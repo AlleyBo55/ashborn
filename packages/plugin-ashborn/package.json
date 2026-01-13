@@ -1,0 +1,33 @@
+{
+    "name": "@ashborn/plugin-eliza",
+    "version": "0.2.0",
+    "description": "Eliza AI agent plugin for Ashborn privacy protocol",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@ashborn/sdk": "workspace:*"
+    },
+    "peerDependencies": {
+        "@ai16z/eliza": ">=0.1.0"
+    },
+    "devDependencies": {
+        "tsup": "^8.0.0",
+        "typescript": "^5.3.0",
+        "vitest": "^1.1.0"
+    },
+    "keywords": [
+        "eliza",
+        "ai-agent",
+        "solana",
+        "privacy",
+        "ashborn"
+    ]
+}

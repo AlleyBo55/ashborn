@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  ashborn-app:
+    container_name: ashborn-shadow-monarch
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

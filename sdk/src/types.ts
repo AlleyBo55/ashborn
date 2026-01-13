@@ -1,0 +1,155 @@
+/**
+ * TypeScript types for Ashborn SDK
+ */
+
+import { PublicKey } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
+
+/**
+ * SDK configuration options
+ */
+export interface AshbornConfig {
+  /** Custom program ID (defaults to deployed Ashborn program) */
+  programId: PublicKey;
+  /** RPC endpoint URL */
+  rpcUrl?: string;
+  /** Commitment level */
+  commitment?: "processed" | "confirmed" | "finalized";
+}
+
+/**
+ * Proof types for selective disclosure
+ */
+export enum ProofType {
+  /** Prove balance is within a range */
+  RangeProof = 0,
+  /** Prove ownership without revealing amount */
+  OwnershipProof = 1,
+  /** Prove compliance with AML limits */
+  ComplianceProof = 2,
+  /** Custom proof for specific requirements */
+  Custom = 3,
+}
+
+/**
+ * Parameters for shielding assets
+ */
+export interface ShieldParams {
+  /** Amount to shield (in token base units) */
+  amount: bigint;
+  /** Token mint address */
+  mint: PublicKey;
+  /** Optional blinding factor (generated if not provided) */
+  blindingFactor?: Uint8Array;
+}
+
+/**
+ * Parameters for shadow transfers
+ */
+export interface TransferParams {
+  /** Source note to spend */
+  sourceNoteAddress: PublicKey;
+  /** Amount to transfer */
+  amount: bigint;
+  /** Recipient's stealth address (from ShadowWire) */
+  recipientStealthAddress: PublicKey;
+  /** Optional blinding factor */
+  blindingFactor?: Uint8Array;
+}
+
+/**
+ * Parameters for selective reveal
+ */
+export interface RevealParams {
+  /** Type of proof to generate */
+  proofType: ProofType;
+  /** Minimum value in range (for range proofs) */
+  rangeMin?: bigint;
+  /** Maximum value in range (for range proofs) */
+  rangeMax?: bigint;
+  /** Custom statement to prove */
+  statement?: string;
+}
+
+/**
+ * Parameters for unshielding
+ */
+export interface UnshieldParams {
+  /** Source note to spend */
+  sourceNoteAddress: PublicKey;
+  /** Amount to unshield */
+  amount: bigint;
+  /** Destination token account */
+  destinationTokenAccount: PublicKey;
+}
+
+/**
+ * Shadow Vault account data
+ */
+export interface ShadowVault {
+  owner: PublicKey;
+  bump: number;
+  shadowBalance: BN;
+  noteCount: number;
+  viewKeyHash: Uint8Array;
+  createdAt: BN;
+  lastActivity: BN;
+}
+
+/**
+ * Shielded Note account data
+ */
+export interface ShieldedNote {
+  vault: PublicKey;
+  commitment: Uint8Array;
+  encryptedAmount: Uint8Array;
+  index: number;
+  spent: boolean;
+  createdAt: BN;
+  bump: number;
+}
+
+/**
+ * Compliance Proof account data
+ */
+export interface ComplianceProofData {
+  vault: PublicKey;
+  proofType: ProofType;
+  proofData: Uint8Array;
+  rangeMin: BN;
+  rangeMax: BN;
+  verified: boolean;
+  expiresAt: BN;
+  bump: number;
+}
+
+/**
+ * ShadowWire stealth address data
+ */
+export interface StealthAddress {
+  /** The one-time public key */
+  ephemeralPubkey: PublicKey;
+  /** The stealth destination */
+  stealthPubkey: PublicKey;
+  /** Encrypted metadata */
+  encryptedMeta?: Uint8Array;
+}
+
+/**
+ * Transfer commitment pair
+ */
+export interface TransferCommitments {
+  senderCommitment: Uint8Array;
+  recipientCommitment: Uint8Array;
+}
+
+/**
+ * Range proof generation params
+ */
+export interface RangeProofParams {
+  type: ProofType;
+  rangeMin?: bigint;
+  rangeMax?: bigint;
+  statement?: string;
+  vaultAddress: PublicKey;
+}

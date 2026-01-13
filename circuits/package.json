@@ -1,0 +1,23 @@
+{
+    "name": "ashborn-circuits",
+    "version": "0.2.0",
+    "description": "ZK circuits for Ashborn privacy protocol",
+    "scripts": {
+        "compile:transfer": "circom circuits/transfer.circom --r1cs --wasm --sym -o build/",
+        "compile:shield": "circom circuits/shield.circom --r1cs --wasm --sym -o build/",
+        "compile:range": "circom circuits/range.circom --r1cs --wasm --sym -o build/",
+        "compile:all": "npm run compile:transfer && npm run compile:shield && npm run compile:range",
+        "setup:transfer": "snarkjs groth16 setup build/transfer.r1cs pot20_final.ptau build/transfer_0000.zkey",
+        "setup:shield": "snarkjs groth16 setup build/shield.r1cs pot12_final.ptau build/shield_0000.zkey",
+        "setup:range": "snarkjs groth16 setup build/range.r1cs pot12_final.ptau build/range_0000.zkey",
+        "export:vkeys": "snarkjs zkey export verificationkey build/transfer_0000.zkey build/transfer_vkey.json && snarkjs zkey export verificationkey build/shield_0000.zkey build/shield_vkey.json && snarkjs zkey export verificationkey build/range_0000.zkey build/range_vkey.json",
+        "export:solidity": "snarkjs zkey export solidityverifier build/transfer_0000.zkey build/TransferVerifier.sol"
+    },
+    "dependencies": {
+        "circomlib": "^2.0.5",
+        "snarkjs": "^0.7.3"
+    },
+    "devDependencies": {
+        "circom": "^2.1.6"
+    }
+}
