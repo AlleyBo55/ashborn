@@ -1,4 +1,4 @@
-![Ashborn Shadow Monarch](assets/ashborn_shadow_monarch.png)
+![Ashborn Shadow Monarch](assets/ashborn_webtoon_banner.png)
 
 # 🌑 **ASHBORN: The Shadow Monarch** 🌑
 
