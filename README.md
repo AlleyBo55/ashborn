@@ -4,7 +4,7 @@
 
 > *“I alone level up.”* — Sung Jin-Woo
 
-**Ashborn** is a **production-grade privacy protocol** for Solana that enables:
+**Ashborn** is a **Compliant Private Payment Protocol** on Solana that enables:
 *   **⚔️ Private Transfers** — Send SOL/tokens without revealing sender, recipient, or amount
 *   **🔮 Selective Disclosure** — Prove balance ranges without revealing exact amounts
 *   **👻 Stealth Addresses** — Receive payments at unlinkable addresses
