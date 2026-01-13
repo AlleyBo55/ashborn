@@ -1,4 +1,4 @@
-![Ashborn Shadow Monarch](assets/ashborn_webtoon_banner.png)
+![Ashborn Shadow Monarch](app/public/assets/hero-eye-override.png)
 
 # 🌑 **ASHBORN: The Shadow Monarch** 🌑
 

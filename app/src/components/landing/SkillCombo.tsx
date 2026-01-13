@@ -1,146 +1,167 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Shield, Zap, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Box, Sword, Skull, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-const SkillCard = ({ icon: Icon, title, desc, delay, step }: { icon: any, title: string, desc: string, delay: number, step: string }) => {
-    const [isHovered, setIsHovered] = useState(false);
-
+const ComboStep = ({
+    step,
+    title,
+    desc,
+    active,
+    icon: Icon
+}: {
+    step: number;
+    title: string;
+    desc: string;
+    active: boolean;
+    icon: any;
+}) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay, duration: 0.6, type: "spring" }}
-            onHoverStart={() => setIsHovered(true)}
-            onHoverEnd={() => setIsHovered(false)}
-            className="relative group perspective-1000"
+            animate={{
+                scale: active ? 1.05 : 1,
+                opacity: active ? 1 : 0.4
+            }}
+            className={`relative flex items-center gap-6 p-6 border-l-4 ${active ? 'border-purple-500 bg-purple-900/10' : 'border-gray-800 bg-transparent'} transition-colors duration-300`}
         >
-            {/* Card Container */}
-            <motion.div
-                className="relative bg-black/40 border-2 border-gray-800 p-8 flex flex-col items-center text-center gap-6 overflow-hidden backdrop-blur-md transition-all duration-300 group-hover:border-arise-blue/50 group-hover:bg-arise-blue/5 h-[350px] justify-between z-10 clip-path-polygon"
-                animate={{
-                    transform: isHovered ? "bg-arise-blue/10 scale(1.05)" : "scale(1)"
-                }}
-            >
-                {/* Step Number Background */}
-                <div className="absolute -top-4 -right-4 text-9xl font-black text-white/5 font-tech select-none group-hover:text-arise-blue/10 transition-colors">
-                    {step}
-                </div>
-
-                {/* Icon with Energy Effect */}
-                <div className="relative">
-                    <div className="w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700 group-hover:border-arise-blue transition-colors z-10 relative">
-                        <Icon className="w-10 h-10 text-gray-400 group-hover:text-arise-blue transition-colors" />
-                    </div>
-                    {/* Glow Ring */}
-                    <motion.div
-                        className="absolute inset-0 bg-arise-blue/20 blur-xl rounded-full"
-                        animate={{ scale: isHovered ? 1.5 : 0.8, opacity: isHovered ? 1 : 0 }}
-                    />
-                </div>
-
-                <div className="relative z-10">
-                    <h3 className="font-manga text-3xl text-white uppercase italic tracking-wider mb-2 group-hover:text-arise-blue transition-colors text-shadow-glow">
-                        <span className="text-arise-blue text-sm block font-mono tracking-widest mb-1 opacity-70">SKILL ACCESS</span>
-                        {title}
-                    </h3>
-                    <p className="font-mono text-xs text-gray-400 leading-relaxed max-w-[200px] mx-auto group-hover:text-gray-300">
-                        {desc}
-                    </p>
-                </div>
-
-                {/* Unlock Button Mockup */}
-                <div className="w-full h-1 bg-gray-800 mt-4 overflow-hidden rounded-full">
-                    <motion.div
-                        className="h-full bg-arise-blue shadow-[0_0_10px_#3b82f6]"
-                        initial={{ width: "0%" }}
-                        whileInView={{ width: "100%" }}
-                        transition={{ delay: delay + 0.5, duration: 1.5 }}
-                    />
-                </div>
-            </motion.div>
-        </motion.div>
-    );
-}
-
-const ConnectionLine = ({ delay }: { delay: number }) => (
-    <div className="hidden md:flex absolute top-1/2 left-0 w-full h-20 -translate-y-1/2 items-center justify-center pointer-events-none z-0">
-        <svg className="w-full h-full" overflow="visible">
-            <motion.path
-                d="M 0 40 H 1000"
-                stroke="#1f2937"
-                strokeWidth="2"
-                strokeDasharray="10 10"
-                fill="none"
-            />
-            <motion.path
-                d="M 0 40 H 1000"
-                stroke="#3b82f6"
-                strokeWidth="2"
-                fill="none"
-                initial={{ pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5, delay: delay, ease: "easeInOut" }}
-            />
-        </svg>
-    </div>
-);
-
-export default function SkillCombo() {
-    return (
-        <section className="py-32 w-full max-w-7xl mx-auto px-4 relative">
-            <div className="text-center mb-24 relative z-10">
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                >
-                    <h2 className="text-5xl md:text-7xl font-manga text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 mb-4 italic drop-shadow-lg">
-                        COMBAT SEQUENCE
-                    </h2>
-                    <div className="h-1 w-full bg-gradient-to-r from-transparent via-arise-blue to-transparent" />
-                </motion.div>
-                <p className="font-mono text-arise-blue mt-4 tracking-[0.3em] text-sm animate-pulse">INITIATING PRIVACY PROTOCOL...</p>
+            {/* Step Number Badge */}
+            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-md border-2 font-black italic text-xl ${active ? 'border-purple-500 text-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)]' : 'border-gray-700 text-gray-700'
+                }`}>
+                <span>{step}</span>
+                <span className="text-[8px] font-mono not-italic font-normal">HIT</span>
             </div>
 
-            <div className="relative">
-                {/* Animated Connecting Lines (Background) */}
-                <div className="hidden md:block absolute top-[50%] left-[16%] right-[16%] h-[2px] bg-gray-800 -translate-y-1/2 z-0 overflow-hidden">
-                    <motion.div
-                        className="h-full w-full bg-arise-blue shadow-[0_0_15px_#3b82f6]"
-                        initial={{ x: "-100%" }}
-                        whileInView={{ x: "100%" }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    />
+            {/* Content */}
+            <div className="flex-1">
+                <div className="flex items-center gap-3 mb-1">
+                    <Icon className={`w-5 h-5 ${active ? 'text-purple-400' : 'text-gray-600'}`} />
+                    <h3 className={`text-2xl font-black italic uppercase tracking-tighter ${active ? 'text-white' : 'text-gray-600'}`}>
+                        {title}
+                    </h3>
+                </div>
+                <p className="text-sm font-mono text-gray-400 max-w-md">
+                    {desc}
+                </p>
+            </div>
+
+            {/* Arrow Connector */}
+            {step < 3 && (
+                <ArrowRight className={`absolute -bottom-8 left-9 rotate-90 w-6 h-6 z-10 ${active ? 'text-purple-500' : 'text-gray-800'}`} />
+            )}
+        </motion.div>
+    );
+};
+
+export default function SkillCombo() {
+    const [activeStep, setActiveStep] = useState(1);
+
+    // Auto-cycle through the combo
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveStep((prev) => (prev % 3) + 1);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <section className="relative w-full max-w-6xl mx-auto py-24 px-6 md:px-12">
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+                {/* Left: VS Screen / Visualizer */}
+                <div className="relative order-2 lg:order-1 h-[400px] bg-black border border-gray-800 flex items-center justify-center overflow-hidden grouped-border">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+
+                    {/* Dynamic Visual Based on Step */}
+                    <AnimatePresence mode="popLayout">
+                        {activeStep === 1 && (
+                            <motion.div
+                                key="step1"
+                                initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+                                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                exit={{ opacity: 0, scale: 1.5, filter: "blur(10px)" }}
+                                className="text-center"
+                            >
+                                <Box className="w-32 h-32 text-blue-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]" />
+                                <h4 className="text-4xl font-black text-white italic">SHIELD UP</h4>
+                                <span className="text-blue-500 font-mono text-xs">ZK-PROOF GENERATED</span>
+                            </motion.div>
+                        )}
+                        {activeStep === 2 && (
+                            <motion.div
+                                key="step2"
+                                initial={{ opacity: 0, x: -100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 100, filter: "blur(10px)" }}
+                                className="text-center"
+                            >
+                                <Sword className="w-32 h-32 text-purple-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]" />
+                                <h4 className="text-4xl font-black text-white italic">SHADOW STRIKE</h4>
+                                <span className="text-purple-500 font-mono text-xs">TRANSFER UNTRACEABLE</span>
+                            </motion.div>
+                        )}
+                        {activeStep === 3 && (
+                            <motion.div
+                                key="step3"
+                                initial={{ opacity: 0, y: 50 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -50, filter: "blur(10px)" }}
+                                className="text-center"
+                            >
+                                <div className="relative">
+                                    <Skull className="w-32 h-32 text-red-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(239,68,68,0.6)]" />
+                                    <Zap className="absolute top-0 right-1/4 w-12 h-12 text-yellow-400 animate-bounce" />
+                                </div>
+                                <h4 className="text-4xl font-black text-white italic">FINISHER</h4>
+                                <span className="text-red-500 font-mono text-xs">WITHDRAW TO FIAT</span>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Combo Counter Overlay */}
+                    <div className="absolute top-4 right-4 text-right">
+                        <div className="text-6xl font-black text-gray-800/50 italic leading-none">{activeStep}x</div>
+                        <div className="text-xs font-bold text-gray-800/50 uppercase tracking-widest">COMBO</div>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 relative z-10">
-                    <SkillCard
-                        icon={Shield}
-                        title="VEIL"
-                        desc="Construct a cryptographic barrier. Asset visibility reduced to zero."
-                        delay={0.2}
-                        step="01"
-                    />
+                {/* Right: The Steps */}
+                <div className="order-1 lg:order-2">
+                    <div className="mb-10">
+                        <h2 className="text-5xl font-black text-white italic tracking-tighter mb-2">
+                            EXECUTE <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">COMBO</span>
+                        </h2>
+                        <p className="text-gray-500 font-mono text-sm uppercase tracking-wide">
+                            Perfect privacy requires a precise sequence.
+                        </p>
+                    </div>
 
-                    <SkillCard
-                        icon={Zap}
-                        title="SHADOW STEP"
-                        desc="Transport value through the void. Leaving no footprints on the ledger."
-                        delay={0.4}
-                        step="02"
-                    />
-
-                    <SkillCard
-                        icon={Lock}
-                        title="DOMINION"
-                        desc="Assert authority over your data. Reveal only what serves your purpose."
-                        delay={0.6}
-                        step="03"
-                    />
+                    <div className="space-y-4">
+                        <ComboStep
+                            step={1}
+                            title="SHIELD"
+                            icon={Box}
+                            desc="Deposit assets into the Ashborn Pool. Convert public tokens into shielded notes via ZK-SNARKs."
+                            active={activeStep === 1}
+                        />
+                        <ComboStep
+                            step={2}
+                            title="TRANSFER"
+                            icon={Sword}
+                            desc="Send assets internally. Zero on-chain footprints. The recipient's stealth address is the only destination."
+                            active={activeStep === 2}
+                        />
+                        <ComboStep
+                            step={3}
+                            title="UNSHIELD"
+                            icon={Skull}
+                            desc="Withdraw to a fresh wallet. The link between source and destination is permanently severed."
+                            active={activeStep === 3}
+                        />
+                    </div>
                 </div>
+
             </div>
         </section>
     );
