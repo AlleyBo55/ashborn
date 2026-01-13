@@ -6,8 +6,8 @@ import { Providers } from '@/components/Providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Ashborn | The Shadow Monarch of Crypto Privacy',
-    description: 'A unified privacy layer on Solana. Shield your assets, transfer in shadows, reveal only what you choose.',
+    title: 'Ashborn | Compliant Private Payment Protocol on Solana',
+    description: 'A unified privacy layer on Solana. Shield your assets, transfer in shadows, reveal only what you choose. Compliant by design.',
     keywords: ['solana', 'privacy', 'zk-proofs', 'blockchain', 'crypto', 'defi'],
     authors: [{ name: 'Ashborn Protocol' }],
     openGraph: {

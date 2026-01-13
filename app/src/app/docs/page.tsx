@@ -73,8 +73,8 @@ export default function DocsPage() {
                                 key={section.id}
                                 onClick={() => scrollTo(section.id)}
                                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center gap-3 ${activeSection === section.id
-                                        ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-400'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-400'
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >
                                 <span className="text-base">{section.icon}</span>
@@ -94,7 +94,7 @@ export default function DocsPage() {
                                 Production-Ready Privacy Protocol
                             </div>
                             <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent">
-                                The Shadow Monarch<br />of Crypto Privacy
+                                The Compliant<br />Private Payment Protocol
                             </h1>
                             <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
                                 Private transfers, selective disclosure, and stealth addresses on Solana.
