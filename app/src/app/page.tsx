@@ -1,31 +1,58 @@
-import Hero from '@/components/landing/Hero';
+import CinematicHero from '@/components/landing/CinematicHero';
+import ParallaxHero from '@/components/landing/ParallaxHero';
+import SystemWarning from '@/components/landing/SystemWarning';
+import SkillCombo from '@/components/landing/SkillCombo';
 import Comparison from '@/components/landing/Comparison';
-import Image from 'next/image';
+import MarketingArsenal from '@/components/landing/MarketingArsenal';
+import MarketingWhy from '@/components/landing/MarketingWhy';
+import ShadowCursor from '@/components/ui/ShadowCursor';
+import SystemToast from '@/components/ui/SystemToast';
+import PortalTransition from '@/components/ui/PortalTransition';
+import SlashSection from '@/components/ui/SlashSection';
+import MonarchAmbience from '@/components/ui/MonarchAmbience';
+import PoweredBySolana from '@/components/ui/PoweredBySolana';
 
 export default function Home() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between bg-monarch-black text-white selection:bg-arise-blue selection:text-white">
-            {/* Global Background (Fixed) */}
-            <div className="fixed inset-0 z-0">
-                <div className="absolute inset-0 bg-shadow-lair bg-cover bg-center bg-no-repeat opacity-60 mix-blend-luminosity" />
-                <div className="absolute inset-0 bg-gradient-to-t from-monarch-black via-transparent to-monarch-black/80" />
-            </div>
+        <main className="flex min-h-screen flex-col items-center justify-between bg-monarch-black text-white selection:bg-arise-blue selection:text-white overflow-x-hidden cursor-none">
+            <PortalTransition />
+            <ShadowCursor />
+            <SystemToast />
+            <MonarchAmbience />
 
-            <div className="z-10 w-full relative">
-                <Hero />
+            <div className="z-10 w-full relative space-y-0 pb-20">
+                {/* Hero remains top, no slant */}
+                <ParallaxHero />
 
-                {/* Transition Fog */}
-                <div className="w-full h-32 bg-gradient-to-b from-transparent to-monarch-black relative z-20 -mt-32 pointer-events-none" />
+                {/* System Alert - Slant Right ("Opening the wound") */}
+                <SlashSection slant="right" className="relative z-20">
+                    <SystemWarning />
+                </SlashSection>
 
-                <div className="bg-monarch-black w-full relative z-20 pb-20">
+                {/* THE WHY - Slant Left ("The History") */}
+                <SlashSection slant="left" className="relative z-20">
+                    <MarketingWhy />
+                </SlashSection>
+
+                {/* THE ARSENAL - No Slant (Top Grid) */}
+                <SlashSection slant="none" className="relative z-20">
+                    <MarketingArsenal />
+                </SlashSection>
+
+                {/* Skill Combo - Slant Left ("The Technique") */}
+                <SlashSection slant="left" className="relative z-30">
+                    <SkillCombo />
+                </SlashSection>
+
+                {/* Comparison - No slant (Stable ground) */}
+                <SlashSection slant="none" className="relative z-40">
                     <Comparison />
-                </div>
+                </SlashSection>
 
-                {/* Footer Minimal */}
-                <footer className="w-full py-10 text-center text-gray-600 text-sm font-mono relative z-20 bg-monarch-black border-t border-gray-900">
-                    <p>ASHBORN PROTOCOL © 2026</p>
-                    <p className="mt-2 text-xs">"I alone level up."</p>
-                </footer>
+                {/* Footer Premium */}
+                <div className="relative z-50">
+                    <PoweredBySolana />
+                </div>
             </div>
         </main>
     );
