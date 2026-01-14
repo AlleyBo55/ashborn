@@ -362,7 +362,7 @@ export default function DocsPage() {
                                     <li className="flex gap-3">
                                         <span className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs font-bold text-purple-400 shrink-0">1</span>
                                         <span>
-                                            <strong>Deposit (Extract):</strong> You put 1 Gold Coin into the vault. In return, the machine gives you a <span className="text-white">Secret Ticket</span> (ZK Note). You are now anonymous; your coin looks identical to everyone else's in the pile.
+                                            <strong>Deposit (Extract):</strong> You put 1 Gold Coin into the vault. In return, the machine gives you a <span className="text-white">Secret Ticket</span> (ZK Note). You are now anonymous; your coin looks identical to everyone else&apos;s in the pile.
                                         </span>
                                     </li>
                                     <li className="flex gap-3">
@@ -398,7 +398,7 @@ export default function DocsPage() {
                                     Smart Contract Pool
                                 </h3>
                                 <p className="text-sm text-gray-400">
-                                    <strong>Pooled Liquidity:</strong> All user assets are pooled together in a single Solana account. This "Anonymity Set" makes it mathematically impossible to link a specific deposit to a specific withdrawal.
+                                    <strong>Pooled Liquidity:</strong> All user assets are pooled together in a single Solana account. This &quot;Anonymity Set&quot; makes it mathematically impossible to link a specific deposit to a specific withdrawal.
                                 </p>
                             </div>
                         </div>

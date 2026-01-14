@@ -1,6 +1,6 @@
 [package]
 name = "ashborn"
-version = "0.2.0"
+version = "1.0.0"
 description = "The Shadow Monarch of Crypto Privacy - Production-grade privacy layer on Solana"
 edition = "2021"
 license = "MIT"

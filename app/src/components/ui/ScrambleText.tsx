@@ -49,6 +49,7 @@ export default function ScrambleText({ text, className = "", delay = 0, scramble
         }, scrambleSpeed);
 
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isInView, text, trigger, scrambleSpeed]);
 
     return (
