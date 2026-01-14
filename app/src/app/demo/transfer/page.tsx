@@ -46,7 +46,7 @@ export default function TransferDemoPage() {
     return (
         <div className="max-w-2xl mx-auto">
             {/* Title */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
                 <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-300 px-4 py-2 rounded-full text-sm mb-6 border border-green-500/20">
                     <Send className="w-4 h-4" />
                     Interactive Demo
@@ -54,6 +54,35 @@ export default function TransferDemoPage() {
                 <h1 className="text-4xl font-bold mb-4 tracking-tight">Shadow Transfer</h1>
                 <p className="text-gray-400 max-w-md mx-auto">
                     Send privately to a stealth address. Includes 3 decoy outputs to break graph analysis.
+                </p>
+            </motion.div>
+
+            {/* What is Shadow Transfer? */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="bg-gradient-to-br from-green-900/20 to-black border border-green-500/20 rounded-xl p-6 mb-8"
+            >
+                <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+                    <Send className="w-4 h-4 text-green-400" />
+                    What is Shadow Transfer?
+                </h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                    Shadow Transfer sends your shielded assets to a <strong className="text-white">stealth address</strong> (one-time address).
+                    The transaction includes <strong className="text-green-300">3 decoy outputs</strong> making it mathematically impossible to determine which output is real.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="bg-green-500/20 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/30">1. Enter Recipient</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-lg border border-purple-500/30">2. Generate Decoys</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/30">3. Nullify Old Note</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-lg border border-amber-500/30">4. Create New Note</span>
+                </div>
+                <p className="text-[10px] text-gray-600 mt-3 font-mono">
+                    Real output + 3 Decoys = 4 identical-looking outputs → Graph analysis broken
                 </p>
             </motion.div>
 
@@ -135,7 +164,7 @@ export default function TransferDemoPage() {
                         <span className="text-sm text-gray-400 font-mono">transfer.ts</span>
                         <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" /><div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" /><div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" /></div>
                     </div>
-                    <pre className="p-6 overflow-x-auto text-sm font-mono"><code className="text-gray-300">{`import { Ashborn, createRelayer } from '@ashborn/sdk';
+                    <pre className="p-6 overflow-x-auto text-sm font-mono"><code className="text-gray-300">{`import { Ashborn, createRelayer } from '@alleyboss/ashborn-sdk';
 
 const ashborn = new Ashborn(connection, wallet);
 

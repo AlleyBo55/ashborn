@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { Shield, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import CodeBlock from '@/components/ui/CodeBlock';
 
 const DENOMINATIONS = [
     { label: '0.1 SOL', value: BigInt(100_000_000), display: '0.1' },
@@ -54,7 +55,7 @@ export default function ShieldDemoPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center mb-12"
+                className="text-center mb-8"
             >
                 <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-300 px-4 py-2 rounded-full text-sm mb-6 border border-purple-500/20">
                     <Shield className="w-4 h-4" />
@@ -63,6 +64,33 @@ export default function ShieldDemoPage() {
                 <h1 className="text-4xl font-bold mb-4 tracking-tight">Shadow Extraction</h1>
                 <p className="text-gray-400 max-w-md mx-auto">
                     Extract SOL into the Shadow Domain. Your assets become invisible to the public ledger.
+                </p>
+            </motion.div>
+
+            {/* What is Shadow Extraction? */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-6 mb-8"
+            >
+                <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-blue-400" />
+                    What is Shadow Extraction?
+                </h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                    Shielding converts your <strong className="text-white">public SOL</strong> into a <strong className="text-purple-300">private ZK commitment</strong> (Shadow Note).
+                    After extraction, your balance is hidden from blockchain explorers. Only you can spend it using your private key.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/30">1. Deposit SOL</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-lg border border-purple-500/30">2. Generate Commitment</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-green-500/20 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/30">3. Receive Note</span>
+                </div>
+                <p className="text-[10px] text-gray-600 mt-3 font-mono">
+                    C = Poseidon(amount, blinding, nullifier) → Stored on-chain as encrypted commitment
                 </p>
             </motion.div>
 
@@ -306,7 +334,7 @@ export default function ShieldDemoPage() {
                 <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
                 <CodeBlock
                     language="typescript"
-                    code={`import { Ashborn } from '@ashborn/sdk';
+                    code={`import { Ashborn } from '@alleyboss/ashborn-sdk';
 
 const ashborn = new Ashborn(connection, wallet);
 

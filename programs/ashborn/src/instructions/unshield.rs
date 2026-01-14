@@ -4,12 +4,13 @@
 
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
-use crate::state::{ShadowVault, ShieldedNote, NullifierTree, ProtocolState};
+use crate::state::{ShadowVault, ShieldedNote, Nullifier, ProtocolState};
 use crate::errors::AshbornError;
-use crate::zk::{verify_transfer_proof, generate_nullifier};
+use crate::zk::verify_transfer_proof;
 
 /// Accounts for unshield
 #[derive(Accounts)]
+#[instruction(amount: u64, nullifier_hash: [u8; 32])]
 pub struct Unshield<'info> {
     /// User's vault
     #[account(
@@ -18,7 +19,7 @@ pub struct Unshield<'info> {
         bump = vault.bump,
         has_one = owner @ AshbornError::Unauthorized,
     )]
-    pub vault: Account<'info, ShadowVault>,
+    pub vault: Box<Account<'info, ShadowVault>>,
 
     /// The note being unshielded
     #[account(
@@ -27,30 +28,32 @@ pub struct Unshield<'info> {
         bump = source_note.bump,
         constraint = !source_note.spent @ AshbornError::NoteAlreadySpent,
     )]
-    pub source_note: Account<'info, ShieldedNote>,
+    pub source_note: Box<Account<'info, ShieldedNote>>,
 
-    /// Global nullifier tree
+    /// Nullifier PDA (Proves spentness)
     #[account(
-        mut,
-        seeds = [b"nullifier_tree"],
-        bump = nullifier_tree.bump,
+        init,
+        payer = owner,
+        space = Nullifier::SIZE,
+        seeds = [b"nullifier", nullifier_hash.as_ref()],
+        bump
     )]
-    pub nullifier_tree: Account<'info, NullifierTree>,
+    pub nullifier_account: Box<Account<'info, Nullifier>>,
 
     /// Protocol state for fee recipient
     #[account(
         seeds = [b"protocol_state"],
         bump = protocol_state.bump,
     )]
-    pub protocol_state: Account<'info, ProtocolState>,
+    pub protocol_state: Box<Account<'info, ProtocolState>>,
 
     /// Shielded pool token account
     #[account(mut)]
-    pub pool_token_account: Account<'info, TokenAccount>,
+    pub pool_token_account: Box<Account<'info, TokenAccount>>,
 
     /// User's destination token account
     #[account(mut)]
-    pub user_token_account: Account<'info, TokenAccount>,
+    pub user_token_account: Box<Account<'info, TokenAccount>>,
 
     /// Pool authority PDA
     /// CHECK: PDA authority for pool
@@ -65,6 +68,7 @@ pub struct Unshield<'info> {
     pub owner: Signer<'info>,
 
     pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
 }
 
 /// Unshield with privacy delay validation
@@ -77,7 +81,7 @@ pub fn handler(
 ) -> Result<()> {
     let vault = &mut ctx.accounts.vault;
     let source_note = &mut ctx.accounts.source_note;
-    let nullifier_tree = &mut ctx.accounts.nullifier_tree;
+    let nullifier_account = &mut ctx.accounts.nullifier_account;
     let protocol_state = &ctx.accounts.protocol_state;
     let clock = Clock::get()?;
 
@@ -90,11 +94,10 @@ pub fn handler(
     let time_waited = clock.unix_timestamp - source_note.created_at;
     msg!("Privacy delay satisfied: {} seconds elapsed", time_waited);
 
-    // 2. Verify nullifier not already used
-    require!(
-        !nullifier_tree.is_valid_root(&nullifier),
-        AshbornError::NullifierAlreadyUsed
-    );
+    // 2. Initialize Nullifier PDA (Double Spend Check is implicit)
+    nullifier_account.hash = nullifier;
+    nullifier_account.spent_at = clock.unix_timestamp;
+    nullifier_account.bump = ctx.bumps.nullifier_account;
 
     // 3. Verify withdrawal proof
     // For unshield, we verify the user knows the preimage of the commitment
@@ -108,20 +111,17 @@ pub fn handler(
     )?;
     require!(proof_valid, AshbornError::InvalidWithdrawProof);
 
-    // 4. Insert nullifier into tree
-    nullifier_tree.insert(nullifier, &merkle_siblings)?;
-
-    // 5. Mark note as spent
+    // 4. Mark note as spent
     source_note.spent = true;
 
-    // 6. Calculate fee with overflow protection
+    // 5. Calculate fee with overflow protection
     let fee = amount
         .checked_mul(protocol_state.fee_bps as u64)
         .and_then(|v| v.checked_div(10000))
         .ok_or(AshbornError::Overflow)?;
     let net_amount = amount.saturating_sub(fee);
 
-    // 7. Transfer tokens from pool to user
+    // 6. Transfer tokens from pool to user
     let pool_seeds = &[b"pool_authority".as_ref(), &[ctx.bumps.pool_authority]];
     let signer_seeds = &[&pool_seeds[..]];
 
@@ -136,7 +136,7 @@ pub fn handler(
     );
     token::transfer(transfer_ctx, net_amount)?;
 
-    // 8. Update vault state (no balance stored - privacy!)
+    // 7. Update vault state (no balance stored - privacy!)
     vault.note_count = vault.note_count.saturating_sub(1);
     vault.last_activity = clock.unix_timestamp;
 

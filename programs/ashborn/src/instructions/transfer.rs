@@ -4,12 +4,13 @@
 //! Merkle tree nullifiers
 
 use anchor_lang::prelude::*;
-use crate::state::{ShadowVault, ShieldedNote, NullifierTree, CommitmentTree, Denomination};
+use crate::state::{ShadowVault, ShieldedNote, CommitmentTree, Nullifier};
 use crate::errors::AshbornError;
-use crate::zk::{verify_transfer_proof, poseidon_hash_2};
+use crate::zk::verify_transfer_proof;
 
 /// Accounts for shadow transfer
 #[derive(Accounts)]
+#[instruction(nullifier_hash: [u8; 32])]
 pub struct ShadowTransfer<'info> {
     /// The sender's vault
     #[account(
@@ -18,7 +19,7 @@ pub struct ShadowTransfer<'info> {
         bump = sender_vault.bump,
         has_one = owner @ AshbornError::Unauthorized,
     )]
-    pub sender_vault: Account<'info, ShadowVault>,
+    pub sender_vault: Box<Account<'info, ShadowVault>>,
 
     /// The source shielded note being spent
     #[account(
@@ -27,15 +28,17 @@ pub struct ShadowTransfer<'info> {
         bump = source_note.bump,
         constraint = !source_note.spent @ AshbornError::NoteAlreadySpent,
     )]
-    pub source_note: Account<'info, ShieldedNote>,
+    pub source_note: Box<Account<'info, ShieldedNote>>,
 
-    /// Global nullifier tree (Merkle tree for O(log n) storage)
+    /// Nullifier PDA (Proves spentness)
     #[account(
-        mut,
-        seeds = [b"nullifier_tree"],
-        bump = nullifier_tree.bump,
+        init,
+        payer = sender,
+        space = Nullifier::SIZE,
+        seeds = [b"nullifier", nullifier_hash.as_ref()],
+        bump
     )]
-    pub nullifier_tree: Account<'info, NullifierTree>,
+    pub nullifier: Box<Account<'info, Nullifier>>,
 
     /// Global commitment tree
     #[account(
@@ -43,7 +46,7 @@ pub struct ShadowTransfer<'info> {
         seeds = [b"commitment_tree"],
         bump = commitment_tree.bump,
     )]
-    pub commitment_tree: Account<'info, CommitmentTree>,
+    pub commitment_tree: Box<Account<'info, CommitmentTree>>,
 
     /// The change note created for sender
     #[account(
@@ -53,7 +56,7 @@ pub struct ShadowTransfer<'info> {
         seeds = [b"shielded_note", sender_vault.key().as_ref(), &(sender_vault.note_count + 1).to_le_bytes()],
         bump,
     )]
-    pub change_note: Account<'info, ShieldedNote>,
+    pub change_note: Box<Account<'info, ShieldedNote>>,
 
     /// Sender (payer for change note)
     #[account(mut)]
@@ -76,10 +79,11 @@ pub fn handler(
     merkle_root: [u8; 32],
 ) -> Result<()> {
     let source_note = &ctx.accounts.source_note;
-    let nullifier_tree = &mut ctx.accounts.nullifier_tree;
+    // let nullifier_tree = &mut ctx.accounts.nullifier_tree; // Removed
     let commitment_tree = &mut ctx.accounts.commitment_tree;
     let sender_vault = &mut ctx.accounts.sender_vault;
     let change_note = &mut ctx.accounts.change_note;
+    let nullifier_account = &mut ctx.accounts.nullifier;
     let clock = Clock::get()?;
 
     // 1. Verify Merkle root is valid (current or recent)
@@ -88,12 +92,10 @@ pub fn handler(
         AshbornError::InvalidMerkleRoot
     );
 
-    // 2. Verify nullifier hasn't been used
-    // Check if nullifier already exists in the tree
-    require!(
-        !nullifier_tree.nullifier_exists(&nullifier),
-        AshbornError::NullifierAlreadyUsed
-    );
+    // 2. Initialize Nullifier PDA (Double Spend Check is implicit via 'init')
+    nullifier_account.hash = nullifier;
+    nullifier_account.spent_at = clock.unix_timestamp;
+    nullifier_account.bump = ctx.bumps.nullifier;
 
     // 3. REAL Groth16 proof verification 
     let proof_valid = verify_transfer_proof(
@@ -107,20 +109,13 @@ pub fn handler(
 
     require!(proof_valid, AshbornError::ProofVerificationFailed);
 
-    // 4. Verify Merkle siblings before insertion
-    let siblings_valid = nullifier_tree.verify_siblings_for_insert(&merkle_siblings)?;
-    require!(siblings_valid, AshbornError::InvalidMerkleSiblings);
-
-    // 5. Insert nullifier into Merkle tree
-    nullifier_tree.insert(nullifier, &merkle_siblings)?;
-
-    // 6. Mark source note as spent
+    // 4. Mark source note as spent (redundant with nullifier but good for vault state)
     ctx.accounts.source_note.spent = true;
 
-    // 7. Insert new commitments into commitment tree
+    // 5. Insert new commitments into commitment tree
     let change_index = commitment_tree.insert_commitment(change_commitment, &merkle_siblings)?;
 
-    // 7. Create change note
+    // 6. Create change note
     change_note.vault = sender_vault.key();
     change_note.commitment = change_commitment;
     change_note.index = change_index;
@@ -129,7 +124,7 @@ pub fn handler(
     change_note.unshield_after = clock.unix_timestamp + 24 * 60 * 60; // 24h delay
     change_note.bump = ctx.bumps.change_note;
 
-    // 8. Update vault state
+    // 7. Update vault state
     sender_vault.note_count += 1;
     sender_vault.last_activity = clock.unix_timestamp;
 

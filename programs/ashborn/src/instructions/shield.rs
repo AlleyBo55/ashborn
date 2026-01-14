@@ -19,14 +19,14 @@ pub struct ShieldDeposit<'info> {
         bump = vault.bump,
         has_one = owner @ AshbornError::Unauthorized,
     )]
-    pub vault: Account<'info, ShadowVault>,
+    pub vault: Box<Account<'info, ShadowVault>>,
 
     /// User's token account to deposit from
     #[account(
         mut,
         constraint = user_token_account.mint == mint.key() @ AshbornError::InvalidMint,
     )]
-    pub user_token_account: Account<'info, TokenAccount>,
+    pub user_token_account: Box<Account<'info, TokenAccount>>,
 
     /// The token mint being shielded
     pub mint: Account<'info, Mint>,
@@ -39,7 +39,7 @@ pub struct ShieldDeposit<'info> {
         token::mint = mint,
         token::authority = pool_authority,
     )]
-    pub pool_token_account: Account<'info, TokenAccount>,
+    pub pool_token_account: Box<Account<'info, TokenAccount>>,
 
     /// Pool authority PDA (controls pool withdrawals)
     /// CHECK: PDA authority for pool, verified by seeds
@@ -55,7 +55,7 @@ pub struct ShieldDeposit<'info> {
         seeds = [b"commitment_tree"],
         bump = commitment_tree.bump,
     )]
-    pub commitment_tree: Account<'info, CommitmentTree>,
+    pub commitment_tree: Box<Account<'info, CommitmentTree>>,
 
     /// The new shielded note
     #[account(
@@ -65,7 +65,7 @@ pub struct ShieldDeposit<'info> {
         seeds = [b"shielded_note", vault.key().as_ref(), &(vault.note_count + 1).to_le_bytes()],
         bump,
     )]
-    pub note: Account<'info, ShieldedNote>,
+    pub note: Box<Account<'info, ShieldedNote>>,
 
     /// Owner (payer)
     #[account(mut)]
