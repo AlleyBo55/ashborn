@@ -1,164 +1,177 @@
 'use client';
 
-import { Shield, Zap, EyeOff, Ghost, Network, Users, ChevronRight, Binary, Cpu, Lock } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Shield, Zap, EyeOff, Ghost, Network, Users, Terminal, Code, Cpu, Skull } from 'lucide-react';
+import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 
-// Skill Data
-const ARSENAL_MODULES = [
+// Shadow Army / Skills Data
+const SHADOW_SKILLS = [
     {
-        id: 'shield',
-        icon: Shield,
-        name: "Void Shield",
-        desc: "ZK-SNARKs privacy layer. Encrypts assets into the shadow realm.",
-        stats: { type: "DEFENSE", power: 100 },
-        rarity: "MYTHIC"
-    },
-    {
-        id: 'cloak',
+        id: 'RULE_OF_SILENCE',
         icon: Ghost,
-        name: "Stealth Cloak",
-        desc: "ECDH Key Exchange. Generates invisible one-time addresses.",
-        stats: { type: "STEALTH", power: 95 },
-        rarity: "LEGENDARY"
+        name: "STEALTH CLOAK",
+        rank: "GENERAL",
+        desc: "Absolute invisibility. Generates phantom addresses for each transaction. No footprint remains.",
+        cost: "0 MANA"
     },
     {
-        id: 'army',
+        id: 'DOMAIN_EXPANSION',
+        icon: Shield,
+        name: "VOID SHIELD",
+        rank: "MARSHAL",
+        desc: "ZK-SNARK proof generation. Encapsulates assets in an impenetrable barrier of mathematics.",
+        cost: "HIGH"
+    },
+    {
+        id: 'SHADOW_EXCHANGE',
         icon: Users,
-        name: "Shadow Army",
-        desc: "Decoy output generation. Confuses graph analysis tools.",
-        stats: { type: "CHAOS", power: 90 },
-        rarity: "EPIC"
+        name: "SHADOW ARMY",
+        rank: "COMMANDER",
+        desc: "Summons decoy outputs. Your transaction hides amongst thousands of shadow soldiers.",
+        cost: "MED"
     },
     {
-        id: 'key',
+        id: 'KINGS_AUTHORITY',
         icon: EyeOff,
-        name: "View Key",
-        desc: "Selective disclosure proof. reveal data only to trusted auditors.",
-        stats: { type: "UTILITY", power: 85 },
-        rarity: "RARE"
+        name: "VIEW KEY",
+        rank: "RULER",
+        desc: "Selective revelation. Grant vision only to those you deem worthy (Auditors).",
+        cost: "VARIES"
     },
     {
-        id: 'strike',
+        id: 'SHADOW_STEP',
         icon: Zap,
-        name: "Flash Strike",
-        desc: "Solana Mainnet optimization. <400ms finality execution.",
-        stats: { type: "SPEED", power: 98 },
-        rarity: "EPIC"
+        name: "FLASH STRIKE",
+        rank: "ELITE",
+        desc: "Instantaneous execution. Move across the Solana network faster than light (<400ms).",
+        cost: "LOW"
     },
     {
-        id: 'relay',
+        id: 'PHANTOM_TOUCH',
         icon: Network,
-        name: "Ghost Relay",
-        desc: "Gasless meta-transactions. Disconnect wallet from on-chain history.",
-        stats: { type: "RELAY", power: 100 },
-        rarity: "LEGENDARY"
+        name: "GHOST RELAY",
+        rank: "ASSASSIN",
+        desc: "Gasless interaction. Your wallet remains untouched; the shadows pay the fee.",
+        cost: "NONE"
     }
 ];
 
-const ModuleCard = ({ module, index }: { module: any, index: number }) => {
+const ShadowCard = ({ skill, index }: { skill: any, index: number }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    const Icon = module.icon;
+    const Icon = skill.icon;
 
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative h-64 bg-black/40 border border-white/10 hover:border-purple-500/50 rounded-xl overflow-hidden transition-all duration-500 hover:shadow-2xl"
+            className={`group relative h-[300px] border transition-all duration-500 overflow-hidden flex flex-col justify-between p-6
+                ${isHovered
+                    ? 'bg-purple-950/20 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.2)]'
+                    : 'bg-black/60 border-white/5 hover:border-white/20'
+                }`}
         >
-            {/* Background Tech Lines */}
-            <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-grid-white/[0.05]" />
+            {/* Dark Overlay that clears on hover */}
+            <div className={`absolute inset-0 bg-black/80 transition-opacity duration-500 ${isHovered ? 'opacity-0' : 'opacity-100'}`} />
 
-            {/* Active Glow Corner */}
-            <div className={`absolute top-0 right-0 p-3 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-                <Cpu className="w-4 h-4 text-purple-400 animate-pulse" />
+            {/* "ARISE" Command Background Text */}
+            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black italic text-4xl tracking-widest text-purple-600/20 transition-all duration-300 pointer-events-none ${isHovered ? 'scale-110 opacity-100 blur-[2px]' : 'scale-50 opacity-0 blur-xl'}`}>
+                ARISE
             </div>
 
-            <div className="p-6 h-full flex flex-col justify-between relative z-10">
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="p-3 rounded-lg bg-white/5 border border-white/5 group-hover:bg-purple-500/20 group-hover:border-purple-500/30 transition-colors duration-300">
-                        <Icon className={`w-6 h-6 ${isHovered ? 'text-purple-300' : 'text-gray-400'}`} />
-                    </div>
-                    <span className="text-[10px] font-mono text-gray-600 border border-gray-800 px-2 py-1 rounded">
-                        MOD_0{index + 1}
+            {/* Top: Rank & System Info */}
+            <div className="relative z-10 flex justify-between items-start">
+                <div className="flex flex-col gap-1">
+                    <span className={`text-[10px] font-mono tracking-[0.2em] transition-colors duration-300 ${isHovered ? 'text-purple-400' : 'text-gray-600'}`}>
+                        // RANK: {skill.rank}
+                    </span>
+                    <span className="text-[10px] font-mono text-gray-700">
+                        ID: {skill.id}
                     </span>
                 </div>
-
-                {/* Content */}
-                <div>
-                    <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                        {module.name}
-                        <ChevronRight className={`w-4 h-4 text-purple-500 transition-transform duration-300 ${isHovered ? 'translate-x-1 opacity-100' : '-translate-x-2 opacity-0'}`} />
-                    </h3>
-                    <p className="text-sm text-gray-400 leading-relaxed font-mono">
-                        {module.desc}
-                    </p>
-                </div>
-
-                {/* Stats Bar */}
-                <div className="space-y-2 pt-4 border-t border-white/5">
-                    <div className="flex justify-between text-[10px] font-bold text-gray-500 tracking-wider">
-                        <span>{module.stats.type}</span>
-                        <span className={isHovered ? 'text-purple-400' : 'text-gray-600'}>
-                            {module.stats.power}% PWR
-                        </span>
-                    </div>
-                    <div className="h-1 bg-gray-600 rounded-full overflow-hidden">
-                        <div
-                            className={`h-full ${isHovered ? 'bg-purple-500' : 'bg-gray-400'} transition-all duration-1000 ease-out`}
-                            style={{
-                                width: mounted ? `${module.stats.power}%` : '0%'
-                            }}
-                        />
-                    </div>
+                <div className={`p-2 rounded-full border transition-all duration-500 ${isHovered ? 'bg-purple-600 border-purple-400 text-white animate-pulse' : 'bg-transparent border-gray-800 text-gray-600'}`}>
+                    <Icon className="w-5 h-5" />
                 </div>
             </div>
+
+            {/* Middle: Name (Standard -> Arise Mode) */}
+            <div className="relative z-10 my-auto text-center">
+                <h3 className={`font-black italic text-2xl md:text-3xl transition-all duration-300 transform ${isHovered ? 'text-transparent bg-clip-text bg-gradient-to-b from-white to-purple-400 scale-110' : 'text-gray-500'}`}>
+                    {skill.name}
+                </h3>
+            </div>
+
+            {/* Bottom: Description & Stats */}
+            <div className="relative z-10 border-t border-white/5 pt-4 mt-4">
+                <p className={`text-xs font-mono leading-relaxed transition-colors duration-300 ${isHovered ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {skill.desc}
+                </p>
+
+                <div className="mt-4 flex items-center justify-between">
+                    <div className="flex gap-1">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 delay-${i * 100} ${isHovered ? 'bg-purple-500' : 'bg-gray-800'}`} />
+                        ))}
+                    </div>
+                    <span className={`text-[10px] font-bold tracking-widest ${isHovered ? 'text-purple-400' : 'text-gray-700'}`}>
+                        COST: {skill.cost}
+                    </span>
+                </div>
+            </div>
+
+            {/* Purple Flame Effect (Bottom Border) */}
+            <div className={`absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-600 to-transparent transition-all duration-500 ${isHovered ? 'opacity-100 shadow-[0_0_20px_#9333ea]' : 'opacity-0'}`} />
         </div>
     );
 };
 
 export default function MarketingArsenal() {
     return (
-        <section className="relative w-full max-w-7xl mx-auto py-32 px-6 md:px-12">
+        <section className="relative w-full py-32 px-6 md:px-12 bg-black overflow-hidden">
 
-            <div className="mb-20 flex flex-col md:flex-row justify-between items-end border-b border-gray-800 pb-8">
-                <div>
-                    <h2 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter mb-4">
-                        SYSTEM <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-blue-500">MODULES</span>
+            {/* Background Texture - Dungeon Vibe */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent z-10" />
+            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-10" />
+
+            <div className="max-w-7xl mx-auto relative z-20">
+
+                {/* Header: System Message */}
+                <div className="text-center mb-24">
+                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-purple-900/50 bg-purple-900/10 text-purple-400 font-mono text-xs mb-6">
+                        <Skull className="w-3 h-3" />
+                        <span>SYSTEM NOTIFICATION</span>
+                    </div>
+                    <h2 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter mb-4">
+                        <span className="text-gray-800">MY</span> <ScrambleText text="SHADOWS" />
                     </h2>
-                    <div className="flex items-center gap-4 text-gray-400 font-mono text-sm">
-                        <span className="flex items-center gap-2">
-                            <Binary className="w-4 h-4 text-purple-500" />
-                            ENCRYPTION: AES-256
-                        </span>
-                        <span className="hidden md:inline text-gray-700">|</span>
-                        <span className="flex items-center gap-2">
-                            <Lock className="w-4 h-4 text-blue-500" />
-                            PROTOCOL: ZK-GROTH16
-                        </span>
+                    <p className="text-gray-500 font-mono text-sm max-w-xl mx-auto uppercase tracking-widest border-t border-b border-gray-900 py-4">
+                        "I am the record of your struggles, the evidence of your resistance, and the reward of your pain."
+                    </p>
+                </div>
+
+                {/* The Army Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-gray-800 bg-gray-900/20">
+                    {SHADOW_SKILLS.map((skill, index) => (
+                        <ShadowCard key={skill.id} skill={skill} index={index} />
+                    ))}
+                </div>
+
+                {/* System Console Footer */}
+                <div className="mt-12 flex justify-between items-center text-[10px] font-mono text-gray-700 uppercase tracking-widest">
+                    <div className="flex items-center gap-2">
+                        <Terminal className="w-4 h-4" />
+                        <span>SYSTEM: ACCESS_GRANTED</span>
+                    </div>
+                    <div>
+                        SHADOW_EXTRACTION_RATE: 100%
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span>CLASS: NECROMANCER</span>
+                        <Code className="w-4 h-4" />
                     </div>
                 </div>
-                <div className="mt-6 md:mt-0 text-right">
-                    <p className="text-gray-500 font-mono text-xs mb-2">AVAILABLE MODULES</p>
-                    <div className="text-4xl font-black text-white">06 <span className="text-purple-500">/</span> 06</div>
-                </div>
+
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ARSENAL_MODULES.map((module, index) => (
-                    <ModuleCard key={module.id} module={module} index={index} />
-                ))}
-            </div>
-
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-purple-900/5 blur-[150px] -z-10 pointer-events-none" />
-
         </section>
     );
 }
