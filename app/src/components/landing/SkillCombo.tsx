@@ -128,8 +128,8 @@ export default function SkillCombo() {
 
                 {/* Right: The Steps */}
                 <div className="order-1 lg:order-2">
-                    <div className="mb-10">
-                        <h2 className="text-5xl font-black text-white italic tracking-tighter mb-2">
+                    <div className="mb-10 pl-2">
+                        <h2 className="text-5xl font-black text-white italic tracking-tighter mb-2 leading-tight pr-2 pb-2">
                             EXECUTE <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">COMBO</span>
                         </h2>
                         <p className="text-gray-500 font-mono text-sm uppercase tracking-wide">

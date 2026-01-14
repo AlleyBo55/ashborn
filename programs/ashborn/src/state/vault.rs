@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 
 /// Shadow Vault - A user's personal privacy fortress
 #[account]
-#[derive(Default)]
+#[derive(InitSpace)]
 pub struct ShadowVault {
     /// The owner's public key
     pub owner: Pubkey,

@@ -3,7 +3,7 @@
 //! Vitalik-approved: No more O(n) individual nullifier accounts
 
 use anchor_lang::prelude::*;
-use light_poseidon::{Poseidon, PoseidonBytesHasher};
+// use light_poseidon::{Poseidon, PoseidonBytesHasher};
 
 /// Merkle tree depth - 2^20 = 1,048,576 nullifiers
 pub const TREE_DEPTH: usize = 20;
@@ -67,15 +67,10 @@ impl NullifierTree {
         current
     }
 
-    /// Hash two nodes using Poseidon
+    /// Hash two nodes using Mock Poseidon
     fn hash_pair(left: &[u8; 32], right: &[u8; 32]) -> [u8; 32] {
-        let mut hasher = Poseidon::<2>::new();
-        let mut result = [0u8; 32];
-        
-        hasher.hash_bytes_le(&[left.as_slice(), right.as_slice()], &mut result)
-            .expect("Poseidon hash failed");
-        
-        result
+        use crate::zk::poseidon_hash_2;
+        poseidon_hash_2(left, right)
     }
 
     /// Insert a nullifier and update the root

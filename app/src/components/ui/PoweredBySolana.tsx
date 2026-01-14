@@ -1,66 +1,67 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Activity, Globe, Cpu } from 'lucide-react';
 
 export default function PoweredBySolana() {
     return (
-        <footer className="relative w-full py-20 overflow-hidden border-t border-purple-900/30 bg-black/90 backdrop-blur-md">
-            {/* Ambient Glow from bottom */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-purple-600/20 blur-[120px] rounded-full pointer-events-none mix-blend-screen" />
+        <footer className="relative w-full py-24 flex justify-center items-end overflow-hidden">
 
-            <div className="relative z-10 flex flex-col items-center justify-center gap-6">
+            {/* Gradient Ambience */}
+            <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-purple-600/20 blur-[120px] rounded-full pointer-events-none mix-blend-screen" />
 
-                {/* 1. The Energy Core (Solana Logo Interpretation) */}
-                <div className="relative group cursor-pointer">
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-0 bg-gradient-to-tr from-purple-500 to-blue-500 rounded-full blur-xl opacity-40 group-hover:opacity-100 transition-opacity duration-500"
-                    />
+            {/* The Dock */}
+            <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                className="relative z-10 flex items-center gap-2 md:gap-4 px-4 py-3 bg-gray-900/40 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)]"
+            >
+                {/* 1. Protocol Identity */}
+                <div className="group relative flex items-center justify-center p-3 rounded-full bg-white/5 border border-white/5 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300">
+                    <span className="text-xs font-bold text-white tracking-widest px-2">ASHBORN</span>
+                    <div className="absolute -bottom-1 w-1 h-1 bg-white/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
 
-                    <div className="relative bg-black border border-purple-500/50 px-8 py-3 rounded-full flex items-center gap-4 shadow-[0_0_30px_rgba(168,85,247,0.2)] group-hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300">
-                        {/* Solana Animated Icon */}
-                        <div className="flex flex-col gap-[2px]">
-                            <motion.div
-                                animate={{ x: [0, 2, 0] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                                className="w-6 h-[2px] bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
-                            />
-                            <motion.div
-                                animate={{ x: [0, -2, 0] }}
-                                transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-                                className="w-6 h-[2px] bg-gradient-to-r from-purple-400 to-purple-600 rounded-full"
-                            />
-                            <motion.div
-                                animate={{ x: [0, 2, 0] }}
-                                transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
-                                className="w-6 h-[2px] bg-gradient-to-r from-blue-500 to-green-400 rounded-full"
-                            />
-                        </div>
+                {/* Separator */}
+                <div className="w-px h-6 bg-white/10" />
 
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 font-bold tracking-widest text-sm group-hover:text-white transition-colors">
-                            POWERED BY SOLANA
-                        </span>
+                {/* 2. Solana Core */}
+                <div className="group relative p-2 rounded-full hover:-translate-y-2 transition-transform duration-300">
+                    <div className="flex flex-col gap-[2px]">
+                        <div className="w-4 h-[2px] bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-pulse" />
+                        <div className="w-4 h-[2px] bg-gradient-to-r from-purple-400 to-purple-600 rounded-full" />
+                        <div className="w-4 h-[2px] bg-gradient-to-r from-blue-500 to-green-400 rounded-full" />
                     </div>
                 </div>
 
-                {/* 2. System Status Footer */}
-                <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-[10px] text-gray-600 font-mono tracking-widest uppercase mt-4 px-4 text-center">
-                    <span className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                        Network: Mainnet-Beta
-                    </span>
-                    <span>TPS: 4,291</span>
-                    <span>Block: #291,012,491</span>
+                {/* 3. Network Status */}
+                <div className="group relative hidden md:flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-white/5 hover:-translate-y-2 transition-all duration-300">
+                    <Activity className="w-3 h-3 text-green-500" />
+                    <div className="flex flex-col">
+                        <span className="text-[8px] text-gray-400 font-bold">MAINNET</span>
+                        <span className="text-[8px] text-green-400">ONLINE</span>
+                    </div>
                 </div>
 
-                <p className="text-[10px] text-gray-700 font-mono mt-8">
-                    ASHBORN PROTOCOL © 2026. &quot;I ALONE LEVEL UP.&quot;
-                </p>
-            </div>
+                {/* 4. TPS Widget */}
+                <div className="group relative hidden md:flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-white/5 hover:-translate-y-2 transition-all duration-300">
+                    <Cpu className="w-3 h-3 text-blue-500" />
+                    <div className="flex flex-col">
+                        <span className="text-[8px] text-gray-400 font-bold">TPS</span>
+                        <span className="text-[8px] text-blue-400">4,291</span>
+                    </div>
+                </div>
 
-            {/* Grid Overlay on Footer */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(20,20,20,0)_1px,transparent_1px),linear-gradient(90deg,rgba(20,20,20,0)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none" />
+                {/* Separator */}
+                <div className="hidden md:block w-px h-6 bg-white/10" />
+
+                {/* Copyright */}
+                <div className="group relative p-2 rounded-full hover:-translate-y-2 transition-transform duration-300 cursor-default">
+                    <span className="text-[10px] text-gray-500 font-medium">© 2026</span>
+                </div>
+
+            </motion.div>
         </footer>
     );
 }

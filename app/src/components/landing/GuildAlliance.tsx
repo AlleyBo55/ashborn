@@ -1,0 +1,76 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
+const PartnerLogo = ({ name, type = "text", path, viewBox = "0 0 24 24" }: { name: string, type?: "svg" | "text", path?: string, viewBox?: string }) => {
+    if (type === "svg") {
+        return (
+            <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 group cursor-pointer">
+                <svg viewBox={viewBox} className="h-6 w-auto fill-current text-white group-hover:text-purple-400">
+                    <path d={path} />
+                </svg>
+                <span className="text-sm font-bold tracking-widest text-white font-tech hidden md:block">{name}</span>
+            </div>
+        );
+    }
+    return (
+        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 group cursor-pointer">
+            <span className="text-lg font-black tracking-tighter text-white group-hover:text-white font-sans">{name}</span>
+        </div>
+    );
+};
+
+export default function GuildAlliance() {
+    return (
+        <section className="relative w-full py-8 border-y border-white/5 bg-black/60 backdrop-blur-md overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 pointer-events-none" />
+
+            <motion.div
+                className="flex gap-16 md:gap-32 w-max"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            >
+                {[...Array(2)].map((_, i) => (
+                    <div key={i} className="flex gap-16 md:gap-32 items-center">
+                        {/* SOLANA */}
+                        <PartnerLogo
+                            name="SOLANA"
+                            type="svg"
+                            viewBox="0 0 24 24"
+                            path="m23.8764 18.0313-3.962 4.1393a.9201.9201 0 0 1-.306.2106.9407.9407 0 0 1-.367.0742H.4599a.4689.4689 0 0 1-.2522-.0733.4513.4513 0 0 1-.1696-.1962.4375.4375 0 0 1-.0314-.2545.4438.4438 0 0 1 .117-.2298l3.9649-4.1393a.92.92 0 0 1 .3052-.2102.9407.9407 0 0 1 .3658-.0746H23.54a.4692.4692 0 0 1 .2523.0734.4531.4531 0 0 1 .1697.196.438.438 0 0 1 .0313.2547.4442.4442 0 0 1-.1169.2297zm-3.962-8.3355a.9202.9202 0 0 0-.306-.2106.941.941 0 0 0-.367-.0742H.4599a.4687.4687 0 0 0-.2522.0734.4513.4513 0 0 0-.1696.1961.4376.4376 0 0 0-.0314.2546.444.444 0 0 0 .117.2297l3.9649 4.1394a.9204.9204 0 0 0 .3052.2102c.1154.049.24.0744.3658.0746H23.54a.469.469 0 0 0 .2523-.0734.453.453 0 0 0 .1697-.1961.4382.4382 0 0 0 .0313-.2546.4444.4444 0 0 0-.1169-.2297zM.46 6.7225h18.7815a.9411.9411 0 0 0 .367-.0742.9202.9202 0 0 0 .306-.2106l3.962-4.1394a.4442.4442 0 0 0 .117-.2297.4378.4378 0 0 0-.0314-.2546.453.453 0 0 0-.1697-.196.469.469 0 0 0-.2523-.0734H4.7596a.941.941 0 0 0-.3658.0745.9203.9203 0 0 0-.3052.2102L.1246 5.9687a.4438.4438 0 0 0-.1169.2295.4375.4375 0 0 0 .0312.2544.4512.4512 0 0 0 .1692.196.4689.4689 0 0 0 .2518.0739z"
+                        />
+
+                        {/* HELIUS (Text Placeholder, stylized) */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-xl font-bold tracking-tight text-orange-500">HELIUS</span>
+                        </div>
+
+                        {/* JITO (Text Placeholder) */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-xl font-bold tracking-tight text-green-500">JITO</span>
+                        </div>
+
+                        {/* PYTH */}
+                        <PartnerLogo
+                            name="PYTH"
+                            type="svg"
+                            viewBox="0 0 512 512"
+                            path="M266,78.7c-27.2,0-52.7,7.3-74.7,20.1c-14.1,8.1-26.7,18.5-37.4,30.7c-23.2,26.4-37.4,61.1-37.4,99.1v112.4l37.4,37.5V228.5c0-33.3,14.4-63.2,37.4-83.8c10.8-9.7,23.4-17.3,37.4-22.2c11.7-4.2,24.3-6.4,37.4-6.4c61.9,0,112.1,50.3,112.1,112.4S327.9,340.9,266,340.9v37.5c82.5,0,149.4-67.1,149.4-149.8S348.5,78.7,266,78.7z"
+                        />
+
+                        {/* LAYERZERO (Text) */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-xl font-black tracking-tighter text-white">LAYERZERO</span>
+                        </div>
+
+                        {/* LIGHT PROTOCOL (Text) */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-lg font-mono font-bold text-white tracking-widest">LIGHT</span>
+                            <span className="text-lg font-mono font-thin text-gray-400">PROTOCOL</span>
+                        </div>
+                    </div>
+                ))}
+            </motion.div>
+        </section>
+    );
+}

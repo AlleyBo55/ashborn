@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 
 /// Shielded Note - An encrypted UTXO-style note
 #[account]
-#[derive(Default)]
+#[derive(InitSpace)]
 pub struct ShieldedNote {
     /// The vault this note belongs to
     pub vault: Pubkey,

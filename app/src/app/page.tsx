@@ -11,6 +11,8 @@ import PortalTransition from '@/components/ui/PortalTransition';
 import SlashSection from '@/components/ui/SlashSection';
 import MonarchAmbience from '@/components/ui/MonarchAmbience';
 import PoweredBySolana from '@/components/ui/PoweredBySolana';
+import GuildAlliance from '@/components/landing/GuildAlliance';
+import ProtectionFeed from '@/components/landing/ProtectionFeed';
 
 export default function Home() {
     return (
@@ -23,6 +25,8 @@ export default function Home() {
             <div className="z-10 w-full relative space-y-0 pb-20">
                 {/* Hero remains top, no slant */}
                 <ParallaxHero />
+
+                <GuildAlliance />
 
                 {/* System Alert - Slant Right ("Opening the wound") */}
                 <SlashSection slant="right" className="relative z-20">
