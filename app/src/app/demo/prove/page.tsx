@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { BarChart3, CheckCircle, Loader2, AlertTriangle, Shield, EyeOff } from 'lucide-react';
+import CodeBlock from '@/components/ui/CodeBlock';
 
 // Type for snarkjs (loaded dynamically)
 declare global {
@@ -164,12 +165,9 @@ export default function ProveDemoPage() {
             {/* Code Snippet */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-8">
                 <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
-                <div className="bg-[#0E0E0E] rounded-xl overflow-hidden border border-white/10">
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
-                        <span className="text-sm text-gray-400 font-mono">prove.ts</span>
-                        <span className="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded font-mono border border-green-500/20">ZK-CIRCUIT-V1</span>
-                    </div>
-                    <pre className="p-6 overflow-x-auto text-sm font-mono"><code className="text-gray-300">{`import { Ashborn, createRangeCompliance } from '@alleyboss/ashborn-sdk';
+                <CodeBlock
+                    language="typescript"
+                    code={`import { Ashborn, createRangeCompliance } from '@alleyboss/ashborn-sdk';
 
 // Generate real Groth16 range proof locally
 const proof = await rangeCompliance.generateRangeProof({
@@ -180,8 +178,9 @@ const proof = await rangeCompliance.generateRangeProof({
 });
 
 // Verify proof (calls on-chain verifier)
-const isValid = await ashborn.submitProof(proof);`}</code></pre>
-                </div>
+const isValid = await ashborn.submitProof(proof);`}
+                    filename="prove.ts"
+                />
             </motion.div>
         </div>
     );

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle, Loader2, AlertCircle, Users } from 'lucide-react';
+import CodeBlock from '@/components/ui/CodeBlock';
 
 type DemoStatus = 'idle' | 'confirming' | 'processing' | 'success' | 'error';
 
@@ -159,12 +160,9 @@ export default function TransferDemoPage() {
             {/* Code Snippet */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-8">
                 <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
-                <div className="bg-[#0E0E0E] rounded-xl overflow-hidden border border-white/10">
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
-                        <span className="text-sm text-gray-400 font-mono">transfer.ts</span>
-                        <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" /><div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" /><div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" /></div>
-                    </div>
-                    <pre className="p-6 overflow-x-auto text-sm font-mono"><code className="text-gray-300">{`import { Ashborn, createRelayer } from '@alleyboss/ashborn-sdk';
+                <CodeBlock
+                    language="typescript"
+                    code={`import { Ashborn, createRelayer } from '@alleyboss/ashborn-sdk';
 
 const ashborn = new Ashborn(connection, wallet);
 
@@ -174,8 +172,9 @@ await ashborn.shadowTransfer({
   recipientStealthAddress: '${recipient || '<stealth_address>'}',
   useDecoys: true,  // Adds 3 fake outputs for graph obfuscation
   viaRelayer: true, // Hides sender IP/Wallet
-});`}</code></pre>
-                </div>
+});`}
+                    filename="transfer.ts"
+                />
             </motion.div>
         </div>
     );
