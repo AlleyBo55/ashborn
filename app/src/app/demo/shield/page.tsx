@@ -227,7 +227,6 @@ export default function ShieldDemoPage() {
                         </div>
                     </>
                 )}
-                )}
             </motion.div>
 
             {/* Privacy Visualizer */}

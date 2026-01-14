@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createX402Middleware } from '@alleyboss/micropay-solana-x402-paywall';
+import { createX402Middleware } from '@alleyboss/micropay-solana-x402-paywall/next';
 import OpenAI from 'openai';
 import { Connection, PublicKey } from '@solana/web3.js';
 

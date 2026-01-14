@@ -82,7 +82,7 @@ const ShadowCard = ({ skill, index }: { skill: any, index: number }) => {
             <div className="relative z-10 flex justify-between items-start">
                 <div className="flex flex-col gap-1">
                     <span className={`text-[10px] font-mono tracking-[0.2em] transition-colors duration-300 ${isHovered ? 'text-purple-400' : 'text-gray-600'}`}>
-                        // RANK: {skill.rank}
+                        {'//'} RANK: {skill.rank}
                     </span>
                     <span className="text-[10px] font-mono text-gray-700">
                         ID: {skill.id}
@@ -145,7 +145,7 @@ export default function MarketingArsenal() {
                         <span className="text-gray-800">MY</span> <ScrambleText text="SHADOWS" />
                     </h2>
                     <p className="text-gray-500 font-mono text-sm max-w-xl mx-auto uppercase tracking-widest border-t border-b border-gray-900 py-4">
-                        "I am the record of your struggles, the evidence of your resistance, and the reward of your pain."
+                        &quot;I am the record of your struggles, the evidence of your resistance, and the reward of your pain.&quot;
                     </p>
                 </div>
 
