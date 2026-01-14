@@ -352,7 +352,7 @@ export default function DocsPage() {
                             <div className="absolute top-0 right-0 p-32 bg-purple-500/5 blur-3xl rounded-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                 <Lock className="w-5 h-5 text-purple-400" />
-                                The "Glass Vault" Analogy
+                                The &quot;Glass Vault&quot; Analogy
                             </h3>
                             <div className="space-y-4 text-gray-400 leading-relaxed">
                                 <p>
@@ -374,7 +374,7 @@ export default function DocsPage() {
                                     <li className="flex gap-3">
                                         <span className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs font-bold text-purple-400 shrink-0">3</span>
                                         <span>
-                                            <strong>Withdraw (Arise):</strong> Your friend uses the ticket to take 1 coin out. The vault verifies the ticket is valid without ever asking <em>"Who gave this to you?"</em>.
+                                            <strong>Withdraw (Arise):</strong> Your friend uses the ticket to take 1 coin out. The vault verifies the ticket is valid without ever asking <em>&quot;Who gave this to you?&quot;</em>.
                                         </span>
                                     </li>
                                 </ul>
@@ -495,7 +495,7 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                             Ashborn includes a semantic layer to parse user intents into privacy operations.
                         </p>
                         <div className="p-4 rounded-lg bg-white/5 border border-white/10 italic text-gray-400 border-l-4 border-l-purple-500">
-                            "Shield 50 USDC and send half to alleyboss.sol"
+                            &quot;Shield 50 USDC and send half to alleyboss.sol&quot;
                         </div>
                     </section>
 

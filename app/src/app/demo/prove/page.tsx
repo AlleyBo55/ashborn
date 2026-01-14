@@ -87,7 +87,7 @@ export default function ProveDemoPage() {
                     What is a Range Proof?
                 </h3>
                 <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                    A Range Proof lets you prove your balance is within a range (e.g., <strong className="text-white">"I have between $0 and $10,000"</strong>)
+                    A Range Proof lets you prove your balance is within a range (e.g., <strong className="text-white">&quot;I have between $0 and $10,000&quot;</strong>)
                     without revealing the exact amount. Uses <strong className="text-amber-300">Groth16 ZK-SNARKs</strong> for on-chain verification.
                 </p>
                 <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
