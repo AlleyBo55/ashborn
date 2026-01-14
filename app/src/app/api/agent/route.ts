@@ -14,7 +14,6 @@ const middleware = createX402Middleware({
     walletAddress: "Hj6iK4v9xP9y9z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5", // Demo Wallet
     rpcUrl: "https://api.devnet.solana.com",
     network: 'devnet',
-    serviceName: "Ashborn AI Agent",
 });
 
 export const POST = middleware(async (req: NextRequest) => {
