@@ -9,7 +9,7 @@ const openai = new OpenAI({
 });
 
 // Configure Paywall
-const { middleware } = createX402Middleware({
+const middleware = createX402Middleware({
     price: 1000000, // 0.001 SOL (in lamports)
     wallet: new PublicKey("Hj6iK4v9xP9y9z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5"), // Demo Wallet
     rpcUrl: "https://api.devnet.solana.com",
