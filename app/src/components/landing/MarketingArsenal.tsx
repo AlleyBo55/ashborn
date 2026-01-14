@@ -5,6 +5,9 @@ import { Shield, Zap, EyeOff, Ghost, Network, Users, ChevronRight, Binary, Cpu, 
 import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 
+// Fix for Next.js 14 / SWC parser issue with motion.div
+const MotionDiv = motion.div;
+
 // Skill Data
 const ARSENAL_MODULES = [
     {
@@ -61,7 +64,7 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <motion.div
+        <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -108,7 +111,7 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
                         </span>
                     </div>
                     <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-                        <motion.div
+                        <MotionDiv
                             initial={{ width: 0 }}
                             whileInView={{ width: `${module.stats.power}%` }}
                             transition={{ duration: 1, delay: 0.5 }}
@@ -117,7 +120,7 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </MotionDiv>
     );
 }
 
