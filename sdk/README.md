@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@ashborn/sdk"><img src="https://img.shields.io/npm/v/@ashborn/sdk.svg?style=flat-square" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/@ashborn/sdk"><img src="https://img.shields.io/npm/dm/@ashborn/sdk.svg?style=flat-square" alt="downloads" /></a>
-  <a href="https://github.com/AlleyBo55/ashborn/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@ashborn/sdk.svg?style=flat-square" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/v/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/dm/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="downloads" /></a>
+  <a href="https://github.com/AlleyBo55/ashborn/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="license" /></a>
 </p>
 
 <p align="center">

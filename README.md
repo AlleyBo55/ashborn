@@ -12,15 +12,17 @@
 
 Built with **real ZK proofs (Groth16)**, **Merkle tree nullifiers**, and a **compliance-friendly** design.
 
+> 🎮 **Live Demo:** [https://ashborn.vercel.app](https://ashborn.vercel.app) (Devnet)
+> Now featuring the **Shadow Monarch Aesthetic** experience.
+
 ---
 
 ## 📦 SDK Status
 
-> ⚠️ **NOT YET PUBLISHED to npm** — The `@ashborn/sdk` package is a local package. To use:
+> ✅ **PUBLISHED to npm** — The SDK is available as `@alleyboss/ashborn-sdk`.
 > ```bash
-> npm install ./sdk  # From monorepo root
+> npm install @alleyboss/ashborn-sdk
 > ```
-> Once published, it will be available as `npm install @ashborn/sdk`.
 
 ---
 
@@ -183,7 +185,7 @@ cd ../app && npm link @ashborn/sdk
 
 ### Basic Usage
 ```typescript
-import { Ashborn } from '@ashborn/sdk';
+import { Ashborn } from '@alleyboss/ashborn-sdk';
 import { Connection } from '@solana/web3.js';
 
 const connection = new Connection('https://api.devnet.solana.com');
