@@ -7,7 +7,7 @@ import ScrambleText from '../ui/ScrambleText';
 // Skill Data
 const ARSENAL_MODULES = [
     {
-        id: 'void-shield',
+        id: 'shield',
         icon: Shield,
         name: "Void Shield",
         desc: "ZK-SNARKs privacy layer. Encrypts assets into the shadow realm.",
@@ -15,7 +15,7 @@ const ARSENAL_MODULES = [
         rarity: "MYTHIC"
     },
     {
-        id: 'stealth-cloak',
+        id: 'cloak',
         icon: Ghost,
         name: "Stealth Cloak",
         desc: "ECDH Key Exchange. Generates invisible one-time addresses.",
@@ -23,7 +23,7 @@ const ARSENAL_MODULES = [
         rarity: "LEGENDARY"
     },
     {
-        id: 'shadow-army',
+        id: 'army',
         icon: Users,
         name: "Shadow Army",
         desc: "Decoy output generation. Confuses graph analysis tools.",
@@ -31,7 +31,7 @@ const ARSENAL_MODULES = [
         rarity: "EPIC"
     },
     {
-        id: 'view-key',
+        id: 'key',
         icon: EyeOff,
         name: "View Key",
         desc: "Selective disclosure proof. reveal data only to trusted auditors.",
@@ -39,7 +39,7 @@ const ARSENAL_MODULES = [
         rarity: "RARE"
     },
     {
-        id: 'flash-strike',
+        id: 'strike',
         icon: Zap,
         name: "Flash Strike",
         desc: "Solana Mainnet optimization. <400ms finality execution.",
@@ -47,7 +47,7 @@ const ARSENAL_MODULES = [
         rarity: "EPIC"
     },
     {
-        id: 'ghost-relay',
+        id: 'relay',
         icon: Network,
         name: "Ghost Relay",
         desc: "Gasless meta-transactions. Disconnect wallet from on-chain history.",
@@ -56,24 +56,24 @@ const ARSENAL_MODULES = [
     }
 ];
 
-function ModuleCard({ module, index }: { module: any, index: number }) {
+const ModuleCard = ({ module, index }: { module: any, index: number }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
-    // Trigger animation on mount
     useEffect(() => {
-        setIsVisible(true);
+        setMounted(true);
     }, []);
+
+    const Icon = module.icon;
 
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={`group relative h-64 bg-black/40 border border-white/10 hover:border-purple-500/50 rounded-xl overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] opacity-0 ${isVisible ? 'animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forwards' : ''}`}
-            style={{ animationDelay: `${index * 100}ms`, opacity: isVisible ? 1 : 0 }}
+            className="group relative h-64 bg-black/40 border border-white/10 hover:border-purple-500/50 rounded-xl overflow-hidden transition-all duration-500 hover:shadow-2xl"
         >
             {/* Background Tech Lines */}
-            <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:10px_10px]" />
+            <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-grid-white/[0.05]" />
 
             {/* Active Glow Corner */}
             <div className={`absolute top-0 right-0 p-3 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
@@ -83,11 +83,11 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
             <div className="p-6 h-full flex flex-col justify-between relative z-10">
                 {/* Header */}
                 <div className="flex justify-between items-start">
-                    <div className={`p-3 rounded-lg bg-white/5 border border-white/5 group-hover:bg-purple-500/20 group-hover:border-purple-500/30 transition-colors duration-300`}>
-                        <module.icon className={`w-6 h-6 ${isHovered ? 'text-purple-300' : 'text-gray-400'}`} />
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/5 group-hover:bg-purple-500/20 group-hover:border-purple-500/30 transition-colors duration-300">
+                        <Icon className={`w-6 h-6 ${isHovered ? 'text-purple-300' : 'text-gray-400'}`} />
                     </div>
                     <span className="text-[10px] font-mono text-gray-600 border border-gray-800 px-2 py-1 rounded">
-                        MOD_{index + 1.toString().padStart(2, '0')}
+                        MOD_0{index + 1}
                     </span>
                 </div>
 
@@ -112,9 +112,9 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
                     </div>
                     <div className="h-1 bg-gray-600 rounded-full overflow-hidden">
                         <div
-                            className={`h-full ${isHovered ? 'bg-purple-500 shadow-[0_0_10px_purple]' : 'bg-gray-400'} transition-all duration-1000 ease-out`}
+                            className={`h-full ${isHovered ? 'bg-purple-500' : 'bg-gray-400'} transition-all duration-1000 ease-out`}
                             style={{
-                                width: isVisible ? `${module.stats.power}%` : '0%'
+                                width: mounted ? `${module.stats.power}%` : '0%'
                             }}
                         />
                     </div>
@@ -122,13 +122,12 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
             </div>
         </div>
     );
-}
+};
 
 export default function MarketingArsenal() {
     return (
         <section className="relative w-full max-w-7xl mx-auto py-32 px-6 md:px-12">
 
-            {/* Section Header */}
             <div className="mb-20 flex flex-col md:flex-row justify-between items-end border-b border-gray-800 pb-8">
                 <div>
                     <h2 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter mb-4">
@@ -152,14 +151,12 @@ export default function MarketingArsenal() {
                 </div>
             </div>
 
-            {/* Modules Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {ARSENAL_MODULES.map((module, index) => (
                     <ModuleCard key={module.id} module={module} index={index} />
                 ))}
             </div>
 
-            {/* Decorative Background */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-purple-900/5 blur-[150px] -z-10 pointer-events-none" />
 
         </section>
