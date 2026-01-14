@@ -1,10 +1,10 @@
 //! Updated Shield Instruction with Denomination Validation and Merkle Tree
 //!
-//! ZachXBT-proof: Fixed denominations only
+//! privacy-preserving: Fixed denominations only
 //! Privacy Cash integration point
 
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+use anchor_spl::token::{self, Token, TokenAccount, Transfer, Mint};
 use crate::state::{ShadowVault, ShieldedNote, CommitmentTree, Denomination};
 use crate::errors::AshbornError;
 use crate::zk::{verify_shield_proof, create_commitment};
@@ -22,12 +22,32 @@ pub struct ShieldDeposit<'info> {
     pub vault: Account<'info, ShadowVault>,
 
     /// User's token account to deposit from
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = user_token_account.mint == mint.key() @ AshbornError::InvalidMint,
+    )]
     pub user_token_account: Account<'info, TokenAccount>,
 
-    /// Shielded pool token account
-    #[account(mut)]
+    /// The token mint being shielded
+    pub mint: Account<'info, Mint>,
+
+    /// Shielded pool token account (PDA validated!)
+    #[account(
+        mut,
+        seeds = [b"shielded_pool", mint.key().as_ref()],
+        bump,
+        token::mint = mint,
+        token::authority = pool_authority,
+    )]
     pub pool_token_account: Account<'info, TokenAccount>,
+
+    /// Pool authority PDA (controls pool withdrawals)
+    /// CHECK: PDA authority for pool, verified by seeds
+    #[account(
+        seeds = [b"pool_authority"],
+        bump,
+    )]
+    pub pool_authority: AccountInfo<'info>,
 
     /// Global commitment tree
     #[account(
@@ -55,7 +75,7 @@ pub struct ShieldDeposit<'info> {
     pub system_program: Program<'info, System>,
 }
 
-/// Shield assets with denomination validation (ZachXBT-proof)
+/// Shield assets with denomination validation (privacy-preserving)
 pub fn handler(
     ctx: Context<ShieldDeposit>,
     amount: u64,
@@ -68,7 +88,7 @@ pub fn handler(
     let commitment_tree = &mut ctx.accounts.commitment_tree;
     let clock = Clock::get()?;
 
-    // 1. Validate denomination (ZachXBT-proof: fixed amounts only)
+    // 1. Validate denomination (privacy-preserving: fixed amounts only)
     let denomination = Denomination::from_amount(amount)
         .ok_or(AshbornError::InvalidDenomination)?;
 
@@ -102,8 +122,7 @@ pub fn handler(
     note.unshield_after = clock.unix_timestamp + 24 * 60 * 60; // 24h privacy delay
     note.bump = ctx.bumps.note;
 
-    // 6. Update vault state
-    vault.shadow_balance += amount;
+    // 6. Update vault state (no balance stored - privacy!)
     vault.note_count += 1;
     vault.last_activity = clock.unix_timestamp;
 

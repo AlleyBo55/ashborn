@@ -1,7 +1,7 @@
 /**
  * Relayer Service - Submit transactions without linking sender wallet
  *
- * ZachXBT-proof: Users never submit their own transactions
+ * Users never submit their own transactions
  */
 
 import { Connection, PublicKey, Transaction, Keypair } from "@solana/web3.js";

@@ -1,7 +1,7 @@
 /**
  * Private NFT Operations - Shadow Monarch Collection Support
  *
- * Frank-approved: NFT privacy with trait-gating
+ * NFT privacy with trait-gating
  */
 
 import { Connection, PublicKey } from "@solana/web3.js";

@@ -49,6 +49,6 @@ impl ProtocolState {
         8 +  // min_privacy_delay
         1;   // bump
         
-    /// Default minimum delay: 24 hours (ZachXBT-proof)
+    /// Default minimum delay: 24 hours (privacy-preserving)
     pub const DEFAULT_DELAY: i64 = 24 * 60 * 60;
 }

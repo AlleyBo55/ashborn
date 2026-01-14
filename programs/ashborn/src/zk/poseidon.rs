@@ -1,6 +1,6 @@
 //! Poseidon hash for ZK-friendly commitments
 //!
-//! Vitalik-approved: Proper algebraic hash, not SHA256
+//! Proper algebraic hash, not SHA256
 
 use anchor_lang::prelude::*;
 // use light_poseidon::{Poseidon, PoseidonBytesHasher};

@@ -405,7 +405,7 @@ export default function ParallaxHero() {
                 >
                     <div className="flex gap-4 justify-center">
                         <a
-                            href="/demo/shield"
+                            href="/demo"
                             className="group relative px-8 py-4 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400 flex items-center gap-3"
                         >
                             <Play className="w-4 h-4 fill-current animate-pulse" />

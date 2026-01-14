@@ -1,5 +1,5 @@
 /**
- * Decoy Output Generation - ZachXBT-proof transaction privacy
+ * Decoy Output Generation - transaction privacy
  *
  * Adds 3+ fake output commitments to break transaction graph analysis
  */
@@ -47,7 +47,7 @@ export function generateDecoys(count: number = DECOY_COUNT): Uint8Array[] {
 /**
  * Create transfer with decoy outputs
  *
- * ZachXBT-proof: Observers cannot distinguish real from fake outputs
+ * Observers cannot distinguish real from fake outputs
  */
 export function createTransferWithDecoys(
   realOutputCommitment: Uint8Array,

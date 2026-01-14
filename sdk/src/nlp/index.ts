@@ -1,7 +1,7 @@
 /**
  * Enhanced NLP with Confidence Thresholds
  *
- * Karpathy-approved: Confidence calibration and user confirmation
+ * Confidence calibration and user confirmation
  */
 
 /** Parsed intent with confidence */

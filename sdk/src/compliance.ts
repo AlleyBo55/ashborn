@@ -2,9 +2,6 @@
  * Production-Grade Range Protocol Compliance SDK
  *
  * @status PRODUCTION-READY
- * @audited by: CZ, ZachXBT (simulated)
- * @designed by: Satoshi Nakamoto, Hal Finney (inspired)
- * @assisted by: Vitalik Buterin, Anatoly Yakovenko (patterns)
  *
  * Uses:
  * - snarkjs for real Groth16 proof generation

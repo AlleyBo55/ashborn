@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { ArrowLeft, Home } from 'lucide-react';
+import ClientWalletButton from '@/components/ClientWalletButton';
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -16,8 +16,12 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
             {/* Header (Apple Style Glass) */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 h-14 flex items-center justify-between px-6 lg:px-8">
                 <div className="flex items-center gap-6">
+                    <Link href="/" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition group">
+                        <Home className="w-4 h-4 group-hover:text-purple-400 transition-colors" />
+                        <span>Home</span>
+                    </Link>
+                    <span className="h-4 w-px bg-white/10" />
                     <Link href="/docs" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition group">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span>Docs</span>
                     </Link>
                     <span className="h-4 w-px bg-white/10 hidden md:block" />
@@ -28,7 +32,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
                 </div>
 
                 <div>
-                    <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-500 !rounded-lg !h-8 !text-xs !font-medium !px-4" />
+                    <ClientWalletButton className="!bg-purple-600 hover:!bg-purple-500 !rounded-lg !h-8 !text-xs !font-medium !px-4" />
                 </div>
             </header>
 

@@ -1,7 +1,7 @@
 /**
  * Cryptographic primitives - REAL encryption, not XOR
  *
- * Vitalik-approved: Poseidon hashes, ChaCha20-Poly1305 encryption
+ * Poseidon hashes, ChaCha20-Poly1305 encryption
  */
 
 import { poseidon2 } from "poseidon-lite";
@@ -211,7 +211,7 @@ export function bytesToBigint(bytes: Uint8Array): bigint {
 }
 
 /**
- * Stealth address derivation using ECDH (ZachXBT-proof)
+ * Stealth address derivation using ECDH 
  * No longer derived from public scan key alone
  */
 export async function deriveStealthAddress(

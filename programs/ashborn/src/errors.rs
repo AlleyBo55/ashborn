@@ -1,6 +1,6 @@
 //! Custom errors for the Ashborn protocol
 //! 
-//! Linus says: Proper error handling, not panic-and-pray.
+//! Proper error handling, not panic-and-pray.
 
 use anchor_lang::prelude::*;
 
@@ -33,6 +33,9 @@ pub enum AshbornError {
     
     #[msg("Insufficient balance for this operation")]
     InsufficientBalance,
+    
+    #[msg("Invalid token mint for pool")]
+    InvalidMint,
     
     #[msg("Deposit amount doesn't match commitment")]
     CommitmentMismatch,
@@ -136,6 +139,12 @@ pub enum AshbornError {
     
     #[msg("Range Compliance integration error")]
     RangeComplianceError,
+    
+    #[msg("Arithmetic overflow in calculation")]
+    Overflow,
+    
+    #[msg("Invalid Merkle siblings provided")]
+    InvalidMerkleSiblings,
     
     #[msg("External SDK call failed")]
     ExternalSdkError,

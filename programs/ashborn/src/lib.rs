@@ -1,9 +1,9 @@
 //! # Ashborn: The Shadow Monarch of Crypto Privacy
 //! 
 //! A production-grade privacy layer on Solana integrating:
-//! - Real Groth16 ZK proofs (Anatoly-approved)
-//! - Merkle tree nullifiers (Vitalik-approved)
-//! - Denomination-based privacy (ZachXBT-proof)
+//! - Real Groth16 ZK proofs 
+//! - Merkle tree nullifiers 
+//! - Denomination-based privacy 
 //! - Radr Labs ShadowWire for unlinkable P2P transfers
 //! - Privacy Cash for shielded stablecoin operations  
 //! - Range Compliance for selective disclosure

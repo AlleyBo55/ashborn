@@ -3,6 +3,34 @@ solana-release/
 test-ledger/
 .anchor/
 target/
+
+# Node
 node_modules/
-.DS_Store
+
+# Next.js
+.next/
+*/.next/
+**/out/
+
+# Large binary files
+*.tar.bz2
+*.tar.gz
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Environment
 .env
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

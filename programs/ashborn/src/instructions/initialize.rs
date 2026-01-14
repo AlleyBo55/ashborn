@@ -42,15 +42,15 @@ pub fn handler(ctx: Context<InitializeVault>) -> Result<()> {
 
     vault.owner = ctx.accounts.owner.key();
     vault.bump = ctx.bumps.shadow_vault;
-    vault.shadow_balance = 0;
     vault.note_count = 0;
     vault.view_key_hash = [0u8; 32]; // User can set later
+    vault.encrypted_nullifier_secret = [0u8; 48];
+    vault.encrypted_balance_hint = [0u8; 48]; // Privacy: balance computed locally
     vault.created_at = clock.unix_timestamp;
     vault.last_activity = clock.unix_timestamp;
     vault._reserved = [0u8; 64];
 
     msg!("Shadow Vault initialized for: {}", vault.owner);
-    msg!("The shadows await your command...");
 
     Ok(())
 }

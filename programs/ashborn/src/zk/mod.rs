@@ -1,6 +1,6 @@
 //! ZK module exports
 //!
-//! Anatoly-approved: Real cryptographic verification
+//! Real cryptographic verification
 
 pub mod verifier;
 pub mod poseidon;

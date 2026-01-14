@@ -18,7 +18,7 @@ pub struct ShieldedNote {
     /// Note index in the commitment tree
     pub index: u64,
     
-    /// Denomination tier (ZachXBT-proof)
+    /// Denomination tier (privacy-preserving)
     pub denomination_tier: u8,
     
     /// Whether this note has been spent
@@ -47,7 +47,7 @@ impl ShieldedNote {
         1;   // bump
 }
 
-/// Denominations for ZachXBT-proof privacy (uniform amounts)
+/// Denominations for privacy-preserving privacy (uniform amounts)
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Denomination {
