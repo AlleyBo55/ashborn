@@ -31,6 +31,7 @@ export { Ashborn } from "./ashborn";
 // SDK Wrappers
 export { ShadowWire } from "./shadowwire";
 export { PrivacyCash } from "./privacycash";
+export { PrivacyCashOfficial } from "./privacycash-official";
 export { RangeCompliance, createRangeCompliance } from "./compliance";
 
 // Helius integration (DAS + webhooks)
