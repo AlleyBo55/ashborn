@@ -130,6 +130,7 @@ export class Ashborn {
    *
    * @param params - Shield parameters
    * @returns Transaction signature and note address
+   * @throws Error if amount is invalid
    */
   async shield(params: ShieldParams): Promise<{
     signature: string;
@@ -137,6 +138,30 @@ export class Ashborn {
     commitment: Uint8Array;
   }> {
     const { amount, mint, blindingFactor } = params;
+
+    // Input validation
+    if (amount <= 0n) {
+      throw new Error("Shield amount must be positive");
+    }
+
+    // Validate denomination
+    const VALID_DENOMINATIONS = [
+      100_000_000n,      // 0.1 SOL
+      1_000_000_000n,    // 1 SOL
+      10_000_000_000n,   // 10 SOL
+      100_000_000_000n,  // 100 SOL
+      1_000_000_000_000n, // 1000 SOL
+    ];
+
+    if (!VALID_DENOMINATIONS.includes(amount)) {
+      throw new Error(
+        `Invalid denomination. Valid amounts: ${VALID_DENOMINATIONS.map(d => `${Number(d) / 1e9} SOL`).join(', ')}`
+      );
+    }
+
+    if (!mint) {
+      throw new Error("Token mint address is required");
+    }
 
     // Generate commitment using Privacy Cash SDK
     const commitment = await this.privacyCash.createShieldCommitment(
@@ -162,9 +187,6 @@ export class Ashborn {
     );
 
     const signature = await this.provider.sendAndConfirm(tx);
-    console.log("Assets shielded:", amount.toString());
-    console.log("Note created:", noteAddress.toBase58());
-    console.log("The shadows grow stronger...");
 
     return { signature, noteAddress, commitment };
   }

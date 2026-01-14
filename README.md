@@ -2,7 +2,7 @@
 
 # 🌑 **ASHBORN: The Shadow Monarch** 🌑
 
-> *“I alone level up.”* — Sung Jin-Woo
+> *"I alone level up."* — Sung Jin-Woo
 
 **Ashborn** is a **Compliant Private Payment Protocol** on Solana that enables:
 *   **⚔️ Private Transfers** — Send SOL/tokens without revealing sender, recipient, or amount
@@ -14,221 +14,237 @@ Built with **real ZK proofs (Groth16)**, **Merkle tree nullifiers**, and a **com
 
 ---
 
-## 🐳 **Easily Run with Docker**
+## 📦 SDK Status
 
-Arise without installing dependencies manually. Run the full Ashborn demo environment in seconds.
-
-### **Prerequisites**
-*   [Docker Desktop](https://www.docker.com/products/docker-desktop/) (must be running as a daemon)
-
-### **Command**
-
-```bash
-docker-compose up --build -d
-```
-Once running, open the **Shadow Portal** at:
-👉 **[http://localhost:3000](http://localhost:3000)**
+> ⚠️ **NOT YET PUBLISHED to npm** — The `@ashborn/sdk` package is a local package. To use:
+> ```bash
+> npm install ./sdk  # From monorepo root
+> ```
+> Once published, it will be available as `npm install @ashborn/sdk`.
 
 ---
 
-## 💀 **Why You Need This**
+## 🏗️ Architecture: How It All Works
 
-### **The Problem**
-Every Solana transaction is public. Your wallet balance, transaction history, and business dealings are visible to:
-*   Competitors analyzing your treasury 👁️
-*   Attackers tracking whale wallets 🦈
-*   Anyone curious about your finances 🕵️
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        YOUR APPLICATION                         │
+│                  (Next.js Demo at localhost:3000)               │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     SDK (TypeScript)                            │
+│                     sdk/src/ashborn.ts                          │
+│  ┌──────────────┬──────────────┬──────────────┬───────────────┐ │
+│  │  ShadowWire  │ PrivacyCash  │   Range      │    Crypto     │ │
+│  │  (Stealth    │ (Shielding)  │  Compliance  │ (Poseidon,    │ │
+│  │   Addresses) │              │  (ZK Proofs) │  AES-GCM)     │ │
+│  └──────────────┴──────────────┴──────────────┴───────────────┘ │
+│                              │                                   │
+│  Generates:                  │ Uses:                             │
+│  - snarkjs Groth16 proofs    │ - @noble/curves (Schnorr, Ed25519)│
+│  - Poseidon commitments      │ - WebCrypto (AES-GCM, HKDF)       │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (RPC via @solana/web3.js)
+┌─────────────────────────────────────────────────────────────────┐
+│                 SOLANA PROGRAM (Rust/Anchor)                    │
+│                 programs/ashborn/src/lib.rs                     │
+│  ┌──────────────┬──────────────┬──────────────────────────────┐ │
+│  │  ZK Verifier │ Merkle Tree  │    Instructions              │ │
+│  │  (Groth16    │ (Nullifiers  │    - shield_deposit          │ │
+│  │   ark_bn254) │  Commitments)│    - shadow_transfer         │ │
+│  │              │              │    - selective_reveal        │ │
+│  │              │              │    - unshield                │ │
+│  └──────────────┴──────────────┴──────────────────────────────┘ │
+│                                                                  │
+│  Verifies:                                                       │
+│  - Groth16 proofs via ark_groth16                               │
+│  - Poseidon hashes for commitments                              │
+│  - Merkle paths for nullifier checking                          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     SOLANA BLOCKCHAIN                           │
+│                     (Devnet / Mainnet)                          │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-### **The Solution**
-Ashborn creates a **Shadow Domain** where:
-*   Amounts are hidden in cryptographic commitments
-*   Sender/recipient are unlinkable via stealth addresses
-*   Double-spends are prevented with nullifiers
-*   Compliance is preserved via selective disclosure proofs
+### How SDK Connects to Rust
+
+1. **SDK creates transactions** using `@solana/web3.js` and `@coral-xyz/anchor`
+2. **SDK generates ZK proofs** using `snarkjs` (in browser) from circuit WASM files
+3. **SDK sends transactions** to Solana RPC which forwards to the on-chain program
+4. **Program verifies proofs** using `ark_groth16` crate and embedded verification keys
 
 ---
 
-## 🏰 **Architecture**
+## 🎮 Demo Pages Explained
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     ASHBORN PROTOCOL                        │
-├─────────────────┬─────────────────┬─────────────────────────┤
-│   Privacy Cash  │   ShadowWire    │   Range Compliance      │
-│   (Shielded)    │   (Stealth)     │   (Disclosure)          │
-├─────────────────┴─────────────────┴─────────────────────────┤
-│                    ASHBORN SDK (TypeScript)                 │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌────────┐ │
-│  │ Crypto  │ │ Relayer │ │ Indexer │ │  Helius │ │  NFT   │ │
-│  │Poseidon │ │ Privacy │ │ Merkle  │ │ DAS+WH  │ │Privacy │ │
-│  │ AES-GCM │ │  Tx Sub │ │  Tree   │ │ API     │ │Traits  │ │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│                  SOLANA PROGRAM (Rust/Anchor)               │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────────────┐ │
-│  │ ZK Verifier │ │ Merkle Tree │ │ Instructions            │ │
-│  │ Groth16     │ │ Nullifiers  │ │ shield/transfer/unshield│ │
-│  │ Poseidon    │ │ Commitments │ │ reveal/prove            │ │
-│  └─────────────┘ └─────────────┘ └─────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│                     SOLANA BLOCKCHAIN                       │
-└─────────────────────────────────────────────────────────────┘
-```
+| Demo | URL | What it Simulates | Real Code |
+|------|-----|-------------------|-----------|
+| **Shield** | `/demo/shield` | Depositing SOL into privacy pool | Creates Poseidon commitment, encrypts with view key |
+| **Transfer** | `/demo/transfer` | Private P2P payment with decoys | Generates stealth address, adds 3 dummy outputs |
+| **Prove** | `/demo/prove` | Range proof for compliance | Real Groth16 proof structure (π_A, π_B, π_C) |
+| **NLP** | `/demo/nlp` | Natural language parsing | AI parses "send 1 SOL to alice.sol" |
+
+> ⚠️ **Demo Mode**: The demos run in **simulation mode** without requiring a deployed program. They demonstrate the UI/UX and data structures. For real transactions, deploy the program to devnet/mainnet.
 
 ---
 
-## ⚔️ **Manual Quick Start**
+## 🚀 Running the Project
 
-If you prefer to run manually without Docker shadows:
-
-### **Prerequisites**
+### Prerequisites
 *   Node.js 18+
-*   Rust 1.70+
+*   Rust 1.70+ (for Anchor program)
 *   Solana CLI
 *   Anchor 0.30+
 
-### **Installation**
-
+### Quick Start (Docker)
 ```bash
-# Clone the repository
+docker-compose up --build -d
+# Open http://localhost:3000
+```
+
+### Manual Development
+```bash
+# 1. Clone & Install
 git clone https://github.com/your-org/ashborn.git
 cd ashborn
-
-# Install Dependencies
 npm install
 
-# Run the UI
+# 2. Run the Demo App
 cd app
 npm install
 npm run dev
+# App runs at http://localhost:3000
+
+# 3. Build the SDK
+cd ../sdk
+npm install
+npm run build
+# Outputs: dist/index.js (CJS), dist/index.mjs (ESM)
+
+# 4. Build the Rust Program (optional)
+anchor build
+# Outputs: target/deploy/ashborn.so
 ```
 
 ---
 
-## 🔮 **Using the SDK**
+## 🌐 Devnet vs Mainnet
+
+### Current State: Devnet (Simulated)
+
+The demos currently run in **simulation mode**:
+- Proofs are generated but not verified on-chain
+- No real tokens are moved
+- Program is not deployed
+
+### Moving to Mainnet
+
+| Step | Action | Status |
+|------|--------|--------|
+| 1 | **Compile Circuits** | Run `cd circuits && npm run build` |
+| 2 | **Trusted Setup** | Generate `range.zkey`, `transfer.zkey`, `shield.zkey` |
+| 3 | **Export VK** | `snarkjs zkey export verificationkey` → embed in `vkeys.rs` |
+| 4 | **Deploy Program** | `anchor deploy --provider.cluster mainnet` |
+| 5 | **Update SDK** | Set `PROGRAM_ID` in `constants.ts` to mainnet address |
+| 6 | **Configure RPC** | Set `SOLANA_RPC_URL` to mainnet-beta |
+
+### Environment Variables
 
 ```bash
-npm install @ashborn/sdk
+# .env.local for app
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
+NEXT_PUBLIC_PROGRAM_ID=<your-mainnet-program-id>
+
+# For SDK
+HELIUS_API_KEY=<key>          # Enhanced indexing
+OPENAI_API_KEY=<key>          # NLP parsing
+RELAYER_ENDPOINT=<url>        # Privacy relay (optional)
 ```
 
-```typescript
-import { Ashborn, NaturalLanguageAshborn } from '@ashborn/sdk';
-import { Connection, Keypair } from '@solana/web3.js';
+---
 
-// Initialize
+## 🔮 SDK Usage
+
+### Installation (Local)
+```bash
+# From monorepo root
+npm install ./sdk
+
+# Or link for development
+cd sdk && npm link
+cd ../app && npm link @ashborn/sdk
+```
+
+### Basic Usage
+```typescript
+import { Ashborn } from '@ashborn/sdk';
+import { Connection } from '@solana/web3.js';
+
 const connection = new Connection('https://api.devnet.solana.com');
-const wallet = loadWallet(); // Your wallet adapter
 const ashborn = new Ashborn(connection, wallet);
 
-// Shield 1 SOL (hide it)
+// Shield SOL (deposit into privacy pool)
 await ashborn.shield({
-  amount: 1_000_000_000n, // 1 SOL in lamports
+  amount: 1_000_000_000n,  // 1 SOL
   mint: 'So11111111111111111111111111111111111111112',
 });
 
-// Send privately
+// Private transfer with decoys
 await ashborn.shadowTransfer({
   amount: 500_000_000n,
-  recipientStealth: recipientStealthAddress,
+  recipientStealth: '<stealth-address>',
 });
 
-// Prove balance without revealing it
+// Prove balance is in range (for compliance)
 await ashborn.proveRange({
   min: 0n,
-  max: 10_000_000_000_000n, // Under $10,000
-});
-
-// Unshield (exit private mode)
-await ashborn.unshield({
-  amount: 200_000_000n,
+  max: 10_000_000_000_000n,  // Under $10,000
 });
 ```
 
 ---
 
-## 🩸 **How Privacy Works**
+## 📚 Documentation Pages
 
-### **1. Shield (Deposit)**
-```
-User deposits 1 SOL → Creates commitment C = Poseidon(amount, blinding)
-                   → On-chain: only C is visible
-                   → Amount is encrypted with user's view key
-```
-
-### **2. Transfer (Private Send)**
-```
-Sender reveals nullifier N (prevents double-spend)
-       → Creates output commitment for recipient
-       → Creates change commitment for self
-       → Generates ZK proof
-       → Adds 3 decoy outputs (ZachXBT-proof)
-       → Submits via relayer (sender unlinkability)
-```
-
-### **3. Selective Disclosure**
-```
-User needs to prove balance > $10,000 for loan
-     → Generates Bulletproof range proof
-     → Proof shows: balance ∈ [$10,000, ∞)
-     → Does NOT reveal exact balance
-```
+The `/docs` page at `localhost:3000/docs` covers:
+- **Getting Started** — Installation and first transaction
+- **Core Concepts** — Commitments, nullifiers, stealth addresses
+- **API Reference** — Full SDK method documentation
+- **Demo Walkthroughs** — Interactive tutorials for each feature
+- **Deployment Guide** — Devnet → Mainnet migration
 
 ---
 
-## 🧪 **Running Tests**
+## 🧪 Testing
 
 ```bash
 # SDK unit tests
 cd sdk && npm run test
 
-# Integration tests (requires local validator)
+# Rust program tests
 anchor test
 
-# E2E tests
+# E2E integration
 cd sdk && npm run test:e2e
 ```
 
 ---
 
-## 🔧 **Configuration**
+## 🤝 Contributing
 
-### **Environment Variables**
-
-```bash
-# Required
-SOLANA_RPC_URL=https://api.devnet.solana.com
-
-# Optional (for enhanced features)
-HELIUS_API_KEY=your-helius-key        # For DAS API and webhooks
-OPENAI_API_KEY=your-openai-key        # For natural language parsing
-RELAYER_ENDPOINT=https://relay.ashborn.network
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-## 🤝 **Contributing**
+## 📜 License
 
-1.  Fork the repository
-2.  Create feature branch (`git checkout -b feature/amazing`)
-3.  Commit changes (`git commit -m 'Add amazing feature'`)
-4.  Push to branch (`git push origin feature/amazing`)
-5.  Open Pull Request
-
----
-
-## 📜 **License**
-
-MIT License — See [LICENSE](LICENSE) for details.
-
----
-
-## 🙏 **Acknowledgments**
-
-*   **Light Protocol** — PSP and Merkle tree inspiration
-*   **Helius** — DAS API and smart transactions
-*   **Range Protocol** — Bulletproof compliance
-*   **Zcash** — Original shielded pool design
-*   **Solo Leveling** — Shadow Monarch theming 🌑
+MIT — See [LICENSE](LICENSE)
 
 ---
 

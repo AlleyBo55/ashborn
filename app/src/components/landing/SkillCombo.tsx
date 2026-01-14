@@ -128,9 +128,9 @@ export default function SkillCombo() {
 
                 {/* Right: The Steps */}
                 <div className="order-1 lg:order-2">
-                    <div className="mb-10">
-                        <h2 className="text-5xl font-black text-white italic tracking-tighter mb-2">
-                            EXECUTE <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">COMBO</span>
+                    <div className="mb-10 pl-4">
+                        <h2 className="text-5xl font-black text-white italic tracking-tighter mb-2 leading-snug py-2 pr-8">
+                            EXECUTE <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 pr-2">COMBO</span>
                         </h2>
                         <p className="text-gray-500 font-mono text-sm uppercase tracking-wide">
                             Perfect privacy requires a precise sequence.
@@ -140,21 +140,21 @@ export default function SkillCombo() {
                     <div className="space-y-4">
                         <ComboStep
                             step={1}
-                            title="SHIELD"
+                            title="EXTRACT"
                             icon={Box}
-                            desc="Deposit assets into the Ashborn Pool. Convert public tokens into shielded notes via ZK-SNARKs."
+                            desc="Deposit assets into the Shadow Domain. Convert public tokens into shadow notes via ZK-SNARKs."
                             active={activeStep === 1}
                         />
                         <ComboStep
                             step={2}
-                            title="TRANSFER"
+                            title="STRIKE"
                             icon={Sword}
                             desc="Send assets internally. Zero on-chain footprints. The recipient's stealth address is the only destination."
                             active={activeStep === 2}
                         />
                         <ComboStep
                             step={3}
-                            title="UNSHIELD"
+                            title="ARISE"
                             icon={Skull}
                             desc="Withdraw to a fresh wallet. The link between source and destination is permanently severed."
                             active={activeStep === 3}

@@ -1,7 +1,7 @@
 /**
  * Tree Indexer Service - Off-chain Merkle tree maintenance
  *
- * Vitalik-approved: Users need local tree copy for proof generation
+ * Users need local tree copy for proof generation
  */
 
 import { Connection, PublicKey } from "@solana/web3.js";

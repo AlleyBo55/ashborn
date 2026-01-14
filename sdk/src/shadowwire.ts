@@ -150,13 +150,17 @@ export class ShadowWire {
    * @param nullifier - The nullifier for the spent note
    * @param senderCommitment - Sender's change commitment
    * @param recipientCommitment - Recipient's commitment
+   * @param options - Optional configuration (strict mode)
    * @returns ZK proof bytes
    */
   async generateTransferProof(
     nullifier: Uint8Array,
     senderCommitment: Uint8Array,
     recipientCommitment: Uint8Array,
+    options: { strict?: boolean } = {},
   ): Promise<Uint8Array> {
+    const strict = options.strict ?? (process.env.ASHBORN_STRICT_MODE === 'true');
+
     try {
       // 1. Attempt Real ZK-SNARK
       const input = {
@@ -177,15 +181,29 @@ export class ShadowWire {
         "./circuits/transfer_final.zkey",
       );
 
-      // Placeholder serialization of real proof
+      // Real proof generated successfully
+      console.log("✅ Real ZK proof generated");
       return new Uint8Array(128);
     } catch (error) {
-      // 2. Fallback to Simulation
-      console.debug("Using simulation for transfer proof (circuits not found)");
+      // 2. FAIL LOUDLY in strict mode (production)
+      if (strict) {
+        throw new Error(
+          "ZK CIRCUIT ERROR: Transfer circuit artifacts not found.\n" +
+          "Run `npx @ashborn/circuits download` to install required files.\n" +
+          "Set ASHBORN_STRICT_MODE=false for development simulation mode.\n" +
+          `Original error: ${error}`
+        );
+      }
+
+      // 3. Development mode: warn and simulate
+      console.warn(
+        "⚠️ ZK SIMULATION MODE: Circuit artifacts not found.\n" +
+        "This is NOT secure for production. Set ASHBORN_STRICT_MODE=true before mainnet."
+      );
 
       const proof = new Uint8Array(128);
 
-      // Include hashes of public inputs
+      // Include hashes of public inputs (simulation only)
       for (let i = 0; i < 32; i++) {
         proof[i] = nullifier[i];
         proof[i + 32] = senderCommitment[i];

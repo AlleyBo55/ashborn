@@ -8,7 +8,7 @@ import { PublicKey } from "@solana/web3.js";
  * Ashborn program ID (placeholder - will be updated on deploy)
  */
 export const PROGRAM_ID = new PublicKey(
-  "11111111111111111111111111111111", // System Program ID (Valid Placeholder)
+  "BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe", // Ashborn Devnet Program ID
 );
 
 /**

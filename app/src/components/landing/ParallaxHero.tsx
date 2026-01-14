@@ -70,9 +70,9 @@ const ParticleField = () => {
 };
 
 const features = [
-    { title: "PRIVACY", sub: "ZK_SNARKS_ACTIVE", icon: ShieldCheck },
-    { title: "COMPLIANCE", sub: "HOOKS_READY", icon: Lock },
-    { title: "POWER", sub: "UNLIMITED_COMPUTE", icon: Zap }
+    { title: "PRIVACY", sub: "ZK_SNARK_PROTOCOL", icon: ShieldCheck },
+    { title: "SPEED", sub: "SOLANA_MAINNET", icon: Zap },
+    { title: "POWER", sub: "ZK_COMPRESSION", icon: Box }
 ];
 
 const FeatureHighlight = () => {
@@ -89,69 +89,67 @@ const FeatureHighlight = () => {
 
     return (
         <div className="absolute top-24 left-1/2 -translate-x-1/2 md:left-16 md:translate-x-0 z-50 flex flex-col gap-2 pointer-events-none w-full items-center md:items-start">
-            <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -30, filter: "blur(5px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, x: 30 }}
-                transition={{ duration: 0.8, ease: "circOut" }}
-                className="flex flex-col border-l-4 border-purple-500 pl-6 py-2"
-            >
-                <div className="flex items-center gap-3 text-purple-400 mb-2">
-                    <CurrentIcon className="w-5 h-5 animate-pulse" />
-                    <span className="text-xs font-mono tracking-widest text-purple-300/80 bg-purple-900/30 px-2 py-0.5 rounded">SYSTEM_OVERRIDE_0{index + 1}</span>
-                </div>
-                <h2 className="text-4xl md:text-8xl font-sans font-black italic text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 tracking-tighter opacity-90 drop-shadow-lg pr-4 pb-2">
-                    <ScrambleText text={features[index].title} key={features[index].title} />
-                </h2>
-                <div className="text-sm font-bold text-purple-400 tracking-[0.5em] mt-2 font-mono">
-                    [<ScrambleText text={features[index].sub} key={features[index].sub} delay={500} />]
-                </div>
-            </motion.div>
+            <AnimatePresence mode='wait'>
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -30, filter: "blur(5px)" }}
+                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, x: 30 }}
+                    transition={{ duration: 0.8, ease: "circOut" }}
+                    className="flex flex-col border-l-4 border-purple-500 pl-6 py-2"
+                >
+                    <div className="flex items-center gap-3 text-purple-400 mb-2">
+                        <CurrentIcon className="w-5 h-5 animate-pulse" />
+                        <span className="text-xs font-mono tracking-widest text-purple-300/80 bg-purple-900/30 px-2 py-0.5 rounded">SYSTEM_OVERRIDE_0{index + 1}</span>
+                    </div>
+                    <h2 className="text-4xl md:text-8xl font-sans font-black italic text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 tracking-tighter opacity-90 drop-shadow-lg pr-4 pb-2">
+                        <ScrambleText text={features[index].title} key={features[index].title} />
+                    </h2>
+                    <div className="text-sm font-bold text-purple-400 tracking-[0.5em] mt-2 font-mono">
+                        [<ScrambleText text={features[index].sub} key={features[index].sub} delay={500} />]
+                    </div>
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 }
 
 // Replaces ContentHUD - Placed Bottom Left
+// Style: iOS Widget "Smart Stack"
 const QuestWindow = () => {
     return (
-        <div className="absolute bottom-32 left-8 md:left-16 z-50 hidden md:block w-full max-w-sm pointer-events-none">
+        <div className="absolute bottom-32 left-8 md:left-16 z-50 hidden md:block w-72 pointer-events-none hover:pointer-events-auto">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.5, duration: 1 }}
-                className="bg-black/80 backdrop-blur-xl border border-blue-500/30 p-0 rounded-sm shadow-[0_0_30px_rgba(59,130,246,0.1)] relative overflow-hidden"
+                className="bg-gray-900/60 backdrop-blur-2xl border border-white/10 p-5 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500"
             >
-                {/* Window Header */}
-                <div className="bg-blue-900/20 border-b border-blue-500/30 px-4 py-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                {/* Header Pills */}
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/20">
                         <Box className="w-3 h-3 text-blue-400" />
-                        <span className="text-[10px] text-blue-300 font-mono font-bold tracking-widest">QUEST_INFO</span>
+                        <span className="text-[10px] text-blue-300 font-bold tracking-wide">QUEST</span>
                     </div>
+                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                 </div>
 
-                {/* Window Body */}
-                <div className="p-5 space-y-4">
-                    <div>
-                        <h3 className="text-blue-200 text-xs font-bold mb-2 flex items-center gap-2 tracking-wide">
-                            <span className="text-blue-500">⚠</span>
-                            QUEST OBJECTIVE
-                        </h3>
-                        <p className="text-xs text-gray-400 leading-relaxed font-mono">
-                            The System requires <span className="text-white font-bold">Absolute Privacy</span>.
-                            Deploy ZK-Proofs to obfuscate transaction graphs on Solana Mainnet designed for high-frequency trading.
-                        </p>
-                    </div>
+                <h3 className="text-white text-lg font-bold mb-2 leading-tight">
+                    Absolute Privacy
+                </h3>
 
-                    <div className="grid grid-cols-2 gap-px bg-blue-500/20 border border-blue-500/20">
-                        <div className="bg-black/90 p-2">
-                            <span className="text-[8px] text-gray-500 block mb-1">REWARD</span>
-                            <span className="text-[10px] text-amber-400 font-mono">FINANCIAL_FREEDOM</span>
-                        </div>
-                        <div className="bg-black/90 p-2">
-                            <span className="text-[8px] text-gray-500 block mb-1">DIFFICULTY</span>
-                            <span className="text-[10px] text-red-400 font-mono">S_RANK</span>
-                        </div>
+                <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                    Deploy ZK-Proofs to shadow transaction graphs.
+                </p>
+
+                <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-black/40 p-3 rounded-2xl border border-white/5">
+                        <span className="text-[9px] text-gray-500 block mb-1 font-bold">REWARD</span>
+                        <span className="text-[10px] text-amber-400 font-bold">FREEDOM</span>
+                    </div>
+                    <div className="bg-black/40 p-3 rounded-2xl border border-white/5">
+                        <span className="text-[9px] text-gray-500 block mb-1 font-bold">RANK</span>
+                        <span className="text-[10px] text-red-400 font-bold">S_RANK</span>
                     </div>
                 </div>
             </motion.div>
@@ -223,6 +221,7 @@ const NetworkMonitor = () => {
         };
     }, []);
 
+    // Style: Dynamic Island / Stack
     return (
         <div className="absolute inset-y-0 right-0 w-64 bg-gradient-to-l from-black via-black/80 to-transparent z-40 hidden md:flex flex-col justify-center pr-8 pointer-events-none">
             {/* Header */}
@@ -265,7 +264,7 @@ const NetworkMonitor = () => {
                 </div>
                 <div className="flex justify-between items-end">
                     <span className="text-[9px] text-gray-500 font-mono">CU_USAGE</span>
-                    <span className="text-xs text-purple-400 font-mono">UNLIMITED</span>
+                    <span className="text-xs text-purple-400 font-mono">OPTIMIZED</span>
                 </div>
             </div>
         </div>
@@ -296,6 +295,34 @@ const ShadowSmoke = () => {
     );
 };
 
+const SystemBroadcast = () => {
+    return (
+        <div className="absolute top-0 left-0 w-full z-[60] bg-gradient-to-r from-purple-900/80 via-purple-600/80 to-purple-900/80 backdrop-blur-md border-b border-purple-500/30 text-white text-[10px] font-mono py-1.5 px-4 flex justify-between items-center tracking-widest uppercase shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+            <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_10px_#4ade80]" />
+                <span className="font-bold text-green-300">DEVNET_LIVE</span>
+            </div>
+            <div className="hidden md:flex items-center gap-4 text-purple-200/70">
+                <span>VERSION v0.2.2</span>
+                <span>::</span>
+                <span>ASHBORN_PROTOCOL</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <span className="text-purple-300">MAINNET_INFILTRATION:</span>
+                <span className="relative w-20 h-1 bg-purple-900/50 rounded-full overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "65%" }}
+                        transition={{ duration: 2, delay: 1 }}
+                        className="absolute h-full bg-purple-400 shadow-[0_0_10px_#c084fc]"
+                    />
+                </span>
+                <span className="text-purple-400 font-bold">65%</span>
+            </div>
+        </div>
+    );
+};
+
 export default function ParallaxHero() {
     const { show } = useSystemToast();
     const [mounted, setMounted] = useState(false);
@@ -322,6 +349,7 @@ export default function ParallaxHero() {
 
     return (
         <div className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black">
+            <SystemBroadcast />
 
             {/* 1. LAYERS: Background & Atmosphere */}
             <div className="absolute inset-0 z-0 bg-black" />
@@ -375,16 +403,23 @@ export default function ParallaxHero() {
                     transition={{ delay: 1, duration: 1 }}
                     className="text-center pointer-events-auto"
                 >
-                    <button
-                        onClick={handleQuestAccept}
-                        className="group relative px-6 py-4 md:px-16 md:py-6 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] md:tracking-[0.3em] text-xs md:text-sm uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400"
-                    >
-                        <span className="relative z-10 flex items-center gap-4 group-hover:text-white transition-colors">
+                    <div className="flex gap-4 justify-center">
+                        <a
+                            href="/demo"
+                            className="group relative px-8 py-4 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400 flex items-center gap-3"
+                        >
                             <Play className="w-4 h-4 fill-current animate-pulse" />
-                            Initialize Protocol
-                        </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
-                    </button>
+                            <span>Launch Demo</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
+                        </a>
+                        <a
+                            href="/docs"
+                            className="group relative px-8 py-4 bg-black/40 border border-white/10 text-gray-400 font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-md rounded-sm hover:border-white/30 flex items-center gap-3"
+                        >
+                            <Terminal className="w-4 h-4" />
+                            <span>Documentation</span>
+                        </a>
+                    </div>
                     <div className="mt-4 text-[10px] text-purple-300/60 font-mono tracking-widest uppercase opacity-80 animate-pulse">
                         Access Level: Monarch
                     </div>

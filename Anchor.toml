@@ -1,12 +1,14 @@
+
+
 [features]
 seeds = false
 skip-lint = false
 
 [programs.localnet]
-ashborn = "ASHBrnShdwMnrch1111111111111111111111111"
+ashborn = "BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe"
 
 [programs.devnet]
-ashborn = "ASHBrnShdwMnrch1111111111111111111111111"
+ashborn = "BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,100 +1,129 @@
 'use client';
 
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
-import { Shield, Zap, EyeOff, Ghost, Lock, Network } from 'lucide-react';
-import { useState } from 'react';
+import { Shield, Zap, EyeOff, Ghost, Network, Hexagon, Users, Bot } from 'lucide-react';
 import ScrambleText from '../ui/ScrambleText';
 
-const InventorySlot = ({
-    icon: Icon,
-    name,
-    type,
-    rarity = "common",
-    stats
-}: {
-    icon: any;
-    name: string;
-    type: string;
-    rarity?: "common" | "rare" | "epic" | "legendary";
-    stats: string[];
-}) => {
-    const rarityColors = {
-        common: "border-gray-700 bg-gray-900/50 text-gray-400",
-        rare: "border-blue-500/50 bg-blue-900/20 text-blue-400",
-        epic: "border-purple-500/50 bg-purple-900/20 text-purple-400",
-        legendary: "border-amber-500/50 bg-amber-900/20 text-amber-400"
-    };
+const InventorySlot = ({ item, index, isHero = false }: { item: any, index: number, isHero?: boolean }) => {
+    let mouseX = useMotionValue(0);
+    let mouseY = useMotionValue(0);
 
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-
-    const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
-        const { left, top } = currentTarget.getBoundingClientRect();
+    function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+        let { left, top } = currentTarget.getBoundingClientRect();
         mouseX.set(clientX - left);
         mouseY.set(clientY - top);
-    };
+    }
 
     return (
         <motion.div
-            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
             onMouseMove={handleMouseMove}
-            className={`relative aspect-square border-2 ${rarityColors[rarity]} p-4 flex flex-col justify-between group cursor-pointer overflow-hidden backdrop-blur-sm`}
+            className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-gray-900/40 backdrop-blur-2xl p-6 hover:bg-gray-800/60 transition-all duration-500 hover:shadow-2xl 
+                ${isHero ? 'md:col-span-2 md:row-span-2' : ''}
+                ${item.tier === 'S' ? 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' : ''}`}
         >
-            {/* Rarity Shine */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            {/* Header */}
-            <div className="flex justify-between items-start text-[9px] uppercase font-mono tracking-wider opacity-60">
-                <span>{type}</span>
-                <span>LVL.MAX</span>
-            </div>
-
-            {/* Icon Center */}
-            <div className="flex justify-center items-center py-4">
-                <Icon className={`w-12 h-12 stroke-[1.5] drop-shadow-lg ${rarity === 'legendary' ? 'animate-pulse text-amber-300' :
-                    rarity === 'epic' ? 'text-purple-300' :
-                        rarity === 'rare' ? 'text-blue-300' : 'text-gray-300'
-                    }`} />
-            </div>
-
-            {/* Footer / Tooltip Overlay */}
-            <div className="absolute inset-0 bg-black/90 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex flex-col justify-center gap-2">
-                <h4 className={`text-sm font-bold ${rarity === 'legendary' ? 'text-amber-400' :
-                    rarity === 'epic' ? 'text-purple-400' : 'text-blue-400'
-                    }`}>{name}</h4>
-                <div className="space-y-1">
-                    {stats.map((stat, i) => (
-                        <div key={i} className="flex items-center gap-2 text-[10px] text-gray-400 font-mono">
-                            <div className="w-1 h-1 bg-current rounded-full" />
-                            {stat}
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Name Label (Visible when not hovering) */}
-            <div className="text-center group-hover:opacity-0 transition-opacity">
-                <span className="text-xs font-bold uppercase tracking-widest">{name}</span>
-            </div>
-
-            {/* Spotlight Gradient */}
+            {/* Spotlight Effect */}
             <motion.div
-                className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+                className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
                 style={{
                     background: useMotionTemplate`
                         radial-gradient(
-                          400px circle at ${mouseX}px ${mouseY}px,
-                          rgba(168, 85, 247, 0.15),
+                          650px circle at ${mouseX}px ${mouseY}px,
+                          rgba(124, 58, 237, 0.1),
                           transparent 80%
                         )
-                    `,
+                      `,
                 }}
             />
+
+            {/* Apple-style Inner Highlight */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
+
+            {/* Header */}
+            <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className={`p-3 rounded-2xl ${item.tier === 'S' ? 'bg-purple-500/20 text-purple-300' :
+                    item.tier === 'A' ? 'bg-blue-500/10 text-blue-300' : 'bg-gray-800 text-gray-400'
+                    }`}>
+                    <item.icon className={isHero ? "w-8 h-8" : "w-5 h-5"} />
+                </div>
+                <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${item.tier === 'S' ? 'border-purple-500/30 text-purple-400 bg-purple-500/10' : 'border-gray-700 text-gray-500'
+                    }`}>
+                    {item.tier}_RANK
+                </span>
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10">
+                <h3 className={`font-bold text-white mb-2 ${isHero ? 'text-2xl' : 'text-lg'}`}>
+                    {item.name}
+                </h3>
+                <p className="text-sm text-gray-400 leading-relaxed font-sans">
+                    {item.desc}
+                </p>
+            </div>
+
+            {/* Hero Decoration */}
+            {isHero && (
+                <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-600/20 blur-[60px] rounded-full pointer-events-none" />
+            )}
         </motion.div>
     );
 };
 
 export default function MarketingArsenal() {
+    const items = [
+        {
+            icon: Shield,
+            name: "Void Shield",
+            desc: "Provides impenetrable privacy for all transactions, leveraging zk-SNARKs for ultimate anonymity.",
+            tier: "S",
+        },
+        {
+            icon: Ghost,
+            name: "Stealth Cloak",
+            desc: "Renders your on-chain activities untraceable with ECDH and invisible metadata.",
+            tier: "A",
+        },
+        {
+            icon: Zap,
+            name: "Flash Strike",
+            desc: "Execute transactions with lightning speed (<400ms) on Solana Mainnet, ensuring low gas costs.",
+            tier: "B",
+        },
+        {
+            icon: EyeOff,
+            name: "View Key",
+            desc: "Offers selective disclosure for compliance proofs, granting auditors controlled access to necessary data.",
+            tier: "A",
+        },
+        {
+            icon: Network,
+            name: "Ghost Relay",
+            desc: "Your wallet never touches the chain. Relayers submit transactions for you, ensuring total sender unlinkability.",
+            tier: "S",
+        },
+        {
+            icon: Hexagon,
+            name: "NFT Anonymity",
+            desc: "Prove ownership of blue-chip NFTs for DAO access or airdrops without revealing which specific asset you hold.",
+            tier: "A",
+        },
+        {
+            icon: Users,
+            name: "Shadow Army",
+            desc: "Each transaction generates 3+ decoy outputs. Mathematically indistinguishable to graph analysis tools.",
+            tier: "S",
+        },
+        {
+            icon: Bot,
+            name: "AI Whisperer",
+            desc: "Execute complex privacy strategies using natural language. 'Send 10 SOL to mom privately'.",
+            tier: "S",
+        },
+    ];
+
     return (
         <section className="relative w-full max-w-7xl mx-auto py-24 px-6 md:px-12">
 
@@ -114,99 +143,23 @@ export default function MarketingArsenal() {
                 </div>
             </div>
 
-            {/* Inventory Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Inventory Grid - Bento Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[240px]">
 
-                {/* 1. Shield */}
+                {/* 1. Shield (Hero Item) */}
                 <InventorySlot
-                    icon={Shield}
-                    name="Void Shield"
-                    type="Defense"
-                    rarity="legendary"
-                    stats={[
-                        "+100% Transaction Privacy",
-                        "zk-SNARK Plating",
-                        "Auto-Audit Logs"
-                    ]}
+                    item={items[0]}
+                    index={0}
+                    isHero={true}
                 />
 
-                {/* 2. Cloak */}
-                <InventorySlot
-                    icon={Ghost}
-                    name="Stealth Cloak"
-                    type="Utility"
-                    rarity="epic"
-                    stats={[
-                        "Untraceable Addresses (ECDH)",
-                        "Invisible Metadata",
-                        "Relayer Support"
-                    ]}
-                />
-
-                {/* 3. Dagger */}
-                <InventorySlot
-                    icon={Zap}
-                    name="Flash Strike"
-                    type="Offense"
-                    rarity="rare"
-                    stats={[
-                        "<400ms Confirmation",
-                        "Solana Mainnet Speed",
-                        "Low Gas Cost"
-                    ]}
-                />
-
-                {/* 4. Eyes (Compliance) */}
-                <InventorySlot
-                    icon={EyeOff}
-                    name="View Key"
-                    type="Key Item"
-                    rarity="epic"
-                    stats={[
-                        "Selective Disclosure",
-                        "Compliance Proofs",
-                        "Auditor Access"
-                    ]}
-                />
-
-                {/* 5. Network */}
-                <InventorySlot
-                    icon={Network}
-                    name="Swarm Node"
-                    type="Infrastructure"
-                    rarity="rare"
-                    stats={[
-                        "Decentralized Relayers",
-                        "Tor Integration",
-                        "High Availability"
-                    ]}
-                />
-
-                {/* 6. Lock */}
-                <InventorySlot
-                    icon={Lock}
-                    name="Timelock Vault"
-                    type="Storage"
-                    rarity="common"
-                    stats={[
-                        "24h Privacy Delay",
-                        "Anti-Analysis Buffer",
-                        "Secure Custody"
-                    ]}
-                />
-
-                {/* Empty Slots for aesthetic */}
-                <div className="aspect-square border border-gray-900/50 bg-black/20 flex items-center justify-center opacity-30">
-                    <span className="text-[10px] font-mono text-gray-700">EMPTY_SLOT</span>
-                </div>
-                <div className="aspect-square border border-gray-900/50 bg-black/20 flex items-center justify-center opacity-30">
-                    <span className="text-[10px] font-mono text-gray-700">LOCKED</span>
-                </div>
+                {/* Other Items */}
+                {items.slice(1).map((item, i) => (
+                    <InventorySlot key={i} item={item} index={i + 1} />
+                ))}
 
             </div>
 
-            {/* Footer Stats Removed as per user request */}
-
-        </section>
+        </section >
     );
 }

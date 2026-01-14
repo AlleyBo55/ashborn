@@ -1,6 +1,6 @@
 //! Custom errors for the Ashborn protocol
 //! 
-//! Linus says: Proper error handling, not panic-and-pray.
+//! Proper error handling, not panic-and-pray.
 
 use anchor_lang::prelude::*;
 
@@ -33,6 +33,9 @@ pub enum AshbornError {
     
     #[msg("Insufficient balance for this operation")]
     InsufficientBalance,
+    
+    #[msg("Invalid token mint for pool")]
+    InvalidMint,
     
     #[msg("Deposit amount doesn't match commitment")]
     CommitmentMismatch,
@@ -73,8 +76,32 @@ pub enum AshbornError {
     
     // ============ Protocol Errors (6400-6499) ============
     
-    #[msg("Protocol is paused")]
+    #[msg("Protocol is currently paused")]
     ProtocolPaused,
+
+    #[msg("Unauthorized access to vault")]
+    Unauthorized,
+
+    #[msg("Invalid denomination amount")]
+    InvalidDenomination,
+
+    #[msg("Note has already been spent")]
+    NoteAlreadySpent,
+
+    #[msg("Invalid Merkle root")]
+    InvalidMerkleRoot,
+
+    #[msg("Invalid ownership proof")]
+    InvalidOwnershipProof,
+
+    #[msg("Custom proof verification failed")]
+    CustomProofFailed,
+
+    #[msg("Too soon to unshield (24h lock)")]
+    TooSoonToUnshield,
+
+    #[msg("Invalid withdraw proof")]
+    InvalidWithdrawProof,
     
     #[msg("Invalid admin authority")]
     InvalidAdmin,
@@ -112,6 +139,12 @@ pub enum AshbornError {
     
     #[msg("Range Compliance integration error")]
     RangeComplianceError,
+    
+    #[msg("Arithmetic overflow in calculation")]
+    Overflow,
+    
+    #[msg("Invalid Merkle siblings provided")]
+    InvalidMerkleSiblings,
     
     #[msg("External SDK call failed")]
     ExternalSdkError,

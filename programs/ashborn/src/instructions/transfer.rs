@@ -1,7 +1,7 @@
 //! Updated Transfer Instruction with Real ZK and Merkle Trees
 //!
-//! Anatoly-approved: Real Groth16 verification
-//! Vitalik-approved: Merkle tree nullifiers
+//! Real Groth16 verification
+//! Merkle tree nullifiers
 
 use anchor_lang::prelude::*;
 use crate::state::{ShadowVault, ShieldedNote, NullifierTree, CommitmentTree, Denomination};
@@ -88,14 +88,14 @@ pub fn handler(
         AshbornError::InvalidMerkleRoot
     );
 
-    // 2. Verify nullifier hasn't been used (check Merkle non-membership)
-    // In production, this would verify a non-membership proof
+    // 2. Verify nullifier hasn't been used
+    // Check if nullifier already exists in the tree
     require!(
-        !nullifier_tree.is_valid_root(&nullifier), // Simplified check
+        !nullifier_tree.nullifier_exists(&nullifier),
         AshbornError::NullifierAlreadyUsed
     );
 
-    // 3. REAL Groth16 proof verification (Anatoly-approved)
+    // 3. REAL Groth16 proof verification 
     let proof_valid = verify_transfer_proof(
         &proof,
         &source_note.commitment,
@@ -107,13 +107,17 @@ pub fn handler(
 
     require!(proof_valid, AshbornError::ProofVerificationFailed);
 
-    // 4. Insert nullifier into Merkle tree
+    // 4. Verify Merkle siblings before insertion
+    let siblings_valid = nullifier_tree.verify_siblings_for_insert(&merkle_siblings)?;
+    require!(siblings_valid, AshbornError::InvalidMerkleSiblings);
+
+    // 5. Insert nullifier into Merkle tree
     nullifier_tree.insert(nullifier, &merkle_siblings)?;
 
-    // 5. Mark source note as spent
+    // 6. Mark source note as spent
     ctx.accounts.source_note.spent = true;
 
-    // 6. Insert new commitments into commitment tree
+    // 7. Insert new commitments into commitment tree
     let change_index = commitment_tree.insert_commitment(change_commitment, &merkle_siblings)?;
 
     // 7. Create change note

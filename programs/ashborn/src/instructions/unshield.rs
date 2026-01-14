@@ -1,6 +1,6 @@
 //! Updated Unshield Instruction with Privacy Delay
 //!
-//! ZachXBT-proof: 24-hour minimum delay before unshield
+//! privacy-preserving: 24-hour minimum delay before unshield
 
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
@@ -81,7 +81,7 @@ pub fn handler(
     let protocol_state = &ctx.accounts.protocol_state;
     let clock = Clock::get()?;
 
-    // 1. Privacy delay check (ZachXBT-proof: must wait 24h)
+    // 1. Privacy delay check (privacy-preserving: must wait 24h)
     require!(
         clock.unix_timestamp >= source_note.unshield_after,
         AshbornError::TooSoonToUnshield
@@ -114,8 +114,11 @@ pub fn handler(
     // 5. Mark note as spent
     source_note.spent = true;
 
-    // 6. Calculate fee
-    let fee = (amount as u128 * protocol_state.fee_bps as u128 / 10000) as u64;
+    // 6. Calculate fee with overflow protection
+    let fee = amount
+        .checked_mul(protocol_state.fee_bps as u64)
+        .and_then(|v| v.checked_div(10000))
+        .ok_or(AshbornError::Overflow)?;
     let net_amount = amount.saturating_sub(fee);
 
     // 7. Transfer tokens from pool to user
@@ -133,8 +136,7 @@ pub fn handler(
     );
     token::transfer(transfer_ctx, net_amount)?;
 
-    // 8. Update vault state
-    vault.shadow_balance = vault.shadow_balance.saturating_sub(amount);
+    // 8. Update vault state (no balance stored - privacy!)
     vault.note_count = vault.note_count.saturating_sub(1);
     vault.last_activity = clock.unix_timestamp;
 

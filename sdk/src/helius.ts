@@ -1,7 +1,7 @@
 /**
  * Enhanced Helius Integration with DAS API and Webhooks
  *
- * Mert-approved: Use actual helius-sdk, DAS, and webhooks
+ * Use actual helius-sdk, DAS, and webhooks
  */
 
 import {
