@@ -26,21 +26,43 @@ export default function PoweredBySolana() {
                 {/* Separator */}
                 <div className="w-px h-6 bg-white/10" />
 
-                {/* 2. Solana Core */}
+                {/* 2. Solana Core (Real Logo) */}
                 <div className="group relative p-2 rounded-full hover:-translate-y-2 transition-transform duration-300">
-                    <div className="flex flex-col gap-[2px]">
-                        <div className="w-4 h-[2px] bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-pulse" />
-                        <div className="w-4 h-[2px] bg-gradient-to-r from-purple-400 to-purple-600 rounded-full" />
-                        <div className="w-4 h-[2px] bg-gradient-to-r from-blue-500 to-green-400 rounded-full" />
-                    </div>
+                    <svg className="w-8 h-8 md:w-8 md:h-8" width="397" height="311" viewBox="0 0 397 311" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z" fill="url(#solana_paint0_linear)" />
+                        <path d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z" fill="url(#solana_paint1_linear)" />
+                        <path d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z" fill="url(#solana_paint2_linear)" />
+                        <defs>
+                            <linearGradient id="solana_paint0_linear" x1="0" y1="0" x2="397" y2="311" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#9945FF" />
+                                <stop offset="1" stopColor="#14F195" />
+                            </linearGradient>
+                            <linearGradient id="solana_paint1_linear" x1="0" y1="0" x2="397" y2="311" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#9945FF" />
+                                <stop offset="1" stopColor="#14F195" />
+                            </linearGradient>
+                            <linearGradient id="solana_paint2_linear" x1="0" y1="0" x2="397" y2="311" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#9945FF" />
+                                <stop offset="1" stopColor="#14F195" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
                 </div>
 
                 {/* 3. Network Status */}
                 <div className="group relative hidden md:flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-white/5 hover:-translate-y-2 transition-all duration-300">
                     <Activity className="w-3 h-3 text-green-500" />
                     <div className="flex flex-col">
-                        <span className="text-[8px] text-gray-400 font-bold">MAINNET</span>
+                        <span className="text-[8px] text-gray-400 font-bold">DEVNET</span>
                         <span className="text-[8px] text-green-400">ONLINE</span>
+                    </div>
+                </div>
+
+                <div className="group relative hidden md:flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-white/5 hover:-translate-y-2 transition-all duration-300">
+                    <Globe className="w-3 h-3 text-gray-500" />
+                    <div className="flex flex-col">
+                        <span className="text-[8px] text-gray-400 font-bold">MAINNET</span>
+                        <span className="text-[8px] text-gray-500">SOON</span>
                     </div>
                 </div>
 
