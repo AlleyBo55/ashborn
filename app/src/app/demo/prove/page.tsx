@@ -64,7 +64,7 @@ export default function ProveDemoPage() {
     return (
         <div className="max-w-2xl mx-auto">
             {/* Title */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
                 <div className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-300 px-4 py-2 rounded-full text-sm mb-6 border border-blue-500/20">
                     <BarChart3 className="w-4 h-4" />
                     Groth16 ZK-SNARK Demo
@@ -73,6 +73,38 @@ export default function ProveDemoPage() {
                 <p className="text-gray-400 max-w-md mx-auto">
                     Prove your balance falls within a range using real Groth16 proofs. {snarkjsLoaded ? 'Powered by snarkjs.' : 'Demo mode.'}
                 </p>
+            </motion.div>
+
+            {/* What is a Range Proof? */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="bg-gradient-to-br from-amber-900/20 to-black border border-amber-500/20 rounded-xl p-6 mb-8"
+            >
+                <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-amber-400" />
+                    What is a Range Proof?
+                </h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                    A Range Proof lets you prove your balance is within a range (e.g., <strong className="text-white">"I have between $0 and $10,000"</strong>)
+                    without revealing the exact amount. Uses <strong className="text-amber-300">Groth16 ZK-SNARKs</strong> for on-chain verification.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
+                    <span className="bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-lg border border-amber-500/30">1. Define Range</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-lg border border-purple-500/30">2. Generate Proof</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-green-500/20 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/30">3. Verify On-Chain</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-black/40 p-2 rounded border border-white/5">
+                        <span className="text-gray-500">Use Case:</span> <span className="text-white">DAO Solvency</span>
+                    </div>
+                    <div className="bg-black/40 p-2 rounded border border-white/5">
+                        <span className="text-gray-500">Use Case:</span> <span className="text-white">KYC Compliance</span>
+                    </div>
+                </div>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
@@ -137,7 +169,7 @@ export default function ProveDemoPage() {
                         <span className="text-sm text-gray-400 font-mono">prove.ts</span>
                         <span className="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded font-mono border border-green-500/20">ZK-CIRCUIT-V1</span>
                     </div>
-                    <pre className="p-6 overflow-x-auto text-sm font-mono"><code className="text-gray-300">{`import { Ashborn, createRangeCompliance } from '@ashborn/sdk';
+                    <pre className="p-6 overflow-x-auto text-sm font-mono"><code className="text-gray-300">{`import { Ashborn, createRangeCompliance } from '@alleyboss/ashborn-sdk';
 
 // Generate real Groth16 range proof locally
 const proof = await rangeCompliance.generateRangeProof({

@@ -115,17 +115,27 @@ export default function NLPDemoPage() {
     return (
         <div className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
             {/* Title Header inside the card */}
-            <div className="p-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
-                        <MessageSquare className="w-4 h-4" />
+            <div className="p-4 border-b border-white/10 bg-white/[0.02]">
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                            <MessageSquare className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
+                            <p className="text-[10px] text-gray-400">Powered by OpenAI &amp; x402 Paywall</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
-                        <p className="text-[10px] text-gray-400">Powered by OpenAI & x402 Paywall</p>
-                    </div>
+                    {!publicKey && <WalletMultiButton className="!bg-purple-600 !h-8 !text-xs !px-3" />}
                 </div>
-                {!publicKey && <WalletMultiButton className="!bg-purple-600 !h-8 !text-xs !px-3" />}
+                {/* How it works mini-guide */}
+                <div className="flex flex-wrap gap-1.5 text-[10px]">
+                    <span className="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20">1. Type Command</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded border border-amber-500/20">2. Pay 0.001 SOL</span>
+                    <span className="text-gray-600">→</span>
+                    <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded border border-green-500/20">3. AI Executes</span>
+                </div>
             </div>
 
             {/* Chat Area */}

@@ -1,10 +1,12 @@
+'use client';
+
 import CodeBlock from '@/components/ui/CodeBlock';
 import TerminalBlock from '@/components/ui/TerminalBlock';
 
 // ... (existing imports, but remove Copy, Check from lucide if unused locally, mostly unused now as CodeBlock handles it)
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Shield, Ghost, Activity, Book, Terminal, Code, Cpu, Lock, Zap, Search, Menu, X, ChevronRight } from 'lucide-react';
+import { ArrowRight, Shield, Ghost, Activity, Book, Terminal, Code, Cpu, Lock, Zap, Search, Menu, X, ChevronRight, Copy, Check } from 'lucide-react';
 import Link from 'next/link';
 
 // ... (sections data remains same)
@@ -15,7 +17,7 @@ import Link from 'next/link';
 <section id="installation" className="mb-20 scroll-mt-24">
     <h2 className="text-2xl font-semibold mb-6">Installation</h2>
     <TerminalBlock
-        command="npm install @ashborn/sdk"
+        command="npm install @alleyboss/ashborn-sdk"
         cwd="~/project"
     />
     <div className="mt-4 p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
@@ -36,7 +38,7 @@ import Link from 'next/link';
         <Step number="01" title="Initialize Client">
             <CodeBlock
                 language="typescript"
-                code={`import { Ashborn } from '@ashborn/sdk';\n\nconst ashborn = new Ashborn(connection, wallet, {\n  network: 'devnet'\n});`}
+                code={`import { Ashborn } from '@alleyboss/ashborn-sdk';\n\nconst ashborn = new Ashborn(connection, wallet, {\n  network: 'devnet'\n});`}
                 filename="client.ts"
             />
         </Step>
@@ -308,7 +310,7 @@ export default function DocsPage() {
                         <h2 className="text-2xl font-semibold mb-6">Installation</h2>
                         <CodeSnippet
                             lang="bash"
-                            code="npm install @ashborn/sdk"
+                            code="npm install @alleyboss/ashborn-sdk"
                             label="Installation"
                         />
                         <div className="mt-4 p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
@@ -329,7 +331,7 @@ export default function DocsPage() {
                             <Step number="01" title="Initialize Client">
                                 <CodeSnippet
                                     lang="typescript"
-                                    code={`import { Ashborn } from '@ashborn/sdk';\n\nconst ashborn = new Ashborn(connection, wallet, {\n  network: 'devnet'\n});`}
+                                    code={`import { Ashborn } from '@alleyboss/ashborn-sdk';\n\nconst ashborn = new Ashborn(connection, wallet, {\n  network: 'devnet'\n});`}
                                 />
                             </Step>
                             <Step number="02" title="Shield Assets">
@@ -398,6 +400,39 @@ export default function DocsPage() {
                                 <p className="text-sm text-gray-400">
                                     <strong>Pooled Liquidity:</strong> All user assets are pooled together in a single Solana account. This "Anonymity Set" makes it mathematically impossible to link a specific deposit to a specific withdrawal.
                                 </p>
+                            </div>
+                        </div>
+
+                        {/* Technical ZK Flow */}
+                        <div className="mt-8">
+                            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <Cpu className="w-4 h-4 text-purple-400" />
+                                Cryptographic Flow
+                            </h3>
+                            <div className="grid md:grid-cols-3 gap-4 mb-6">
+                                <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20">
+                                    <div className="text-xs font-mono text-purple-300 mb-2">STEP 1: COMMITMENT</div>
+                                    <code className="text-[11px] text-gray-400 block mb-2">C = Poseidon(amount, blinding)</code>
+                                    <p className="text-xs text-gray-500">Hidden amount stored on-chain</p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                                    <div className="text-xs font-mono text-blue-300 mb-2">STEP 2: MERKLE INSERT</div>
+                                    <code className="text-[11px] text-gray-400 block mb-2">Tree.insert(C)</code>
+                                    <p className="text-xs text-gray-500">Commitment added to Merkle tree</p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
+                                    <div className="text-xs font-mono text-green-300 mb-2">STEP 3: NULLIFY & SPEND</div>
+                                    <code className="text-[11px] text-gray-400 block mb-2">Prove(C ∈ Tree, nullifier)</code>
+                                    <p className="text-xs text-gray-500">ZK proof without revealing leaf</p>
+                                </div>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                                    <div><span className="text-gray-500">Hash:</span> <span className="text-white font-mono">Poseidon</span></div>
+                                    <div><span className="text-gray-500">Proof:</span> <span className="text-white font-mono">Groth16</span></div>
+                                    <div><span className="text-gray-500">Curve:</span> <span className="text-white font-mono">BN128</span></div>
+                                    <div><span className="text-gray-500">Tree:</span> <span className="text-white font-mono">Sparse Merkle</span></div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -532,26 +567,8 @@ const agent = new Agent({
     );
 }
 
-// Sub-components
-function FeatureCard({ icon: Icon, title, desc }: any) {
-    return (
-        <div className="p-5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/10 transition-colors">
-            <Icon className="w-6 h-6 text-purple-400 mb-3" />
-            <h3 className="font-semibold text-white mb-2">{title}</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">{desc}</p>
-        </div>
-    );
-}
 
-function Step({ number, title, children }: any) {
-    return (
-        <div className="relative pl-8 border-l border-white/10 pb-8 last:pb-0 last:border-0 hover:border-purple-500/30 transition-colors">
-            <span className="absolute -left-[9px] top-0 w-[18px] h-[18px] rounded-full bg-[#050505] border border-white/20 text-[9px] flex items-center justify-center text-gray-500 font-mono font-bold">{number}</span>
-            <h3 className="font-medium text-white mb-3 text-sm tracking-wide uppercase text-gray-400">{title}</h3>
-            {children}
-        </div>
-    );
-}
+// CodeSnippet with copy button
 
 function CodeSnippet({ lang, code, label }: any) {
     const [copied, setCopied] = useState(false);

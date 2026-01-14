@@ -5,6 +5,7 @@ import SkillCombo from '@/components/landing/SkillCombo';
 import Comparison from '@/components/landing/Comparison';
 import MarketingArsenal from '@/components/landing/MarketingArsenal';
 import MarketingWhy from '@/components/landing/MarketingWhy';
+import HowAshbornWorks from '@/components/landing/HowAshbornWorks';
 import ShadowCursor from '@/components/ui/ShadowCursor';
 import SystemToast from '@/components/ui/SystemToast';
 import PortalTransition from '@/components/ui/PortalTransition';
@@ -36,6 +37,11 @@ export default function Home() {
                 {/* THE WHY - Slant Left ("The History") */}
                 <SlashSection slant="left" className="relative z-20">
                     <MarketingWhy />
+                </SlashSection>
+
+                {/* HOW ASHBORN WORKS - Highlighted Section */}
+                <SlashSection slant="none" className="relative z-25">
+                    <HowAshbornWorks />
                 </SlashSection>
 
                 {/* THE ARSENAL - No Slant (Top Grid) */}
