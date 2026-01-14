@@ -50,19 +50,6 @@ export default function GuildAlliance() {
                             <span className="text-xl font-bold tracking-tight text-green-500">JITO</span>
                         </div>
 
-                        {/* PYTH */}
-                        <PartnerLogo
-                            name="PYTH"
-                            type="svg"
-                            viewBox="0 0 512 512"
-                            path="M266,78.7c-27.2,0-52.7,7.3-74.7,20.1c-14.1,8.1-26.7,18.5-37.4,30.7c-23.2,26.4-37.4,61.1-37.4,99.1v112.4l37.4,37.5V228.5c0-33.3,14.4-63.2,37.4-83.8c10.8-9.7,23.4-17.3,37.4-22.2c11.7-4.2,24.3-6.4,37.4-6.4c61.9,0,112.1,50.3,112.1,112.4S327.9,340.9,266,340.9v37.5c82.5,0,149.4-67.1,149.4-149.8S348.5,78.7,266,78.7z"
-                        />
-
-                        {/* LAYERZERO (Text) */}
-                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
-                            <span className="text-xl font-black tracking-tighter text-white">LAYERZERO</span>
-                        </div>
-
                         {/* LIGHT PROTOCOL (Text) */}
                         <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
                             <span className="text-lg font-mono font-bold text-white tracking-widest">LIGHT</span>

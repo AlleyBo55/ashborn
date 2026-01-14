@@ -1,165 +1,177 @@
 'use client';
 
-import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
-import { Shield, Zap, EyeOff, Ghost, Network, Hexagon, Users, Bot } from 'lucide-react';
+import { Shield, Zap, EyeOff, Ghost, Network, Users, Terminal, Code, Cpu, Skull } from 'lucide-react';
+import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 
-const InventorySlot = ({ item, index, isHero = false }: { item: any, index: number, isHero?: boolean }) => {
-    let mouseX = useMotionValue(0);
-    let mouseY = useMotionValue(0);
-
-    function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-        let { left, top } = currentTarget.getBoundingClientRect();
-        mouseX.set(clientX - left);
-        mouseY.set(clientY - top);
+// Shadow Army / Skills Data
+const SHADOW_SKILLS = [
+    {
+        id: 'RULE_OF_SILENCE',
+        icon: Ghost,
+        name: "STEALTH CLOAK",
+        rank: "GENERAL",
+        desc: "Absolute invisibility. Generates phantom addresses for each transaction. No footprint remains.",
+        cost: "0 MANA"
+    },
+    {
+        id: 'DOMAIN_EXPANSION',
+        icon: Shield,
+        name: "VOID SHIELD",
+        rank: "MARSHAL",
+        desc: "ZK-SNARK proof generation. Encapsulates assets in an impenetrable barrier of mathematics.",
+        cost: "HIGH"
+    },
+    {
+        id: 'SHADOW_EXCHANGE',
+        icon: Users,
+        name: "SHADOW ARMY",
+        rank: "COMMANDER",
+        desc: "Summons decoy outputs. Your transaction hides amongst thousands of shadow soldiers.",
+        cost: "MED"
+    },
+    {
+        id: 'KINGS_AUTHORITY',
+        icon: EyeOff,
+        name: "VIEW KEY",
+        rank: "RULER",
+        desc: "Selective revelation. Grant vision only to those you deem worthy (Auditors).",
+        cost: "VARIES"
+    },
+    {
+        id: 'SHADOW_STEP',
+        icon: Zap,
+        name: "FLASH STRIKE",
+        rank: "ELITE",
+        desc: "Instantaneous execution. Move across the Solana network faster than light (<400ms).",
+        cost: "LOW"
+    },
+    {
+        id: 'PHANTOM_TOUCH',
+        icon: Network,
+        name: "GHOST RELAY",
+        rank: "ASSASSIN",
+        desc: "Gasless interaction. Your wallet remains untouched; the shadows pay the fee.",
+        cost: "NONE"
     }
+];
+
+const ShadowCard = ({ skill, index }: { skill: any, index: number }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    const Icon = skill.icon;
 
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            onMouseMove={handleMouseMove}
-            className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-gray-900/40 backdrop-blur-2xl p-6 hover:bg-gray-800/60 transition-all duration-500 hover:shadow-2xl 
-                ${isHero ? 'md:col-span-2 md:row-span-2' : ''}
-                ${item.tier === 'S' ? 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' : ''}`}
+        <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className={`group relative h-[300px] border transition-all duration-500 overflow-hidden flex flex-col justify-between p-6
+                ${isHovered
+                    ? 'bg-purple-950/20 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.2)]'
+                    : 'bg-black/60 border-white/5 hover:border-white/20'
+                }`}
         >
-            {/* Spotlight Effect */}
-            <motion.div
-                className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
-                style={{
-                    background: useMotionTemplate`
-                        radial-gradient(
-                          650px circle at ${mouseX}px ${mouseY}px,
-                          rgba(124, 58, 237, 0.1),
-                          transparent 80%
-                        )
-                      `,
-                }}
-            />
+            {/* Dark Overlay that clears on hover */}
+            <div className={`absolute inset-0 bg-black/80 transition-opacity duration-500 ${isHovered ? 'opacity-0' : 'opacity-100'}`} />
 
-            {/* Apple-style Inner Highlight */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
+            {/* "ARISE" Command Background Text */}
+            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black italic text-4xl tracking-widest text-purple-600/20 transition-all duration-300 pointer-events-none ${isHovered ? 'scale-110 opacity-100 blur-[2px]' : 'scale-50 opacity-0 blur-xl'}`}>
+                ARISE
+            </div>
 
-            {/* Header */}
-            <div className="flex justify-between items-start mb-4 relative z-10">
-                <div className={`p-3 rounded-2xl ${item.tier === 'S' ? 'bg-purple-500/20 text-purple-300' :
-                    item.tier === 'A' ? 'bg-blue-500/10 text-blue-300' : 'bg-gray-800 text-gray-400'
-                    }`}>
-                    <item.icon className={isHero ? "w-8 h-8" : "w-5 h-5"} />
+            {/* Top: Rank & System Info */}
+            <div className="relative z-10 flex justify-between items-start">
+                <div className="flex flex-col gap-1">
+                    <span className={`text-[10px] font-mono tracking-[0.2em] transition-colors duration-300 ${isHovered ? 'text-purple-400' : 'text-gray-600'}`}>
+                        {'//'} RANK: {skill.rank}
+                    </span>
+                    <span className="text-[10px] font-mono text-gray-700">
+                        ID: {skill.id}
+                    </span>
                 </div>
-                <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${item.tier === 'S' ? 'border-purple-500/30 text-purple-400 bg-purple-500/10' : 'border-gray-700 text-gray-500'
-                    }`}>
-                    {item.tier}_RANK
-                </span>
+                <div className={`p-2 rounded-full border transition-all duration-500 ${isHovered ? 'bg-purple-600 border-purple-400 text-white animate-pulse' : 'bg-transparent border-gray-800 text-gray-600'}`}>
+                    <Icon className="w-5 h-5" />
+                </div>
             </div>
 
-            {/* Content */}
-            <div className="relative z-10">
-                <h3 className={`font-bold text-white mb-2 ${isHero ? 'text-2xl' : 'text-lg'}`}>
-                    {item.name}
+            {/* Middle: Name (Standard -> Arise Mode) */}
+            <div className="relative z-10 my-auto text-center">
+                <h3 className={`font-black italic text-2xl md:text-3xl transition-all duration-300 transform ${isHovered ? 'text-transparent bg-clip-text bg-gradient-to-b from-white to-purple-400 scale-110' : 'text-gray-500'}`}>
+                    {skill.name}
                 </h3>
-                <p className="text-sm text-gray-400 leading-relaxed font-sans">
-                    {item.desc}
-                </p>
             </div>
 
-            {/* Hero Decoration */}
-            {isHero && (
-                <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-600/20 blur-[60px] rounded-full pointer-events-none" />
-            )}
-        </motion.div>
+            {/* Bottom: Description & Stats */}
+            <div className="relative z-10 border-t border-white/5 pt-4 mt-4">
+                <p className={`text-xs font-mono leading-relaxed transition-colors duration-300 ${isHovered ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {skill.desc}
+                </p>
+
+                <div className="mt-4 flex items-center justify-between">
+                    <div className="flex gap-1">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 delay-${i * 100} ${isHovered ? 'bg-purple-500' : 'bg-gray-800'}`} />
+                        ))}
+                    </div>
+                    <span className={`text-[10px] font-bold tracking-widest ${isHovered ? 'text-purple-400' : 'text-gray-700'}`}>
+                        COST: {skill.cost}
+                    </span>
+                </div>
+            </div>
+
+            {/* Purple Flame Effect (Bottom Border) */}
+            <div className={`absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-600 to-transparent transition-all duration-500 ${isHovered ? 'opacity-100 shadow-[0_0_20px_#9333ea]' : 'opacity-0'}`} />
+        </div>
     );
 };
 
 export default function MarketingArsenal() {
-    const items = [
-        {
-            icon: Shield,
-            name: "Void Shield",
-            desc: "Provides impenetrable privacy for all transactions, leveraging zk-SNARKs for ultimate anonymity.",
-            tier: "S",
-        },
-        {
-            icon: Ghost,
-            name: "Stealth Cloak",
-            desc: "Renders your on-chain activities untraceable with ECDH and invisible metadata.",
-            tier: "A",
-        },
-        {
-            icon: Zap,
-            name: "Flash Strike",
-            desc: "Execute transactions with lightning speed (<400ms) on Solana Mainnet, ensuring low gas costs.",
-            tier: "B",
-        },
-        {
-            icon: EyeOff,
-            name: "View Key",
-            desc: "Offers selective disclosure for compliance proofs, granting auditors controlled access to necessary data.",
-            tier: "A",
-        },
-        {
-            icon: Network,
-            name: "Ghost Relay",
-            desc: "Your wallet never touches the chain. Relayers submit transactions for you, ensuring total sender unlinkability.",
-            tier: "S",
-        },
-        {
-            icon: Hexagon,
-            name: "NFT Anonymity",
-            desc: "Prove ownership of blue-chip NFTs for DAO access or airdrops without revealing which specific asset you hold.",
-            tier: "A",
-        },
-        {
-            icon: Users,
-            name: "Shadow Army",
-            desc: "Each transaction generates 3+ decoy outputs. Mathematically indistinguishable to graph analysis tools.",
-            tier: "S",
-        },
-        {
-            icon: Bot,
-            name: "AI Whisperer",
-            desc: "Execute complex privacy strategies using natural language. 'Send 10 SOL to mom privately'.",
-            tier: "S",
-        },
-    ];
-
     return (
-        <section className="relative w-full max-w-7xl mx-auto py-24 px-6 md:px-12">
+        <section className="relative w-full py-32 px-6 md:px-12 bg-black overflow-hidden">
 
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-gray-800 pb-6">
-                <div>
-                    <h2 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter mb-2">
-                        THE <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500"><ScrambleText text="ARSENAL" /></span>
+            {/* Background Texture - Dungeon Vibe */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent z-10" />
+            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-10" />
+
+            <div className="max-w-7xl mx-auto relative z-20">
+
+                {/* Header: System Message */}
+                <div className="text-center mb-24">
+                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-purple-900/50 bg-purple-900/10 text-purple-400 font-mono text-xs mb-6">
+                        <Skull className="w-3 h-3" />
+                        <span>SYSTEM NOTIFICATION</span>
+                    </div>
+                    <h2 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter mb-4">
+                        <span className="text-gray-800">MY</span> <ScrambleText text="SHADOWS" />
                     </h2>
-                    <p className="text-gray-500 font-mono text-sm max-w-md">
-                        Equip yourself with the highest-grade privacy artifacts.
-                        Only the truly worthy can wield the full power regarding the Ashborn&apos;s Army.               </p>
+                    <p className="text-gray-500 font-mono text-sm max-w-xl mx-auto uppercase tracking-widest border-t border-b border-gray-900 py-4">
+                        &quot;I am the record of your struggles, the evidence of your resistance, and the reward of your pain.&quot;
+                    </p>
                 </div>
-                <div className="font-mono text-xs text-purple-500 mt-4 md:mt-0">
-                    {'// SYSTEM_STATUS: ONLINE'} <br />
-                    {'// INVENTORY_LOADED: 100%'}
+
+                {/* The Army Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-gray-800 bg-gray-900/20">
+                    {SHADOW_SKILLS.map((skill, index) => (
+                        <ShadowCard key={skill.id} skill={skill} index={index} />
+                    ))}
                 </div>
+
+                {/* System Console Footer */}
+                <div className="mt-12 flex justify-between items-center text-[10px] font-mono text-gray-700 uppercase tracking-widest">
+                    <div className="flex items-center gap-2">
+                        <Terminal className="w-4 h-4" />
+                        <span>SYSTEM: ACCESS_GRANTED</span>
+                    </div>
+                    <div>
+                        SHADOW_EXTRACTION_RATE: 100%
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span>CLASS: NECROMANCER</span>
+                        <Code className="w-4 h-4" />
+                    </div>
+                </div>
+
             </div>
-
-            {/* Inventory Grid - Bento Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[240px]">
-
-                {/* 1. Shield (Hero Item) */}
-                <InventorySlot
-                    item={items[0]}
-                    index={0}
-                    isHero={true}
-                />
-
-                {/* Other Items */}
-                {items.slice(1).map((item, i) => (
-                    <InventorySlot key={i} item={item} index={i + 1} />
-                ))}
-
-            </div>
-
-        </section >
+        </section>
     );
 }

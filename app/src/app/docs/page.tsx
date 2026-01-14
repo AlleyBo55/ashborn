@@ -352,7 +352,7 @@ export default function DocsPage() {
                             <div className="absolute top-0 right-0 p-32 bg-purple-500/5 blur-3xl rounded-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                 <Lock className="w-5 h-5 text-purple-400" />
-                                The "Glass Vault" Analogy
+                                The &quot;Glass Vault&quot; Analogy
                             </h3>
                             <div className="space-y-4 text-gray-400 leading-relaxed">
                                 <p>
@@ -374,7 +374,7 @@ export default function DocsPage() {
                                     <li className="flex gap-3">
                                         <span className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs font-bold text-purple-400 shrink-0">3</span>
                                         <span>
-                                            <strong>Withdraw (Arise):</strong> Your friend uses the ticket to take 1 coin out. The vault verifies the ticket is valid without ever asking <em>"Who gave this to you?"</em>.
+                                            <strong>Withdraw (Arise):</strong> Your friend uses the ticket to take 1 coin out. The vault verifies the ticket is valid without ever asking <em>&quot;Who gave this to you?&quot;</em>.
                                         </span>
                                     </li>
                                 </ul>
@@ -495,7 +495,7 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                             Ashborn includes a semantic layer to parse user intents into privacy operations.
                         </p>
                         <div className="p-4 rounded-lg bg-white/5 border border-white/10 italic text-gray-400 border-l-4 border-l-purple-500">
-                            "Shield 50 USDC and send half to alleyboss.sol"
+                            &quot;Shield 50 USDC and send half to alleyboss.sol&quot;
                         </div>
                     </section>
 
@@ -534,7 +534,23 @@ const agent = new Agent({
                     {/* Deployment */}
                     <section id="deployment" className="mb-20 scroll-mt-24">
                         <h2 className="text-2xl font-semibold mb-6">Deployment</h2>
-                        <p className="text-gray-400 mb-6">Program IDs for current deployments.</p>
+
+                        <div className="p-4 border border-green-500/20 bg-green-900/10 rounded-lg mb-6">
+                            <h3 className="text-green-400 font-bold mb-2">🚀 PRODUCTION READY (Devnet)</h3>
+                            <p className="text-gray-300 text-sm mb-4">
+                                The Ashborn protocol is deployed on Solana Devnet with <strong>REAL ZK Verification</strong> enabled.
+                            </p>
+                            <div className="grid gap-2 font-mono text-sm">
+                                <div className="bg-black/50 p-2 rounded border border-white/10 flex justify-between items-center">
+                                    <span className="text-gray-500">Program ID:</span>
+                                    <code className="text-purple-400">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
+                                </div>
+                                <div className="bg-black/50 p-2 rounded border border-white/10 flex justify-between items-center">
+                                    <span className="text-gray-500">IDL Address:</span>
+                                    <code className="text-blue-400">54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz</code>
+                                </div>
+                            </div>
+                        </div>
 
                         <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
                             <table className="w-full text-sm">
@@ -549,7 +565,7 @@ const agent = new Agent({
                                     <tr>
                                         <td className="px-4 py-3">Devnet</td>
                                         <td className="px-4 py-3 text-purple-300">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</td>
-                                        <td className="px-4 py-3"><span className="text-green-400 text-xs px-2 py-0.5 bg-green-500/10 rounded-full">Live</span></td>
+                                        <td className="px-4 py-3"><span className="text-green-400 text-xs px-2 py-0.5 bg-green-500/10 rounded-full">Live (ZK)</span></td>
                                     </tr>
                                     <tr>
                                         <td className="px-4 py-3">Mainnet</td>
