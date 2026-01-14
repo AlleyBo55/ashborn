@@ -5,8 +5,8 @@ import { Shield, Zap, EyeOff, Ghost, Network, Users, ChevronRight, Binary, Cpu, 
 import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 
-// Fix for Next.js 14 / SWC parser issue with motion.div
-const MotionDiv = motion.div;
+// Alias for inner animation to avoid parser issues
+const AnimBar = motion.div;
 
 // Skill Data
 const ARSENAL_MODULES = [
@@ -64,13 +64,11 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <MotionDiv
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+        <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative h-64 bg-black/40 border border-white/10 hover:border-purple-500/50 rounded-xl overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)]"
+            className="group relative h-64 bg-black/40 border border-white/10 hover:border-purple-500/50 rounded-xl overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] opacity-0 animate-in fade-in slide-in-from-bottom-4 fill-mode-forwards"
+            style={{ animationDelay: `${index * 100}ms` }}
         >
             {/* Background Tech Lines */}
             <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:10px_10px]" />
@@ -110,17 +108,17 @@ function ModuleCard({ module, index }: { module: any, index: number }) {
                             {module.stats.power}% PWR
                         </span>
                     </div>
-                    <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-                        <MotionDiv
+                    <div className="h-1 bg-gray-600 rounded-full overflow-hidden">
+                        <AnimBar
                             initial={{ width: 0 }}
                             whileInView={{ width: `${module.stats.power}%` }}
                             transition={{ duration: 1, delay: 0.5 }}
-                            className={`h-full ${isHovered ? 'bg-purple-500 shadow-[0_0_10px_purple]' : 'bg-gray-600'} transition-colors duration-300`}
+                            className={`h-full ${isHovered ? 'bg-purple-500 shadow-[0_0_10px_purple]' : 'bg-gray-400'} transition-colors duration-300`}
                         />
                     </div>
                 </div>
             </div>
-        </MotionDiv>
+        </div>
     );
 }
 
