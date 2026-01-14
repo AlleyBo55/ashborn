@@ -84,12 +84,13 @@ pub mod ashborn {
     pub fn selective_reveal(
         ctx: Context<SelectiveReveal>,
         proof_type: ProofType,
+        timestamp: u64,
         range_min: u64,
         range_max: u64,
         proof_data: Vec<u8>,
         commitment: [u8; 32],
     ) -> Result<()> {
-        instructions::reveal::handler(ctx, proof_type, range_min, range_max, proof_data, commitment)
+        instructions::reveal::handler(ctx, proof_type, timestamp, range_min, range_max, proof_data, commitment)
     }
 
     /// Unshield assets back to public Solana

@@ -10,7 +10,7 @@ use crate::ProofType;
 
 /// Accounts for selective reveal
 #[derive(Accounts)]
-#[instruction(proof_type: ProofType)]
+#[instruction(proof_type: ProofType, timestamp: u64)]
 pub struct SelectiveReveal<'info> {
     /// User's vault
     #[account(
@@ -25,7 +25,7 @@ pub struct SelectiveReveal<'info> {
         init,
         payer = owner,
         space = ComplianceProof::size(256),
-        seeds = [b"compliance_proof", vault.key().as_ref(), &(Clock::get()?.unix_timestamp as u64).to_le_bytes()],
+        seeds = [b"compliance_proof", vault.key().as_ref(), &timestamp.to_le_bytes()],
         bump,
     )]
     pub proof_record: Account<'info, ComplianceProof>,
@@ -41,6 +41,7 @@ pub struct SelectiveReveal<'info> {
 pub fn handler(
     ctx: Context<SelectiveReveal>,
     proof_type: ProofType,
+    timestamp: u64,
     range_min: u64,
     range_max: u64,
     proof_data: Vec<u8>,

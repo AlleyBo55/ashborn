@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { Shield, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import CodeBlock from '@/components/ui/CodeBlock';
 
 const DENOMINATIONS = [
     { label: '0.1 SOL', value: BigInt(100_000_000), display: '0.1' },

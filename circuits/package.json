@@ -15,9 +15,6 @@
     },
     "dependencies": {
         "circomlib": "^2.0.5",
-        "snarkjs": "^0.7.3"
-    },
-    "devDependencies": {
-        "circom": "^2.1.6"
+        "snarkjs": "^0.7.6"
     }
 }
