@@ -152,7 +152,7 @@ await ashborn.shadowTransfer({
 
 ## 📚 Documentation
 
-Visit `/docs` in the app or see the [Wiki](https://github.com/alleyboss/ashborn/wiki) for:
+Visit the **Documentation** page in the live demo (`/docs`) to learn about:
 - **Core Concepts** — Commitments, nullifiers, stealth addresses
 - **API Reference** — Full SDK method documentation
 - **Circuit Logic** — How the ZK proofs enforce integrity
