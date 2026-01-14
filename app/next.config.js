@@ -13,7 +13,7 @@ const nextConfig = {
   },
   // Optimize for Solana web3.js
   transpilePackages: ["@solana/web3.js", "@coral-xyz/anchor"],
-  output: "standalone",
+  // output: "standalone",
 };
 
 module.exports = nextConfig;
