@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { Shield, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import { Shield, CheckCircle, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
 import CodeBlock from '@/components/ui/CodeBlock';
+import { useAshborn, getSolscanUrl, SOL_MINT } from '@/hooks/useAshborn';
+import { PublicKey } from '@solana/web3.js';
 
 const DENOMINATIONS = [
     { label: '0.1 SOL', value: BigInt(100_000_000), display: '0.1' },
@@ -16,29 +18,34 @@ type DemoStatus = 'idle' | 'confirming' | 'processing' | 'success' | 'error';
 
 export default function ShieldDemoPage() {
     const { connected, publicKey } = useWallet();
+    const { ashborn, isReady } = useAshborn();
     const [selectedAmount, setSelectedAmount] = useState(DENOMINATIONS[0]);
     const [status, setStatus] = useState<DemoStatus>('idle');
     const [txSignature, setTxSignature] = useState<string | null>(null);
+    const [noteAddress, setNoteAddress] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     const handleShield = async () => {
-        if (!connected || !publicKey) return;
+        if (!connected || !publicKey || !ashborn || !isReady) return;
 
         setStatus('confirming');
         setError(null);
 
-        // Simulate shield operation
         try {
             setStatus('processing');
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            const fakeSignature = Array.from({ length: 64 }, () =>
-                Math.floor(Math.random() * 16).toString(16)
-            ).join('');
 
-            setTxSignature(fakeSignature);
+            // Execute real shield operation on devnet
+            const result = await ashborn.shield({
+                amount: selectedAmount.value,
+                mint: new PublicKey(SOL_MINT),
+            });
+
+            setTxSignature(result.signature);
+            setNoteAddress(result.noteAddress.toBase58());
             setStatus('success');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Unknown error');
+            console.error('Shield error:', err);
+            setError(err instanceof Error ? err.message : 'Shield transaction failed');
             setStatus('error');
         }
     };
@@ -46,6 +53,7 @@ export default function ShieldDemoPage() {
     const resetDemo = () => {
         setStatus('idle');
         setTxSignature(null);
+        setNoteAddress(null);
         setError(null);
     };
 
@@ -126,16 +134,36 @@ export default function ShieldDemoPage() {
                         <p className="text-gray-400 mb-4">
                             {selectedAmount.display} SOL is now in the Shadow Domain.
                         </p>
-                        <div className="bg-black/40 rounded-lg p-4 mb-6 text-left border border-white/5">
-                            <div className="text-xs text-gray-500 mb-1">Shadow Trace (Signature)</div>
-                            <code className="text-xs text-purple-300 break-all font-mono">{txSignature}</code>
+                        <div className="bg-black/40 rounded-lg p-4 mb-6 text-left border border-white/5 space-y-3">
+                            <div>
+                                <div className="text-xs text-gray-500 mb-1">Transaction Signature</div>
+                                <div className="flex items-center gap-2">
+                                    <code className="text-xs text-purple-300 break-all font-mono flex-1">{txSignature}</code>
+                                    {txSignature && (
+                                        <a
+                                            href={getSolscanUrl(txSignature)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-400 hover:text-blue-300 transition"
+                                        >
+                                            <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                            {noteAddress && (
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Note Address (PDA)</div>
+                                    <code className="text-xs text-green-300 break-all font-mono">{noteAddress}</code>
+                                </div>
+                            )}
                         </div>
                         <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-left mb-6">
                             <div className="text-sm text-purple-300 mb-2">Extraction Analysis:</div>
                             <ul className="text-xs text-gray-400 space-y-1">
                                 <li>• Commitment Forged: <code className="text-purple-300">C = Poseidon(amount, blinding)</code></li>
                                 <li>• Note encrypted with view key</li>
-                                <li>• Public trace erased</li>
+                                <li>• <span className="text-green-400">✓ Live on Solana Devnet</span></li>
                             </ul>
                         </div>
                         <button
@@ -220,9 +248,9 @@ export default function ShieldDemoPage() {
                         </button>
 
                         {/* Info Box */}
-                        <div className="mt-6 bg-amber-500/5 border border-amber-500/20 rounded-lg p-4">
-                            <p className="text-xs text-amber-200/60 leading-relaxed">
-                                <strong>Simulation Mode:</strong> This interface mimics the Shielding process. On a live deployment, this would invoke the Ashborn program to create a ZK note on-chain.
+                        <div className="mt-6 bg-green-500/5 border border-green-500/20 rounded-lg p-4">
+                            <p className="text-xs text-green-200/60 leading-relaxed">
+                                <strong>🔴 Live Devnet:</strong> This executes a real blockchain transaction on Solana Devnet. Ensure you have devnet SOL. Get some at <a href="https://faucet.solana.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-300">faucet.solana.com</a>
                             </p>
                         </div>
                     </>

@@ -15,6 +15,8 @@ import PoweredBySolana from '@/components/ui/PoweredBySolana';
 import GuildAlliance from '@/components/landing/GuildAlliance';
 import ProtectionFeed from '@/components/landing/ProtectionFeed';
 
+import SystemCapabilities from '@/components/landing/SystemCapabilities';
+
 export default function Home() {
     return (
         <main className="flex min-h-screen flex-col items-center justify-between bg-monarch-black text-white selection:bg-arise-blue selection:text-white overflow-x-hidden cursor-none">
@@ -37,6 +39,11 @@ export default function Home() {
                 {/* THE WHY - Slant Left ("The History") */}
                 <SlashSection slant="left" className="relative z-20">
                     <MarketingWhy />
+                </SlashSection>
+
+                {/* SYSTEM CAPABILITIES - Viral Demo Showcase */}
+                <SlashSection slant="none" className="relative z-25 bg-black/50">
+                    <SystemCapabilities />
                 </SlashSection>
 
                 {/* HOW ASHBORN WORKS - Highlighted Section */}

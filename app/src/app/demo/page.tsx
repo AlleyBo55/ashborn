@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Box, Send, Shield, Bot, ArrowRight, Zap, ChevronRight, Sparkles, Eye, Lock, Users, Terminal, Activity } from 'lucide-react';
+import { Box, Send, Shield, Bot, ArrowRight, Zap, ChevronRight, Sparkles, Eye, Lock, Users, Terminal, Activity, Ghost } from 'lucide-react';
 import { useState } from 'react';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -10,7 +10,45 @@ import { useState } from 'react';
 // Apple minimalism × Google vibes × Solo Leveling darkness
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// Integration Badge Component
+const IntegrationBadge = ({ tech }: { tech: string }) => {
+    if (tech === 'Ashborn') return (
+        <span className="text-[9px] font-mono bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 font-bold uppercase tracking-wider">
+            🔥 Ashborn
+        </span>
+    );
+    if (tech === 'PrivacyCash') return (
+        <span className="text-[9px] font-mono bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20 font-bold uppercase tracking-wider">
+            🛡️ PrivacyCash
+        </span>
+    );
+    if (tech.includes('Radr') || tech.includes('ShadowWire')) return (
+        <span className="text-[9px] font-mono bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded border border-purple-500/20 font-bold uppercase tracking-wider">
+            👻 Radr/ShadowWire
+        </span>
+    );
+    return (
+        <span className="text-[9px] font-mono bg-white/5 text-gray-500 px-2 py-0.5 rounded border border-white/5">
+            {tech}
+        </span>
+    );
+};
+
 const demos = [
+    {
+        id: 'radr',
+        title: 'ShadowWire by Radr',
+        subtitle: 'STEALTH_PRIMITIVES',
+        desc: "Generate unlinkable stealth addresses and ephemeral keys. The cryptographic core of private transfers.",
+        href: '/demo/radr',
+        icon: Ghost,
+        gradient: 'from-purple-500 to-indigo-600',
+        glow: 'shadow-[0_0_60px_rgba(139,92,246,0.3)]',
+        flow: ['Gen Ephemeral Key', 'Derive Shared Secret', 'Comput Stealth Addr', 'Scan Outputs'],
+        integrations: ['Radr', 'Ashborn'],
+        techStack: ['ShadowWire', 'Secp256k1', 'ECDH'],
+        rank: 'S+',
+    },
     {
         id: 'shield',
         title: 'Shadow Extraction',
@@ -21,6 +59,7 @@ const demos = [
         gradient: 'from-blue-600 to-purple-600',
         glow: 'shadow-[0_0_60px_rgba(59,130,246,0.3)]',
         flow: ['Deposit SOL', 'Generate Commitment', 'Encrypt Note', 'Store On-Chain'],
+        integrations: ['Ashborn'],
         techStack: ['Poseidon Hash', 'Groth16', 'BN128'],
         rank: 'S',
     },
@@ -34,8 +73,23 @@ const demos = [
         gradient: 'from-green-600 to-emerald-600',
         glow: 'shadow-[0_0_60px_rgba(34,197,94,0.3)]',
         flow: ['Enter Recipient', 'Generate Decoys', 'Nullify Old', 'Create New Note'],
-        techStack: ['Ring Signatures', 'Stealth Addr', 'ECDH'],
+        integrations: ['Ashborn', 'Radr'],
+        techStack: ['Ring Signatures', 'ShadowWire', 'Stealth Addr'],
         rank: 'A',
+    },
+    {
+        id: 'interop',
+        title: 'Cross-Protocol Link',
+        subtitle: 'INTEROPERABILITY',
+        desc: 'Seamlessly move assets between Ashborn and PrivacyCash privacy islands.',
+        href: '/demo/interop',
+        icon: Activity,
+        gradient: 'from-cyan-500 to-blue-600',
+        glow: 'shadow-[0_0_60px_rgba(6,182,212,0.3)]',
+        flow: ['Shield (PrivacyCash)', 'Stealth Transfer (Ashborn)', 'Unshield (PrivacyCash)'],
+        integrations: ['Ashborn', 'PrivacyCash', 'Radr'],
+        techStack: ['PrivacyCash SDK', 'Ashborn SDK', 'ShadowWire'],
+        rank: 'SS',
     },
     {
         id: 'prove',
@@ -47,8 +101,23 @@ const demos = [
         gradient: 'from-amber-500 to-orange-600',
         glow: 'shadow-[0_0_60px_rgba(245,158,11,0.3)]',
         flow: ['Define Range', 'Compute Proof', 'On-Chain Verify', 'Issue Certificate'],
+        integrations: ['Ashborn'],
         techStack: ['Range Proofs', 'Groth16', 'Merkle Tree'],
         rank: 'A',
+    },
+    {
+        id: 'ai-payment',
+        title: 'Shadow Payment',
+        subtitle: 'AI_COMMERCE',
+        desc: 'AI Agents paying for services privately. No tracking of model usage or prompts.',
+        href: '/demo/ai-payment',
+        icon: Bot,
+        gradient: 'from-pink-600 to-rose-600',
+        glow: 'shadow-[0_0_60px_rgba(244,63,94,0.3)]',
+        flow: ['Agent Request', 'PrivacyCash Pay', 'x402 Verify', 'Service Unlock'],
+        integrations: ['Ashborn', 'PrivacyCash'],
+        techStack: ['PrivacyCash SDK', 'Micropay', 'x402'],
+        rank: 'A+',
     },
     {
         id: 'nlp',
@@ -56,20 +125,23 @@ const demos = [
         subtitle: 'AI_AGENT_PROTOCOL',
         desc: 'Command privacy operations with natural language. Pay-per-query micropayments.',
         href: '/demo/nlp',
-        icon: Bot,
+        icon: Sparkles,
         gradient: 'from-purple-600 to-pink-600',
         glow: 'shadow-[0_0_60px_rgba(168,85,247,0.3)]',
         flow: ['Speak Intent', 'Parse Command', 'Execute Action', 'Confirm Result'],
+        integrations: ['Ashborn'],
         techStack: ['OpenAI', 'x402 Paywall', 'Micropay'],
         rank: 'S',
     }
 ];
 
+// ... (existing RankBadge and FlowStep components)
+
 // Rank Badge Component
 const RankBadge = ({ rank }: { rank: string }) => (
-    <div className={`absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm border ${rank === 'S'
-            ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 shadow-[0_0_20px_rgba(168,85,247,0.5)]'
-            : 'bg-blue-500/20 border-blue-500/50 text-blue-300'
+    <div className={`absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm border ${rank === 'S' || rank === 'S+' || rank === 'SS'
+        ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 shadow-[0_0_20px_rgba(168,85,247,0.5)]'
+        : 'bg-blue-500/20 border-blue-500/50 text-blue-300'
         }`}>
         {rank}
     </div>
@@ -117,8 +189,12 @@ const DemoCard = ({ demo, index }: { demo: typeof demos[0]; index: number }) => 
                         </div>
                     </div>
 
-                    {/* Subtitle */}
-                    <div className="text-[10px] font-mono text-gray-600 tracking-[0.2em] mb-2">{demo.subtitle}</div>
+                    {/* Subtitle & Integrations */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                        {demo.integrations.map((tech) => (
+                            <IntegrationBadge key={tech} tech={tech} />
+                        ))}
+                    </div>
 
                     {/* Title */}
                     <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2 tracking-tight">

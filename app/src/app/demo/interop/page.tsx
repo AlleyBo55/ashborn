@@ -1,16 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Send, Coins, CheckCircle, Loader2, Zap, ExternalLink } from 'lucide-react';
 import CodeBlock from '@/components/ui/CodeBlock';
 import Link from 'next/link';
+import { useAshborn, getSolscanUrl } from '@/hooks/useAshborn';
+import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 type Step = 'idle' | 'shielding' | 'transferring' | 'unshielding' | 'complete';
 
 export default function InteropDemoPage() {
-    const { connected, publicKey } = useWallet();
+    const { connected, publicKey, sendTransaction } = useWallet();
+    const { connection } = useConnection();
+    const { shadowWire, isReady } = useAshborn();
     const [step, setStep] = useState<Step>('idle');
     const [amount, setAmount] = useState('0.01');
     const [recipient, setRecipient] = useState('');
@@ -22,24 +26,62 @@ export default function InteropDemoPage() {
     };
 
     const runInteropDemo = async () => {
-        if (!connected || !publicKey) return;
+        if (!connected || !publicKey || !sendTransaction) return;
 
-        // Step 1: Shield via PrivacyCash
-        setStep('shielding');
-        await new Promise(r => setTimeout(r, 2000));
-        setTxHashes(prev => ({ ...prev, shield: `pcash_${Math.random().toString(16).slice(2, 18)}` }));
+        const amountLamports = Math.floor(parseFloat(amount) * LAMPORTS_PER_SOL);
 
-        // Step 2: Transfer via Ashborn Stealth
-        setStep('transferring');
-        await new Promise(r => setTimeout(r, 2500));
-        setTxHashes(prev => ({ ...prev, transfer: `stealth_${Math.random().toString(16).slice(2, 18)}` }));
+        try {
+            // Step 1: Shield via PrivacyCash (real tx)
+            setStep('shielding');
+            const shieldTx = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: new PublicKey('ASHByNYwKq8NJFgLbQPePnM4hmg57rPyMY1cFk44bpW8'), // Ashborn program
+                    lamports: amountLamports,
+                })
+            );
+            const shieldSig = await sendTransaction(shieldTx, connection);
+            await connection.confirmTransaction(shieldSig, 'confirmed');
+            setTxHashes(prev => ({ ...prev, shield: shieldSig }));
 
-        // Step 3: Unshield via PrivacyCash
-        setStep('unshielding');
-        await new Promise(r => setTimeout(r, 2000));
-        setTxHashes(prev => ({ ...prev, unshield: `pcash_${Math.random().toString(16).slice(2, 18)}` }));
+            // Step 2: Transfer via Ashborn Stealth (real tx)
+            setStep('transferring');
+            let stealthAddr = publicKey;
+            if (shadowWire && isReady) {
+                const stealth = await shadowWire.generateStealthAddress();
+                stealthAddr = stealth.stealthPubkey;
+            }
 
-        setStep('complete');
+            const transferTx = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: stealthAddr,
+                    lamports: amountLamports,
+                })
+            );
+            const transferSig = await sendTransaction(transferTx, connection);
+            await connection.confirmTransaction(transferSig, 'confirmed');
+            setTxHashes(prev => ({ ...prev, transfer: transferSig }));
+
+            // Step 3: Unshield (self-transfer for demo)
+            setStep('unshielding');
+            const unshieldTx = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: recipient ? new PublicKey(recipient) : publicKey,
+                    lamports: amountLamports,
+                })
+            );
+            const unshieldSig = await sendTransaction(unshieldTx, connection);
+            await connection.confirmTransaction(unshieldSig, 'confirmed');
+            setTxHashes(prev => ({ ...prev, unshield: unshieldSig }));
+
+            setStep('complete');
+        } catch (err) {
+            console.error('Interop error:', err);
+            setTxHashes(prev => ({ ...prev, unshield: `error: ${err instanceof Error ? err.message : 'failed'}` }));
+            setStep('complete');
+        }
     };
 
     const steps = [

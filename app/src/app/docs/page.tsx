@@ -136,6 +136,7 @@ const sections = [
     {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: Code },
+            { id: 'stealth', title: 'Stealth Addresses', icon: Ghost },
             { id: 'nlp', title: 'Natural Language', icon: Activity },
             { id: 'eliza', title: 'Eliza Plugin', icon: Ghost },
         ]
@@ -483,6 +484,51 @@ await ashborn.transfer({
 const proof = await ashborn.proveRange({ max: 1000n });`}
                             filename="sdk-usage.ts"
                         />
+                    </section>
+
+                    {/* Stealth Addresses (ECDH) - NEW */}
+                    <section id="stealth" className="mb-20 scroll-mt-24">
+                        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                            Stealth Addresses <span className="text-xs font-normal text-green-500 font-mono border border-green-500/20 px-1.5 py-0.5 rounded bg-green-500/5">ECDH v1.1</span>
+                        </h2>
+                        <p className="text-gray-400 mb-6">
+                            Generate unlinkable one-time addresses using Vitalik&apos;s formula: <code className="text-purple-300 bg-purple-500/10 px-1 rounded">P = H(r*A)*G + B</code>
+                        </p>
+                        <CodeBlock
+                            language="typescript"
+                            code={`import { ShadowWire } from '@alleyboss/ashborn-sdk';
+
+// Recipient: Generate keypair ONCE (publish pubkeys)
+const meta = shadowWire.generateStealthMetaAddress();
+// Share: meta.viewPubKey, meta.spendPubKey
+
+// Sender: Derive stealth address for payment
+const { ephemeralPubkey, stealthPubkey } = shadowWire.generateStealthAddress(
+  recipientViewPubKey,
+  recipientSpendPubKey
+);
+// Send funds to stealthPubkey, publish ephemeralPubkey
+
+// Recipient: Scan for incoming payments
+const matches = shadowWire.scanForPayments(
+  meta.viewPrivKey,
+  meta.spendPubKey,
+  ephemeralPubkeys
+);
+
+// Recipient: Derive spending key to claim
+const spendKey = shadowWire.deriveStealthPrivateKey(
+  meta.viewPrivKey,
+  meta.spendPrivKey,
+  ephemeralPubkey
+);`}
+                            filename="stealth-ecdh.ts"
+                        />
+                        <div className="mt-4 p-4 rounded-lg bg-green-900/10 border border-green-500/20">
+                            <p className="text-sm text-green-200/80">
+                                <strong className="text-green-400">Cryptography:</strong> Uses <code className="text-green-300">@noble/curves/ed25519</code> for elliptic curve operations. Both sender and receiver remain unlinkable on-chain.
+                            </p>
+                        </div>
                     </section>
 
                     {/* Natural Language */}

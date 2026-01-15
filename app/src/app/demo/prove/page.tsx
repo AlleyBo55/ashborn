@@ -5,6 +5,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { BarChart3, CheckCircle, Loader2, AlertTriangle, Shield, EyeOff } from 'lucide-react';
 import CodeBlock from '@/components/ui/CodeBlock';
+import { useAshborn } from '@/hooks/useAshborn';
+import { randomBytes } from '@alleyboss/ashborn-sdk';
 
 // Type for snarkjs (loaded dynamically)
 declare global {
@@ -22,6 +24,7 @@ type DemoStatus = 'idle' | 'loading_snarkjs' | 'generating' | 'verifying' | 'suc
 
 export default function ProveDemoPage() {
     const { connected } = useWallet();
+    const { rangeCompliance, isReady } = useAshborn();
     const [minValue, setMinValue] = useState('0');
     const [maxValue, setMaxValue] = useState('10000');
     const [status, setStatus] = useState<DemoStatus>('idle');
@@ -39,23 +42,45 @@ export default function ProveDemoPage() {
                     script.async = true;
                     script.onload = () => setSnarkjsLoaded(true);
                     document.body.appendChild(script);
-                } catch { console.warn('Failed to load snarkjs, using demo mode'); }
+                } catch { console.warn('Failed to load snarkjs, using SDK mode'); }
             } else if (window.snarkjs) setSnarkjsLoaded(true);
         };
         loadSnarkjs();
     }, []);
 
     const handleProve = async () => {
-        setStatus('generating'); setError(null);
+        setStatus('generating');
+        setError(null);
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate proof generation
-            setProofHash(`groth16_${Math.random().toString(16).slice(2, 18)}${Math.random().toString(16).slice(2, 18)}`);
+            if (rangeCompliance && isReady) {
+                // Use real SDK to generate proof
+                const minBigInt = BigInt(parseInt(minValue) * 1_000_000); // Convert to base units
+                const maxBigInt = BigInt(parseInt(maxValue) * 1_000_000);
+                const testBalance = minBigInt + (maxBigInt - minBigInt) / BigInt(2); // Midpoint value
+                const blinding = randomBytes(32);
+
+                const proof = await rangeCompliance.generateRangeProof(
+                    testBalance,
+                    blinding,
+                    minBigInt,
+                    maxBigInt
+                );
+
+                setProofHash(`groth16_${Buffer.from(proof.proof.slice(0, 16)).toString('hex')}`);
+            } else {
+                // Fallback to simulated proof for demo without wallet
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                setProofHash(`groth16_${Math.random().toString(16).slice(2, 18)}${Math.random().toString(16).slice(2, 18)}`);
+            }
+
             setStatus('verifying');
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 800));
             setIsVerified(true);
             setStatus('success');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error');
+            console.error('Proof generation error:', err);
+            setError(err instanceof Error ? err.message : 'Proof generation failed');
             setStatus('error');
         }
     };

@@ -1,43 +1,94 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import { Bot, Banknote, CheckCircle, Loader2, Shield, ArrowRight, BarChart3, ExternalLink } from 'lucide-react';
 import CodeBlock from '@/components/ui/CodeBlock';
 import Link from 'next/link';
+import { useAshborn, getSolscanUrl } from '@/hooks/useAshborn';
+import { Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { randomBytes } from '@alleyboss/ashborn-sdk';
 
 type Step = 'idle' | 'proving' | 'lending' | 'confirming' | 'complete';
 
 export default function AILendingDemoPage() {
-    const { connected } = useWallet();
+    const { connected, publicKey, sendTransaction } = useWallet();
+    const { connection } = useConnection();
+    const { rangeCompliance, shadowWire, isReady } = useAshborn();
     const [step, setStep] = useState<Step>('idle');
     const [loanAmount, setLoanAmount] = useState('1.0');
     const [collateralRange, setCollateralRange] = useState({ min: '2', max: '10' });
     const [loanId, setLoanId] = useState<string | null>(null);
+    const [proofHash, setProofHash] = useState<string | null>(null);
+    const [txSignature, setTxSignature] = useState<string | null>(null);
 
     const resetDemo = () => {
         setStep('idle');
         setLoanId(null);
+        setProofHash(null);
+        setTxSignature(null);
     };
 
     const runLendingDemo = async () => {
-        if (!connected) return;
+        if (!connected || !publicKey || !sendTransaction) return;
 
-        // Step 1: Generate ZK collateral proof
-        setStep('proving');
-        await new Promise(r => setTimeout(r, 2500));
+        try {
+            // Step 1: Generate ZK collateral proof
+            setStep('proving');
 
-        // Step 2: Lender transfers to borrower's stealth
-        setStep('lending');
-        await new Promise(r => setTimeout(r, 2000));
+            if (rangeCompliance && isReady) {
+                const minBigInt = BigInt(parseInt(collateralRange.min) * LAMPORTS_PER_SOL);
+                const maxBigInt = BigInt(parseInt(collateralRange.max) * LAMPORTS_PER_SOL);
+                const testBalance = minBigInt + (maxBigInt - minBigInt) / BigInt(2);
+                const blinding = randomBytes(32);
 
-        // Step 3: Confirm loan
-        setStep('confirming');
-        await new Promise(r => setTimeout(r, 1000));
+                const proof = await rangeCompliance.generateRangeProof(
+                    testBalance,
+                    blinding,
+                    minBigInt,
+                    maxBigInt
+                );
+                setProofHash(`groth16_${Buffer.from(proof.proof.slice(0, 12)).toString('hex')}`);
+            } else {
+                await new Promise(r => setTimeout(r, 2000));
+                setProofHash(`groth16_${Math.random().toString(16).slice(2, 18)}`);
+            }
 
-        setLoanId(`loan_${Math.random().toString(16).slice(2, 14)}`);
-        setStep('complete');
+            // Step 2: Lender transfers to borrower's stealth (real tx)
+            setStep('lending');
+            const loanLamports = Math.floor(parseFloat(loanAmount) * LAMPORTS_PER_SOL);
+
+            // Generate stealth address if available
+            let recipientKey = publicKey; // Self-transfer for demo
+            if (shadowWire && isReady) {
+                const stealth = await shadowWire.generateStealthAddress();
+                recipientKey = stealth.stealthPubkey;
+            }
+
+            const transaction = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: recipientKey,
+                    lamports: loanLamports,
+                })
+            );
+
+            const signature = await sendTransaction(transaction, connection);
+            await connection.confirmTransaction(signature, 'confirmed');
+            setTxSignature(signature);
+
+            // Step 3: Confirm loan
+            setStep('confirming');
+            await new Promise(r => setTimeout(r, 800));
+
+            setLoanId(`loan_${signature.slice(0, 12)}`);
+            setStep('complete');
+        } catch (err) {
+            console.error('Lending error:', err);
+            setLoanId(`error_${Math.random().toString(16).slice(2, 8)}`);
+            setStep('complete');
+        }
     };
 
     const steps = [
