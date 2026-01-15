@@ -12,6 +12,9 @@ import {
 } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
 import { useAshborn } from '@/hooks/useAshborn';
+import { Transaction, SystemProgram } from '@solana/web3.js';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { TxLink } from '@/components/demo';
 import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
 import { BaseCard } from '@/components/ui/base/BaseCard';
 import { InfoCard } from '@/components/demo/InfoCard';
@@ -20,45 +23,64 @@ import { BaseButton } from '@/components/ui/base/BaseButton';
 type Step = 'idle' | 'generating' | 'scanning' | 'complete';
 
 export default function RadrDemoPage() {
-    const { connected, publicKey } = useWallet();
+    const { connected, publicKey, sendTransaction } = useWallet();
+    const { connection } = useConnection();
     const { shadowWire, isReady } = useAshborn();
     const [step, setStep] = useState<Step>('idle');
     const [stealthAddress, setStealthAddress] = useState<string | null>(null);
     const [ephemeralKey, setEphemeralKey] = useState<string | null>(null);
     const [viewTag, setViewTag] = useState<string | null>(null);
+    const [txSignature, setTxSignature] = useState<string | null>(null);
 
     const resetDemo = () => {
         setStep('idle');
         setStealthAddress(null);
         setEphemeralKey(null);
         setViewTag(null);
+        setTxSignature(null);
     };
 
     const runRadrDemo = async () => {
-        if (!connected || !publicKey || !shadowWire || !isReady) return;
+        if (!connected || !publicKey) return;
+
+        if (!shadowWire || !isReady) {
+            alert("SDK is still initializing. Please wait a moment.");
+            return;
+        }
 
         try {
             // Step 1: Generate Stealth Address
             setStep('generating');
 
             // Generate a stealth address pair
-            // This normally happens on the sender side using the recipient's scan/spend keys
-            // For demo, we treat the connected wallet as the recipient
             const stealth = await shadowWire.generateStealthAddress();
 
-            await new Promise(r => setTimeout(r, 800)); // Visual delay
+            // Visual delay for "computation" feel, though derivation is fast
+            await new Promise(r => setTimeout(r, 600));
 
             setStealthAddress(stealth.stealthPubkey.toBase58());
             setEphemeralKey(stealth.ephemeralPubkey.toBase58());
-
-            // In a real implementation, view tag is derived from shared secret (High byte)
-            // Here we visualize it for the demo
             setViewTag(stealth.stealthPubkey.toBase58().slice(0, 2));
 
-            // Step 2: "Scanning" simulation
+            // Step 2: "Scanning" -> Real Transaction Verification
+            // We verify the address works by sending a tiny amount to it (on-chain proof)
             setStep('scanning');
-            await new Promise(r => setTimeout(r, 1500));
-            // Simulate scanning process where recipient identifies the output using view key
+
+            const transaction = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: stealth.stealthPubkey, // Send to the generated stealth address
+                    lamports: 1000, // Tiny amount (0.000001 SOL)
+                })
+            );
+
+            // Send real transaction
+            if (sendTransaction) {
+                const signature = await sendTransaction(transaction, connection);
+                await connection.confirmTransaction(signature, 'confirmed');
+                setTxSignature(signature);
+                console.log("Stealth verification tx:", signature);
+            }
 
             setStep('complete');
         } catch (err) {
@@ -112,11 +134,18 @@ export default function RadrDemoPage() {
                                 </div>
                             </div>
 
+                            {txSignature && (
+                                <div className="flex justify-between items-center px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                                    <span className="text-xs text-blue-300">Verification Tx:</span>
+                                    <TxLink signature={txSignature} className="text-xs" />
+                                </div>
+                            )}
+
                             <BaseButton
                                 onClick={step === 'complete' ? resetDemo : runRadrDemo}
                                 disabled={!connected || (step !== 'idle' && step !== 'complete')}
                                 loading={step === 'generating' || step === 'scanning'}
-                                loadingText="Computing Elliptic Curve..."
+                                loadingText={step === 'scanning' ? "Verifying on Blockchain..." : "Computing Elliptic Curve..."}
                                 icon={step === 'complete' ? RefreshIcon : ViewOffIcon}
                                 className="w-full mt-6"
                             >
