@@ -20,6 +20,30 @@ Built with **real ZK proofs (Groth16)**, **Circom circuits**, **Solana Alt_bn128
 
 ---
 
+## 🤝 Powered By
+
+<p align="center">
+  <a href="https://privacy.cash" target="_blank">
+    <img src="https://img.shields.io/badge/Powered%20by-PrivacyCash-blueviolet?style=for-the-badge&logo=solana" alt="Powered by PrivacyCash" />
+  </a>
+  <a href="https://www.npmjs.com/package/@alleyboss/micropay-solana-x402-paywall" target="_blank">
+    <img src="https://img.shields.io/badge/AI%20Payments-X402%20Paywall-blue?style=for-the-badge&logo=npm" alt="X402 Paywall" />
+  </a>
+</p>
+
+### AI-to-AI Privacy Commerce Suite
+
+Ashborn integrates with **PrivacyCash** and **X402 Paywall** to enable autonomous AI agent commerce:
+
+| Demo | Path | Use Case |
+|------|------|----------|
+| **Interop** | `/demo/interop` | Shield → Stealth Transfer → Unshield |
+| **AI Payment** | `/demo/ai-payment` | Agent pays for API via X402 |
+| **AI Lending** | `/demo/ai-lending` | ZK Collateral Proofs |
+| **AI Transfer** | `/demo/ai-transfer` | Stealth + Decoy Outputs |
+
+---
+
 ## 📦 SDK Status
 
 > ✅ **PUBLISHED to npm** — The SDK is available as `@alleyboss/ashborn-sdk`.

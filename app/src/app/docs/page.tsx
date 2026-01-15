@@ -136,6 +136,7 @@ const sections = [
     {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: Code },
+            { id: 'stealth', title: 'Stealth Addresses', icon: Ghost },
             { id: 'nlp', title: 'Natural Language', icon: Activity },
             { id: 'eliza', title: 'Eliza Plugin', icon: Ghost },
         ]
@@ -308,10 +309,10 @@ export default function DocsPage() {
                     {/* Installation */}
                     <section id="installation" className="mb-20 scroll-mt-24">
                         <h2 className="text-2xl font-semibold mb-6">Installation</h2>
-                        <CodeSnippet
-                            lang="bash"
+                        <CodeBlock
+                            language="bash"
                             code="npm install @alleyboss/ashborn-sdk"
-                            label="Installation"
+                            filename="Installation"
                         />
                         <div className="mt-4 p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
                             <Activity className="w-5 h-5 text-amber-500 mt-0.5" />
@@ -329,15 +330,17 @@ export default function DocsPage() {
 
                         <div className="space-y-6">
                             <Step number="01" title="Initialize Client">
-                                <CodeSnippet
-                                    lang="typescript"
+                                <CodeBlock
+                                    language="typescript"
                                     code={`import { Ashborn } from '@alleyboss/ashborn-sdk';\n\nconst ashborn = new Ashborn(connection, wallet, {\n  network: 'devnet'\n});`}
+                                    filename="client.ts"
                                 />
                             </Step>
                             <Step number="02" title="Shield Assets">
-                                <CodeSnippet
-                                    lang="typescript"
+                                <CodeBlock
+                                    language="typescript"
                                     code={`const tx = await ashborn.shield({\n  amount: 1_000_000_000n, // 1 SOL\n  mint: SOL_MINT\n});\n\nconsole.log("Shielded:", tx.signature);`}
+                                    filename="shield.ts"
                                 />
                             </Step>
                         </div>
@@ -466,8 +469,8 @@ export default function DocsPage() {
                     <section id="sdk-core" className="mb-20 scroll-mt-24">
                         <h2 className="text-2xl font-semibold mb-6">Core SDK</h2>
                         <p className="text-gray-400 mb-6">Primary methods for interacting with the Ashborn program.</p>
-                        <CodeSnippet
-                            lang="typescript"
+                        <CodeBlock
+                            language="typescript"
                             code={`// Shield Assets
 await ashborn.shield({ amount: 1_000_000n });
 
@@ -479,8 +482,53 @@ await ashborn.transfer({
 
 // Generate Proof
 const proof = await ashborn.proveRange({ max: 1000n });`}
-                            label="sdk-usage.ts"
+                            filename="sdk-usage.ts"
                         />
+                    </section>
+
+                    {/* Stealth Addresses (ECDH) - NEW */}
+                    <section id="stealth" className="mb-20 scroll-mt-24">
+                        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                            Stealth Addresses <span className="text-xs font-normal text-green-500 font-mono border border-green-500/20 px-1.5 py-0.5 rounded bg-green-500/5">ECDH v1.1</span>
+                        </h2>
+                        <p className="text-gray-400 mb-6">
+                            Generate unlinkable one-time addresses using Vitalik&apos;s formula: <code className="text-purple-300 bg-purple-500/10 px-1 rounded">P = H(r*A)*G + B</code>
+                        </p>
+                        <CodeBlock
+                            language="typescript"
+                            code={`import { ShadowWire } from '@alleyboss/ashborn-sdk';
+
+// Recipient: Generate keypair ONCE (publish pubkeys)
+const meta = shadowWire.generateStealthMetaAddress();
+// Share: meta.viewPubKey, meta.spendPubKey
+
+// Sender: Derive stealth address for payment
+const { ephemeralPubkey, stealthPubkey } = shadowWire.generateStealthAddress(
+  recipientViewPubKey,
+  recipientSpendPubKey
+);
+// Send funds to stealthPubkey, publish ephemeralPubkey
+
+// Recipient: Scan for incoming payments
+const matches = shadowWire.scanForPayments(
+  meta.viewPrivKey,
+  meta.spendPubKey,
+  ephemeralPubkeys
+);
+
+// Recipient: Derive spending key to claim
+const spendKey = shadowWire.deriveStealthPrivateKey(
+  meta.viewPrivKey,
+  meta.spendPrivKey,
+  ephemeralPubkey
+);`}
+                            filename="stealth-ecdh.ts"
+                        />
+                        <div className="mt-4 p-4 rounded-lg bg-green-900/10 border border-green-500/20">
+                            <p className="text-sm text-green-200/80">
+                                <strong className="text-green-400">Cryptography:</strong> Uses <code className="text-green-300">@noble/curves/ed25519</code> for elliptic curve operations. Both sender and receiver remain unlinkable on-chain.
+                            </p>
+                        </div>
                     </section>
 
                     {/* Natural Language */}
@@ -505,14 +553,14 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                         <p className="text-gray-400 mb-6">
                             Drop-in integration for the Eliza agent framework. Give your AI agents a bank account they can use privately.
                         </p>
-                        <CodeSnippet
-                            lang="typescript"
+                        <CodeBlock
+                            language="typescript"
                             code={`import { AshbornPlugin } from '@alleyboss/plugin-ashborn';
 
 const agent = new Agent({
     plugins: [new AshbornPlugin()]
 });`}
-                            label="agent-config.ts"
+                            filename="agent-config.ts"
                         />
                     </section>
 
@@ -586,29 +634,4 @@ const agent = new Agent({
 
 // CodeSnippet with copy button
 
-function CodeSnippet({ lang, code, label }: any) {
-    const [copied, setCopied] = useState(false);
-    const copy = () => {
-        navigator.clipboard.writeText(code);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    return (
-        <div className="rounded-lg border border-white/10 bg-[#0E0E0E] overflow-hidden group">
-            {label && (
-                <div className="px-3 py-1.5 border-b border-white/5 flex items-center justify-between">
-                    <span className="text-xs text-gray-500 font-mono">{label}</span>
-                    <button onClick={copy} className="text-gray-500 hover:text-white transition">
-                        {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
-                    </button>
-                </div>
-            )}
-            <div className="p-4 overflow-x-auto">
-                <pre className="text-sm font-mono text-gray-300 leading-relaxed">
-                    <code>{code}</code>
-                </pre>
-            </div>
-        </div>
-    );
-}
+// CodeSnippet removed, using CodeBlock instead

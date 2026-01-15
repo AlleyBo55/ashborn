@@ -84,14 +84,36 @@ await ashborn.shield({ amount: 1_000_000_000n });
 // ✅ Only you can see your balance
 ```
 
-### 👻 Stealth Addresses
-Generate one-time addresses that can't be linked to your identity.
+### 👻 Stealth Addresses (Proper ECDH)
+Generate one-time addresses using Vitalik's stealth address formula: `P = H(r*A)*G + B`
 
 ```typescript
-const { stealthAddress, ephemeralPubkey } = 
-  await ashborn.shadowWire.generateStealthAddress(recipientViewKey);
-// ✅ Unlinkable to recipient's main wallet
-// ✅ Only recipient can spend
+// Recipient: Generate view/spend keys ONCE
+const meta = shadowWire.generateStealthMetaAddress();
+// Share meta.viewPubKey and meta.spendPubKey with senders
+
+// Sender: Generate stealth address for recipient
+const { ephemeralPubkey, stealthPubkey } = shadowWire.generateStealthAddress(
+  recipientViewPubKey,
+  recipientSpendPubKey
+);
+// ✅ Publish ephemeralPubkey with tx
+// ✅ Send funds to stealthPubkey
+
+// Recipient: Scan for incoming payments
+const matches = shadowWire.scanForPayments(
+  meta.viewPrivKey,
+  meta.spendPubKey,
+  [ephemeralPubkey1, ephemeralPubkey2, ...]
+);
+
+// Recipient: Derive spending key
+const spendKey = shadowWire.deriveStealthPrivateKey(
+  meta.viewPrivKey,
+  meta.spendPrivKey,
+  ephemeralPubkey
+);
+// ✅ Use spendKey to claim funds
 ```
 
 ### 📊 Range Proofs (Compliance-Ready)

@@ -55,6 +55,22 @@ export default function GuildAlliance() {
                             <span className="text-lg font-mono font-bold text-white tracking-widest">LIGHT</span>
                             <span className="text-lg font-mono font-thin text-gray-400">PROTOCOL</span>
                         </div>
+                        {/* PRIVACY CASH */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-xl font-bold tracking-tight text-blue-500">PRIVACY</span>
+                            <span className="text-xl font-thin tracking-tight text-white">CASH</span>
+                        </div>
+
+                        {/* RADR LABS */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-xl font-bold tracking-tight text-purple-500">RADR</span>
+                            <span className="text-xl font-thin tracking-tight text-white">LABS</span>
+                        </div>
+
+                        {/* X402 */}
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
+                            <span className="text-xl font-bold tracking-tight text-red-500">X402</span>
+                        </div>
                     </div>
                 ))}
             </motion.div>

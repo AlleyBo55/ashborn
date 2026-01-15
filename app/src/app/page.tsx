@@ -15,6 +15,9 @@ import PoweredBySolana from '@/components/ui/PoweredBySolana';
 import GuildAlliance from '@/components/landing/GuildAlliance';
 import ProtectionFeed from '@/components/landing/ProtectionFeed';
 
+import SystemCapabilities from '@/components/landing/SystemCapabilities';
+import ShadowECDHShowcase from '@/components/landing/ShadowECDHShowcase';
+
 export default function Home() {
     return (
         <main className="flex min-h-screen flex-col items-center justify-between bg-monarch-black text-white selection:bg-arise-blue selection:text-white overflow-x-hidden cursor-none">
@@ -29,6 +32,9 @@ export default function Home() {
 
                 <GuildAlliance />
 
+                {/* ECDH SHOWCASE - NEW */}
+                <ShadowECDHShowcase />
+
                 {/* System Alert - Slant Right ("Opening the wound") */}
                 <SlashSection slant="right" className="relative z-20">
                     <SystemWarning />
@@ -39,8 +45,13 @@ export default function Home() {
                     <MarketingWhy />
                 </SlashSection>
 
+                {/* SYSTEM CAPABILITIES - Viral Demo Showcase */}
+                <SlashSection slant="none" className="bg-black/50" wrapperClassName="z-30">
+                    <SystemCapabilities />
+                </SlashSection>
+
                 {/* HOW ASHBORN WORKS - Highlighted Section */}
-                <SlashSection slant="none" className="relative z-25">
+                <SlashSection slant="none" className="relative z-30">
                     <HowAshbornWorks />
                 </SlashSection>
 
