@@ -13,6 +13,8 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 
+import { AshbornProvider } from '@/context/AshbornContext';
+
 // Import wallet adapter CSS
 import '@solana/wallet-adapter-react-ui/styles.css';
 
@@ -32,7 +34,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
-                <WalletModalProvider>{children}</WalletModalProvider>
+                <WalletModalProvider>
+                    <AshbornProvider>
+                        {children}
+                    </AshbornProvider>
+                </WalletModalProvider>
             </WalletProvider>
         </ConnectionProvider>
     );

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Ghost, KEY, Lock, Shield, Zap } from 'lucide-react';
+import { GhostIcon, Key01Icon, Lock01Icon, Shield02Icon, FlashIcon } from 'hugeicons-react';
 import { useState, useEffect } from 'react';
 
 export default function ShadowECDHShowcase() {
@@ -112,7 +112,7 @@ export default function ShadowECDHShowcase() {
                             {/* Header */}
                             <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
                                 <div className="flex items-center gap-2 text-sm font-mono text-gray-500">
-                                    <Shield className="w-4 h-4" />
+                                    <Shield02Icon className="w-4 h-4" />
                                     <span>PROTOCOL::ECDH_V1</span>
                                 </div>
                                 <div className="flex gap-1.5">

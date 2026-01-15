@@ -2,7 +2,21 @@
 
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Box, Send, Shield, Bot, ArrowRight, Zap, ChevronRight, Sparkles, Eye, Lock, Users, Terminal, Activity, Ghost } from 'lucide-react';
+import {
+    Cube01Icon,
+    SentIcon,
+    Shield02Icon,
+    AiChat02Icon,
+    ArrowRight01Icon,
+    FlashIcon,
+    SparklesIcon,
+    ViewIcon,
+    Lock01Icon,
+    UserGroup01Icon,
+    CommandLine01Icon,
+    Activity01Icon,
+    GhostIcon
+} from 'hugeicons-react';
 import { useState } from 'react';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -41,7 +55,7 @@ const demos = [
         subtitle: 'STEALTH_PRIMITIVES',
         desc: "Generate unlinkable stealth addresses and ephemeral keys. The cryptographic core of private transfers.",
         href: '/demo/radr',
-        icon: Ghost,
+        icon: GhostIcon,
         gradient: 'from-purple-500 to-indigo-600',
         glow: 'shadow-[0_0_60px_rgba(139,92,246,0.3)]',
         flow: ['Gen Ephemeral Key', 'Derive Shared Secret', 'Comput Stealth Addr', 'Scan Outputs'],
@@ -55,7 +69,7 @@ const demos = [
         subtitle: 'ARISE_PROTOCOL',
         desc: "Convert public SOL into invisible Shadow Notes. Your transaction history ends here.",
         href: '/demo/shield',
-        icon: Box,
+        icon: Cube01Icon,
         gradient: 'from-blue-600 to-purple-600',
         glow: 'shadow-[0_0_60px_rgba(59,130,246,0.3)]',
         flow: ['Deposit SOL', 'Generate Commitment', 'Encrypt Note', 'Store On-Chain'],
@@ -69,7 +83,7 @@ const demos = [
         subtitle: 'STEALTH_TRANSFER',
         desc: 'Send assets with 3 decoy outputs. Graph analysis becomes mathematically impossible.',
         href: '/demo/transfer',
-        icon: Send,
+        icon: SentIcon,
         gradient: 'from-green-600 to-emerald-600',
         glow: 'shadow-[0_0_60px_rgba(34,197,94,0.3)]',
         flow: ['Enter Recipient', 'Generate Decoys', 'Nullify Old', 'Create New Note'],
@@ -83,7 +97,7 @@ const demos = [
         subtitle: 'INTEROPERABILITY',
         desc: 'Seamlessly move assets between Ashborn and PrivacyCash privacy islands.',
         href: '/demo/interop',
-        icon: Activity,
+        icon: Activity01Icon,
         gradient: 'from-cyan-500 to-blue-600',
         glow: 'shadow-[0_0_60px_rgba(6,182,212,0.3)]',
         flow: ['Shield (PrivacyCash)', 'Stealth Transfer (Ashborn)', 'Unshield (PrivacyCash)'],
@@ -97,7 +111,7 @@ const demos = [
         subtitle: 'ZK_RANGE_PROOF',
         desc: "Prove solvency without revealing balance. Auditors verify, privacy preserved.",
         href: '/demo/prove',
-        icon: Shield,
+        icon: Shield02Icon,
         gradient: 'from-amber-500 to-orange-600',
         glow: 'shadow-[0_0_60px_rgba(245,158,11,0.3)]',
         flow: ['Define Range', 'Compute Proof', 'On-Chain Verify', 'Issue Certificate'],
@@ -111,7 +125,7 @@ const demos = [
         subtitle: 'AI_COMMERCE',
         desc: 'AI Agents paying for services privately. No tracking of model usage or prompts.',
         href: '/demo/ai-payment',
-        icon: Bot,
+        icon: AiChat02Icon,
         gradient: 'from-pink-600 to-rose-600',
         glow: 'shadow-[0_0_60px_rgba(244,63,94,0.3)]',
         flow: ['Agent Request', 'PrivacyCash Pay', 'x402 Verify', 'Service Unlock'],
@@ -125,7 +139,7 @@ const demos = [
         subtitle: 'AI_AGENT_PROTOCOL',
         desc: 'Command privacy operations with natural language. Pay-per-query micropayments.',
         href: '/demo/nlp',
-        icon: Sparkles,
+        icon: SparklesIcon,
         gradient: 'from-purple-600 to-pink-600',
         glow: 'shadow-[0_0_60px_rgba(168,85,247,0.3)]',
         flow: ['Speak Intent', 'Parse Command', 'Execute Action', 'Confirm Result'],
@@ -153,7 +167,7 @@ const FlowStep = ({ step, index, total }: { step: string; index: number; total: 
         <span className="text-[10px] bg-white/5 text-gray-400 px-2 py-1 rounded border border-white/5 font-mono">
             {index + 1}. {step}
         </span>
-        {index < total - 1 && <ChevronRight className="w-3 h-3 text-gray-700" />}
+        {index < total - 1 && <ArrowRight01Icon className="w-3 h-3 text-gray-700" />}
     </div>
 );
 
@@ -199,7 +213,7 @@ const DemoCard = ({ demo, index }: { demo: typeof demos[0]; index: number }) => 
                     {/* Title */}
                     <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2 tracking-tight">
                         {demo.title}
-                        <ArrowRight className="w-4 h-4 text-gray-700 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+                        <ArrowRight01Icon className="w-4 h-4 text-gray-700 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
                     </h3>
 
                     {/* Description */}
@@ -250,7 +264,7 @@ const HowItWorksSection = () => (
     >
         <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 text-[10px] font-mono text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 mb-4">
-                <Eye className="w-3 h-3" />
+                <ViewIcon className="w-3 h-3" />
                 HOW ASHBORN WORKS
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">The Shadow Protocol</h2>
@@ -262,10 +276,10 @@ const HowItWorksSection = () => (
 
         <div className="grid md:grid-cols-4 gap-4">
             {[
-                { icon: Box, title: 'Extract', desc: 'Deposit SOL into pool', color: 'text-blue-400', num: '01' },
-                { icon: Lock, title: 'Encrypt', desc: 'Generate ZK commitment', color: 'text-purple-400', num: '02' },
-                { icon: Users, title: 'Anonymize', desc: 'Join global anonymity set', color: 'text-green-400', num: '03' },
-                { icon: Send, title: 'Command', desc: 'Spend with ZK proof', color: 'text-amber-400', num: '04' },
+                { icon: Cube01Icon, title: 'Extract', desc: 'Deposit SOL into pool', color: 'text-blue-400', num: '01' },
+                { icon: Lock01Icon, title: 'Encrypt', desc: 'Generate ZK commitment', color: 'text-purple-400', num: '02' },
+                { icon: UserGroup01Icon, title: 'Anonymize', desc: 'Join global anonymity set', color: 'text-green-400', num: '03' },
+                { icon: SentIcon, title: 'Command', desc: 'Spend with ZK proof', color: 'text-amber-400', num: '04' },
             ].map((step, i) => (
                 <motion.div
                     key={i}
@@ -282,7 +296,7 @@ const HowItWorksSection = () => (
                     </div>
                     {i < 3 && (
                         <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-10">
-                            <ChevronRight className="w-4 h-4 text-gray-800" />
+                            <ArrowRight01Icon className="w-4 h-4 text-gray-800" />
                         </div>
                     )}
                 </motion.div>
@@ -306,7 +320,7 @@ export default function DemoIndexPage() {
                     <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_10px_#4ade80]" />
                     <span className="text-green-400">DEVNET_LIVE</span>
                     <span className="text-gray-600">|</span>
-                    <Zap className="w-3 h-3 text-amber-400" />
+                    <FlashIcon className="w-3 h-3 text-amber-400" />
                     <span className="text-gray-400">INTERACTIVE_DEMOS</span>
                 </div>
 
@@ -346,7 +360,7 @@ export default function DemoIndexPage() {
             >
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <Sparkles className="w-5 h-5 text-purple-400" />
+                        <SparklesIcon className="w-5 h-5 text-purple-400" />
                         <div>
                             <div className="text-xs font-mono text-purple-300">RECOMMENDED_PATH</div>
                             <div className="text-sm text-gray-400">Start with Shadow Extraction, then try Transfer</div>
@@ -354,11 +368,11 @@ export default function DemoIndexPage() {
                     </div>
                     <div className="flex items-center gap-2 text-xs font-mono">
                         <span className="bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded border border-blue-500/30">Shield</span>
-                        <ChevronRight className="w-3 h-3 text-gray-700" />
+                        <ArrowRight01Icon className="w-3 h-3 text-gray-700" />
                         <span className="bg-green-500/20 text-green-300 px-3 py-1.5 rounded border border-green-500/30">Transfer</span>
-                        <ChevronRight className="w-3 h-3 text-gray-700" />
+                        <ArrowRight01Icon className="w-3 h-3 text-gray-700" />
                         <span className="bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded border border-amber-500/30">Prove</span>
-                        <ChevronRight className="w-3 h-3 text-gray-700" />
+                        <ArrowRight01Icon className="w-3 h-3 text-gray-700" />
                         <span className="bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded border border-purple-500/30">AI</span>
                     </div>
                 </div>
@@ -390,7 +404,7 @@ export default function DemoIndexPage() {
                         href="/docs"
                         className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-medium text-sm hover:bg-gray-200 transition-colors"
                     >
-                        <Terminal className="w-4 h-4" />
+                        <CommandLine01Icon className="w-4 h-4" />
                         View Docs
                     </Link>
                 </div>

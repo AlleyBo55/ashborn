@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FileText, EyeOff, Lock, Unlock, Database } from 'lucide-react';
+import { File02Icon, ViewOffIcon, Lock01Icon, Unlock01Icon, Database01Icon } from 'hugeicons-react';
 import { useState } from 'react';
 
 const DataLogEntry = ({
@@ -35,7 +35,7 @@ const DataLogEntry = ({
 
             <div className="relative z-10">
                 <h4 className="text-gray-200 font-bold mb-1 flex items-center gap-2">
-                    {status === 'decrypted' ? <Unlock className="w-3 h-3 text-green-500" /> : <Lock className="w-3 h-3 text-red-500" />}
+                    {status === 'decrypted' ? <Unlock01Icon className="w-3 h-3 text-green-500" /> : <Lock01Icon className="w-3 h-3 text-red-500" />}
                     {title}
                 </h4>
                 <p className={`text-xs leading-relaxed ${status === 'corrupted' ? 'text-red-400/80 blur-[0.5px]' : 'text-gray-400'}`}>
@@ -111,7 +111,7 @@ export default function MarketingWhy() {
             <div className="order-1 md:order-2 space-y-8">
                 <div className="inline-block">
                     <div className="flex items-center gap-2 mb-2">
-                        <Database className="w-4 h-4 text-purple-500" />
+                        <Database01Icon className="w-4 h-4 text-purple-500" />
                         <span className="text-xs font-mono text-purple-400 tracking-widest uppercase">Decrypted Intelligence</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
@@ -131,12 +131,12 @@ export default function MarketingWhy() {
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="border border-purple-500/20 p-4 rounded bg-purple-500/5 hover:bg-purple-500/10 transition-colors cursor-crosshair">
-                        <EyeOff className="w-6 h-6 text-purple-400 mb-2" />
+                        <ViewOffIcon className="w-6 h-6 text-purple-400 mb-2" />
                         <h3 className="text-sm font-bold text-white mb-1">Untraceable</h3>
                         <p className="text-xs text-gray-500">Graph analysis fails against ZK-proofs.</p>
                     </div>
                     <div className="border border-purple-500/20 p-4 rounded bg-purple-500/5 hover:bg-purple-500/10 transition-colors cursor-crosshair">
-                        <FileText className="w-6 h-6 text-purple-400 mb-2" />
+                        <File02Icon className="w-6 h-6 text-purple-400 mb-2" />
                         <h3 className="text-sm font-bold text-white mb-1">Auditable</h3>
                         <p className="text-xs text-gray-500">Optional view keys for compliance.</p>
                     </div>

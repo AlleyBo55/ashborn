@@ -1,7 +1,7 @@
 'use client';
 
 import { Highlight, themes } from 'prism-react-renderer';
-import { Copy, Check } from 'lucide-react';
+import { Copy01Icon, CheckmarkCircle01Icon } from 'hugeicons-react';
 import { useState } from 'react';
 
 export default function CodeBlock({ code, language = 'typescript', filename }: { code: string, language?: string, filename?: string }) {
@@ -30,7 +30,7 @@ export default function CodeBlock({ code, language = 'typescript', filename }: {
                     className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
                     title="Copy Code"
                 >
-                    {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <CheckmarkCircle01Icon className="w-3.5 h-3.5 text-green-400" /> : <Copy01Icon className="w-3.5 h-3.5" />}
                 </button>
             </div>
 

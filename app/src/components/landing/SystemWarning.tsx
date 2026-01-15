@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Eye, ShieldAlert } from 'lucide-react';
+import { ViewIcon, Shield02Icon } from 'hugeicons-react';
 
 export default function SystemWarning() {
     return (
@@ -33,8 +33,8 @@ export default function SystemWarning() {
                     <div className="mt-8 flex flex-col items-center gap-6 relative z-20">
                         <div className="relative">
                             <div className="absolute inset-0 bg-red-500 blur-2xl opacity-20 animate-pulse" />
-                            <ShieldAlert className="w-16 h-16 text-red-500 relative z-10" />
-                            <Eye className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-black animate-ping opacity-50" />
+                            <Shield02Icon className="w-16 h-16 text-red-500 relative z-10" />
+                            <ViewIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-black animate-ping opacity-50" />
                         </div>
 
                         <div className="space-y-4 max-w-2xl">

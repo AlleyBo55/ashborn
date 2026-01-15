@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Home } from 'lucide-react';
-import ClientWalletButton from '@/components/ClientWalletButton';
+import { ArrowLeft01Icon, Home01Icon } from 'hugeicons-react';
+import ClientWalletButton from '@/components/ui/ClientWalletButton';
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -17,7 +17,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
             <header className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 h-14 flex items-center justify-between px-6 lg:px-8">
                 <div className="flex items-center gap-6">
                     <Link href="/" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition group">
-                        <Home className="w-4 h-4 group-hover:text-purple-400 transition-colors" />
+                        <Home01Icon className="w-4 h-4 group-hover:text-purple-400 transition-colors" />
                         <span>Home</span>
                     </Link>
                     <span className="h-4 w-px bg-white/10" />

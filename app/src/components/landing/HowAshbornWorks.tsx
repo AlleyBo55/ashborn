@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Box, Lock, Users, Send, Eye, ChevronRight, Zap, Shield } from 'lucide-react';
+import { Cube01Icon, Lock01Icon, UserGroup01Icon, SentIcon, ViewIcon, ArrowRight01Icon, FlashIcon, Shield02Icon } from 'hugeicons-react';
 import Link from 'next/link';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -12,7 +12,7 @@ import Link from 'next/link';
 const steps = [
     {
         num: '01',
-        icon: Box,
+        icon: Cube01Icon,
         title: 'Extract',
         subtitle: 'SHIELD_PROTOCOL',
         desc: 'Deposit SOL into the Shadow Pool. Your public balance becomes a hidden ZK commitment.',
@@ -22,7 +22,7 @@ const steps = [
     },
     {
         num: '02',
-        icon: Lock,
+        icon: Lock01Icon,
         title: 'Encrypt',
         subtitle: 'ZK_COMMITMENT',
         desc: 'Generate cryptographic proof. Only you possess the private key to spend.',
@@ -32,7 +32,7 @@ const steps = [
     },
     {
         num: '03',
-        icon: Users,
+        icon: UserGroup01Icon,
         title: 'Anonymize',
         subtitle: 'ANONYMITY_SET',
         desc: 'Join the global anonymity pool. Your deposit is indistinguishable from millions.',
@@ -42,7 +42,7 @@ const steps = [
     },
     {
         num: '04',
-        icon: Send,
+        icon: SentIcon,
         title: 'Command',
         subtitle: 'SHADOW_STRIKE',
         desc: 'Spend or transfer with ZK proof. Recipient gets fresh note, no links to you.',
@@ -89,7 +89,7 @@ const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => 
         {/* Connector Arrow (hidden on last item and mobile) */}
         {index < 3 && (
             <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
-                <ChevronRight className="w-5 h-5 text-gray-800" />
+                <ArrowRight01Icon className="w-5 h-5 text-gray-800" />
             </div>
         )}
     </motion.div>
@@ -110,7 +110,7 @@ export default function HowAshbornWorks() {
             >
                 {/* Badge */}
                 <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-300 px-4 py-2 rounded-full text-xs font-mono mb-6 border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.15)]">
-                    <Eye className="w-3 h-3" />
+                    <ViewIcon className="w-3 h-3" />
                     THE_SHADOW_PROTOCOL
                 </div>
 
@@ -161,9 +161,9 @@ export default function HowAshbornWorks() {
                         href="/demo"
                         className="group flex items-center gap-3 px-6 py-3 bg-white text-black rounded-xl font-bold text-sm hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.2)]"
                     >
-                        <Zap className="w-4 h-4" />
+                        <FlashIcon className="w-4 h-4" />
                         Try Live Demo
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight01Icon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
             </motion.div>

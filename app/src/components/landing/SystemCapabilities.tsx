@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Bot, Ghost, ShieldCheck, Zap, Globe, Lock, Code, ExternalLink } from 'lucide-react';
+import { BotIcon, GhostIcon, SecurityValidationIcon, FlashIcon, Globe02Icon, Lock01Icon, CodeIcon, LinkSquare02Icon } from 'hugeicons-react';
 import Link from 'next/link';
 
 const DemoCard = ({ icon: Icon, title, desc, link, tech, color }: any) => (
@@ -13,7 +13,7 @@ const DemoCard = ({ icon: Icon, title, desc, link, tech, color }: any) => (
             <div className={`absolute inset-0 bg-${color}-500/10 blur-xl group-hover:bg-${color}-500/20 transition-all duration-500`} />
             <div className="relative h-full bg-black/40 backdrop-blur-sm border border-white/5 p-6 rounded-2xl overflow-hidden group-hover:border-white/10 transition-colors">
                 <div className={`absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity duration-500`}>
-                    <ExternalLink className="w-5 h-5 text-white" />
+                    <LinkSquare02Icon className="w-5 h-5 text-white" />
                 </div>
 
                 <div className={`w-12 h-12 rounded-full bg-${color}-500/20 flex items-center justify-center mb-6 border border-${color}-500/30 group-hover:scale-110 transition-transform duration-500`}>
@@ -83,7 +83,7 @@ export default function SystemCapabilities() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Card 1: AI Payment */}
                     <DemoCard
-                        icon={Bot}
+                        icon={BotIcon}
                         title="AI-to-AI Economy"
                         desc="Agents paying agents in total darkness. Using X402 for payment gates and Ashborn for receiver anonymity. The future of machine commerce."
                         link="/demo/ai-payment"
@@ -93,7 +93,7 @@ export default function SystemCapabilities() {
 
                     {/* Card 2: Stealth Transfer */}
                     <DemoCard
-                        icon={Ghost}
+                        icon={GhostIcon}
                         title="Shadow Transfer"
                         desc="Mathematical invisibility for P2P payments. Send SOL to anyone without revealing their main wallet. Radr Labs integration active."
                         link="/demo/transfer"
@@ -103,7 +103,7 @@ export default function SystemCapabilities() {
 
                     {/* Card 3: Compliance */}
                     <DemoCard
-                        icon={ShieldCheck}
+                        icon={SecurityValidationIcon}
                         title="Solvency Proofs"
                         desc="Prove you have funds without showing how much. Selective disclosure verified on-chain. Regulatory compliance, solved."
                         link="/demo/prove"
@@ -113,7 +113,7 @@ export default function SystemCapabilities() {
 
                     {/* Card 4: Interop */}
                     <DemoCard
-                        icon={Zap}
+                        icon={FlashIcon}
                         title="Protocol Interop"
                         desc="Seamlessly move assets between PrivacyCash pools and Ashborn stealth addresses. One shield, infinite destinations."
                         link="/demo/interop"
@@ -123,7 +123,7 @@ export default function SystemCapabilities() {
 
                     {/* Card 5: Radr Native */}
                     <DemoCard
-                        icon={Globe}
+                        icon={Globe02Icon}
                         title="Radr Labs Integration"
                         desc="Direct integration with Radr's stealth infrastructure. Ephemeral keys ensuring perfect forward secrecy for every transaction."
                         link="/demo/radr"
@@ -138,7 +138,7 @@ export default function SystemCapabilities() {
                     >
                         <div className="absolute inset-0 bg-white/5 blur-xl group-hover:bg-white/10 transition-all duration-500" />
                         <div className="relative h-full bg-gradient-to-br from-gray-900 to-black border border-dashed border-white/10 p-6 rounded-2xl flex flex-col items-center justify-center text-center group-hover:border-white/20 transition-colors">
-                            <Code className="w-12 h-12 text-gray-600 mb-4 group-hover:text-white transition-colors" />
+                            <CodeIcon className="w-12 h-12 text-gray-600 mb-4 group-hover:text-white transition-colors" />
                             <h3 className="text-xl font-bold text-gray-500 mb-2 font-mono tracking-tight group-hover:text-white transition-colors">Build The Unknown</h3>
                             <p className="text-gray-600 text-sm max-w-xs group-hover:text-gray-400 transition-colors">
                                 The SDK is open. The circuits are verified. What will you build in the shadows?

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Box, Sword, Skull, Zap } from 'lucide-react';
+import { ArrowRight01Icon, Cube01Icon, Sword01Icon, SkullIcon, FlashIcon } from 'hugeicons-react';
 import { useState, useEffect } from 'react';
 
 const ComboStep = ({
@@ -47,7 +47,7 @@ const ComboStep = ({
 
             {/* Arrow Connector */}
             {step < 3 && (
-                <ArrowRight className={`absolute -bottom-8 left-9 rotate-90 w-6 h-6 z-10 ${active ? 'text-purple-500' : 'text-gray-800'}`} />
+                <ArrowRight01Icon className={`absolute -bottom-8 left-9 rotate-90 w-6 h-6 z-10 ${active ? 'text-purple-500' : 'text-gray-800'}`} />
             )}
         </motion.div>
     );
@@ -83,7 +83,7 @@ export default function SkillCombo() {
                                 exit={{ opacity: 0, scale: 1.5, filter: "blur(10px)" }}
                                 className="text-center"
                             >
-                                <Box className="w-32 h-32 text-blue-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]" />
+                                <Cube01Icon className="w-32 h-32 text-blue-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]" />
                                 <h4 className="text-4xl font-black text-white italic">SHIELD UP</h4>
                                 <span className="text-blue-500 font-mono text-xs">ZK-PROOF GENERATED</span>
                             </motion.div>
@@ -96,7 +96,7 @@ export default function SkillCombo() {
                                 exit={{ opacity: 0, x: 100, filter: "blur(10px)" }}
                                 className="text-center"
                             >
-                                <Sword className="w-32 h-32 text-purple-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]" />
+                                <Sword01Icon className="w-32 h-32 text-purple-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]" />
                                 <h4 className="text-4xl font-black text-white italic">SHADOW STRIKE</h4>
                                 <span className="text-purple-500 font-mono text-xs">TRANSFER UNTRACEABLE</span>
                             </motion.div>
@@ -110,8 +110,8 @@ export default function SkillCombo() {
                                 className="text-center"
                             >
                                 <div className="relative">
-                                    <Skull className="w-32 h-32 text-red-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(239,68,68,0.6)]" />
-                                    <Zap className="absolute top-0 right-1/4 w-12 h-12 text-yellow-400 animate-bounce" />
+                                    <SkullIcon className="w-32 h-32 text-red-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(239,68,68,0.6)]" />
+                                    <FlashIcon className="absolute top-0 right-1/4 w-12 h-12 text-yellow-400 animate-bounce" />
                                 </div>
                                 <h4 className="text-4xl font-black text-white italic">FINISHER</h4>
                                 <span className="text-red-500 font-mono text-xs">WITHDRAW TO FIAT</span>
@@ -141,21 +141,21 @@ export default function SkillCombo() {
                         <ComboStep
                             step={1}
                             title="EXTRACT"
-                            icon={Box}
+                            icon={Cube01Icon}
                             desc="Deposit assets into the Shadow Domain. Convert public tokens into shadow notes via ZK-SNARKs."
                             active={activeStep === 1}
                         />
                         <ComboStep
                             step={2}
                             title="STRIKE"
-                            icon={Sword}
+                            icon={Sword01Icon}
                             desc="Send assets internally. Zero on-chain footprints. The recipient's stealth address is the only destination."
                             active={activeStep === 2}
                         />
                         <ComboStep
                             step={3}
                             title="ARISE"
-                            icon={Skull}
+                            icon={SkullIcon}
                             desc="Withdraw to a fresh wallet. The link between source and destination is permanently severed."
                             active={activeStep === 3}
                         />
