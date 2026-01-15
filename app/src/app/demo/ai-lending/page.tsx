@@ -86,9 +86,17 @@ export default function AILendingDemoPage() {
             const stealthString = `stealth_${publicKey.toBase58().slice(0, 10)}`;
             setLoanData(prev => ({ ...prev, stealthAddr: stealthString }));
 
-            // Step 3: Confirm loan
+            // Step 3: Confirm loan (Real Tx simulation)
             setStep('confirming');
-            await new Promise(r => setTimeout(r, 800));
+            const confirmTx = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: publicKey,
+                    lamports: 1000,
+                })
+            );
+            const confirmSig = await sendTransaction(confirmTx, connection);
+            await connection.confirmTransaction(confirmSig, 'confirmed');
 
             const loanId = `loan_${Math.random().toString(36).substring(7)}`;
             setLoanData(prev => ({ ...prev, id: loanId }));

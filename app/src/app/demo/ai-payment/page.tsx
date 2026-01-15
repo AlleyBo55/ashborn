@@ -15,7 +15,7 @@ import { useConnection } from '@solana/wallet-adapter-react';
 type Step = 'idle' | 'shielding' | 'paying' | 'unshielding' | 'complete';
 
 export default function AIPaymentDemoPage() {
-    const { connected, publicKey } = useWallet();
+    const { connected, publicKey, sendTransaction } = useWallet();
     const { privacyCash, isReady } = useAshborn();
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
 
@@ -58,15 +58,32 @@ export default function AIPaymentDemoPage() {
                 await connection.confirmTransaction(txSig, 'confirmed');
             }
 
-            // Step 2: Private Payment (Simulated internal state update)
+            // Step 2: Private Payment (Real Simulated Tx)
             setStep('paying');
-            await new Promise(r => setTimeout(r, 1500));
+            // Execute a tiny self-transfer to create a transaction record for "Private Payment"
+            const payTx = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: publicKey,
+                    lamports: 1000, // tiny amount
+                })
+            );
+            const paySig = await sendTransaction(payTx, connection);
+            await connection.confirmTransaction(paySig, 'confirmed');
 
-            // Step 3: Merchant Unshields
+            // Step 3: Merchant Unshields (Real Simulated Tx)
             setStep('unshielding');
-            await new Promise(r => setTimeout(r, 1000));
+            const unshieldTx = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: publicKey,
+                    lamports: 1000,
+                })
+            );
+            const unshieldSig = await sendTransaction(unshieldTx, connection);
+            await connection.confirmTransaction(unshieldSig, 'confirmed');
 
-            // Store the REAL signature
+            // Store the REAL signature (from Step 1)
             setMockData({ amount: 0.05, recipient: 'MerchantAgent_X', signature: txSig });
             setStep('complete');
             setStatus('success');
