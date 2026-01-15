@@ -6,11 +6,12 @@ import { clsx } from 'clsx';
 interface SlashSectionProps {
     children: React.ReactNode;
     className?: string;
+    wrapperClassName?: string;
     slant?: 'left' | 'right' | 'none';
     delay?: number;
 }
 
-export default function SlashSection({ children, className, slant = 'none', delay = 0 }: SlashSectionProps) {
+export default function SlashSection({ children, className, wrapperClassName, slant = 'none', delay = 0 }: SlashSectionProps) {
 
     // Slant Styles using clip-path
     // Adjusted to be less aggressive to prevent "broken" look
@@ -28,7 +29,7 @@ export default function SlashSection({ children, className, slant = 'none', dela
     };
 
     return (
-        <div className={clsx("relative w-full z-10", margins[slant])}>
+        <div className={clsx("relative w-full z-10", margins[slant], wrapperClassName)}>
             {/* Background Container having the slant */}
             <div
                 className="absolute inset-0 bg-monarch-black/40 backdrop-blur-md z-0 border-b border-arise-blue/10"

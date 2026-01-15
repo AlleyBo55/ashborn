@@ -46,7 +46,7 @@ export default function Home() {
                 </SlashSection>
 
                 {/* SYSTEM CAPABILITIES - Viral Demo Showcase */}
-                <SlashSection slant="none" className="relative z-40 bg-black/50">
+                <SlashSection slant="none" className="bg-black/50" wrapperClassName="z-30">
                     <SystemCapabilities />
                 </SlashSection>
 
