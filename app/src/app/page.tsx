@@ -16,6 +16,7 @@ import GuildAlliance from '@/components/landing/GuildAlliance';
 import ProtectionFeed from '@/components/landing/ProtectionFeed';
 
 import SystemCapabilities from '@/components/landing/SystemCapabilities';
+import ShadowECDHShowcase from '@/components/landing/ShadowECDHShowcase';
 
 export default function Home() {
     return (
@@ -30,6 +31,9 @@ export default function Home() {
                 <ParallaxHero />
 
                 <GuildAlliance />
+
+                {/* ECDH SHOWCASE - NEW */}
+                <ShadowECDHShowcase />
 
                 {/* System Alert - Slant Right ("Opening the wound") */}
                 <SlashSection slant="right" className="relative z-20">
