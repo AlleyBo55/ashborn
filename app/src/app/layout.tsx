@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import '@/styles/nprogress.css';
-import { Providers } from '@/components/Providers';
+import { Providers } from '@/components/providers/Providers';
 import { Suspense } from 'react';
-import NavigationProgress from '@/components/NavigationProgress';
+import NavigationProgress from '@/components/ui/NavigationProgress';
 
 export const metadata: Metadata = {
     title: 'Ashborn | Compliant Private Payment Protocol on Solana',
