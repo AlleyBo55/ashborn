@@ -58,7 +58,7 @@ export function useAshborn(): UseAshbornResult {
 
         try {
             const ashbornInstance = new Ashborn(connection, wallet, {
-                programId: new PublicKey('ASHByNYwKq8NJFgLbQPePnM4hmg57rPyMY1cFk44bpW8'), // Devnet program
+                // programId will use default from SDK (BzBU...)
             });
 
             const shadowWireInstance = new ShadowWire(connection, wallet);
