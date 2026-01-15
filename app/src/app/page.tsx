@@ -46,12 +46,12 @@ export default function Home() {
                 </SlashSection>
 
                 {/* SYSTEM CAPABILITIES - Viral Demo Showcase */}
-                <SlashSection slant="none" className="relative z-25 bg-black/50">
+                <SlashSection slant="none" className="relative z-40 bg-black/50">
                     <SystemCapabilities />
                 </SlashSection>
 
                 {/* HOW ASHBORN WORKS - Highlighted Section */}
-                <SlashSection slant="none" className="relative z-25">
+                <SlashSection slant="none" className="relative z-30">
                     <HowAshbornWorks />
                 </SlashSection>
 
