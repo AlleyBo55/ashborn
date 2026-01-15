@@ -12,7 +12,7 @@ describe("ashborn", () => {
   anchor.setProvider(provider);
 
   // Program ID (update after deployment)
-  const programId = new PublicKey("ASHBrnShdwMnrch1111111111111111111111111");
+  const programId = new PublicKey("BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe");
 
   // Test accounts
   const owner = provider.wallet;

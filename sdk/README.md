@@ -226,7 +226,7 @@ const ashborn = new Ashborn(connection, wallet, {
 
 | Network | Status | Program ID |
 |---------|--------|------------|
-| Devnet | ✅ Ready | `ASHBrn...` |
+| Devnet | ✅ Ready | `BzBU...5Qe` |
 | Mainnet | 🔜 Coming | TBD |
 
 ---
