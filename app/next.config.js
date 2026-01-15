@@ -33,6 +33,13 @@ const nextConfig = {
       asyncWebAssembly: true,
       layers: true,
     };
+
+    // Force privacycash to resolve from app's node_modules (fixes SDK transitive dependency issue)
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'privacycash': require.resolve('privacycash'),
+    };
+
     return config;
   },
   // Optimize for Solana web3.js
