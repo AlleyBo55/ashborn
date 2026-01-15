@@ -1,9 +1,16 @@
 const webpack = require('webpack');
+const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config, { isServer }) => {
+    // Force alias for privacycash to avoid resolution errors
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'privacycash': path.resolve(__dirname, 'node_modules/privacycash/dist/index.js')
+    };
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,

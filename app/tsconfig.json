@@ -24,6 +24,9 @@
         "paths": {
             "@/*": [
                 "./src/*"
+            ],
+            "privacycash": [
+                "./node_modules/privacycash/dist/index.d.ts"
             ]
         }
     },
