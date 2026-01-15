@@ -1,22 +1,26 @@
-import CinematicHero from '@/components/landing/CinematicHero';
-import ParallaxHero from '@/components/landing/ParallaxHero';
-import SystemWarning from '@/components/landing/SystemWarning';
-import SkillCombo from '@/components/landing/SkillCombo';
-import Comparison from '@/components/landing/Comparison';
-import MarketingArsenal from '@/components/landing/MarketingArsenal';
-import MarketingWhy from '@/components/landing/MarketingWhy';
-import HowAshbornWorks from '@/components/landing/HowAshbornWorks';
-import ShadowCursor from '@/components/ui/ShadowCursor';
-import SystemToast from '@/components/ui/SystemToast';
-import PortalTransition from '@/components/ui/PortalTransition';
-import SlashSection from '@/components/ui/SlashSection';
-import MonarchAmbience from '@/components/ui/MonarchAmbience';
-import PoweredBySolana from '@/components/ui/PoweredBySolana';
-import GuildAlliance from '@/components/landing/GuildAlliance';
-import ProtectionFeed from '@/components/landing/ProtectionFeed';
+import dynamic from 'next/dynamic';
 
-import SystemCapabilities from '@/components/landing/SystemCapabilities';
-import ShadowECDHShowcase from '@/components/landing/ShadowECDHShowcase';
+// Static imports for critical above-the-fold content only
+import SlashSection from '@/components/ui/SlashSection';
+import PoweredBySolana from '@/components/ui/PoweredBySolana';
+
+// Dynamic imports for heavy components - load only when needed
+const ParallaxHero = dynamic(() => import('@/components/landing/ParallaxHero'), { ssr: true });
+const SystemWarning = dynamic(() => import('@/components/landing/SystemWarning'), { ssr: true });
+const SkillCombo = dynamic(() => import('@/components/landing/SkillCombo'), { ssr: true });
+const Comparison = dynamic(() => import('@/components/landing/Comparison'), { ssr: true });
+const MarketingArsenal = dynamic(() => import('@/components/landing/MarketingArsenal'), { ssr: true });
+const MarketingWhy = dynamic(() => import('@/components/landing/MarketingWhy'), { ssr: true });
+const HowAshbornWorks = dynamic(() => import('@/components/landing/HowAshbornWorks'), { ssr: true });
+const GuildAlliance = dynamic(() => import('@/components/landing/GuildAlliance'), { ssr: true });
+const SystemCapabilities = dynamic(() => import('@/components/landing/SystemCapabilities'), { ssr: true });
+const ShadowECDHShowcase = dynamic(() => import('@/components/landing/ShadowECDHShowcase'), { ssr: true });
+
+// Non-critical UI effects - load client-side only
+const ShadowCursor = dynamic(() => import('@/components/ui/ShadowCursor'), { ssr: false });
+const SystemToast = dynamic(() => import('@/components/ui/SystemToast'), { ssr: false });
+const PortalTransition = dynamic(() => import('@/components/ui/PortalTransition'), { ssr: false });
+const MonarchAmbience = dynamic(() => import('@/components/ui/MonarchAmbience'), { ssr: false });
 
 export default function Home() {
     return (
