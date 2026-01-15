@@ -52,10 +52,26 @@ export default function RadrDemoPage() {
             // Step 1: Generate Stealth Address
             setStep('generating');
 
-            // Generate a stealth address pair
-            const stealth = await shadowWire.generateStealthAddress();
+            // Implementation note: The SDK's random scalar generation might occasionally produce
+            // an invalid scalar (0 or >= curve order). We implement a retry mechanism here.
+            let stealth: any = null;
+            let attempts = 0;
+            const maxAttempts = 5;
 
-            // Visual delay for "computation" feel, though derivation is fast
+            while (!stealth && attempts < maxAttempts) {
+                try {
+                    attempts++;
+                    stealth = await shadowWire.generateStealthAddress();
+                } catch (e: any) {
+                    console.warn(`Attempt ${attempts} failed:`, e.message);
+                    if (attempts === maxAttempts) throw e;
+                    await new Promise(r => setTimeout(r, 200)); // Small backoff
+                }
+            }
+
+            if (!stealth) throw new Error("Failed to generate stealth address after retries");
+
+            // Visual delay for "computation" feel
             await new Promise(r => setTimeout(r, 600));
 
             setStealthAddress(stealth.stealthPubkey.toBase58());
