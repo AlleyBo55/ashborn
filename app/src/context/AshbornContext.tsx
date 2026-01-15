@@ -113,10 +113,11 @@ export function AshbornProvider({ children }: { children: ReactNode }) {
         import('@alleyboss/ashborn-sdk/integrations').then((Integrations) => {
             if (cancelled) return;
             try {
+                // PrivacyCash SDK expects a Keypair, use the payer from walletAdapter
                 const instance = new Integrations.PrivacyCashOfficial({
                     rpcUrl: connection.rpcEndpoint,
-                    owner: walletAdapter,
-                    // PrivacyCash devnet deployment by @alleyboss from official Privacy-Cash/privacy-cash-sdk
+                    owner: walletAdapter.payer,
+                    // PrivacyCash devnet deployment by @alleyboss from official Privacy-Cash/privacy-cash
                     programId: 'ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS',
                 });
                 setPrivacyCash(instance);
