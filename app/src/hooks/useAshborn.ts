@@ -3,21 +3,19 @@
 /**
  * useAshborn Hook - Shared SDK initialization for demo pages
  * 
- * Provides initialized Ashborn, ShadowWire, and RangeCompliance instances
- * connected to the user's wallet on Solana devnet.
+ * Uses DYNAMIC IMPORTS to lazy-load the heavy SDK only when wallet connects.
+ * This dramatically reduces initial bundle size and improves navigation speed.
  */
 
-import { useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, PublicKey } from '@solana/web3.js';
-import { Wallet } from '@coral-xyz/anchor';
-import {
-    Ashborn,
-    ShadowWire,
-    RangeCompliance,
-    PrivacyCashOfficial,
-    createRangeCompliance,
-} from '@alleyboss/ashborn-sdk';
+
+// Types only - these don't bloat the bundle
+type Ashborn = any;
+type ShadowWire = any;
+type RangeCompliance = any;
+type PrivacyCashOfficial = any;
 
 interface UseAshbornResult {
     ashborn: Ashborn | null;
@@ -25,63 +23,74 @@ interface UseAshbornResult {
     rangeCompliance: RangeCompliance | null;
     privacyCash: PrivacyCashOfficial | null;
     isReady: boolean;
+    isLoading: boolean;
 }
 
 /**
- * Custom hook for Ashborn SDK initialization
+ * Custom hook for Ashborn SDK initialization with LAZY LOADING
  * 
- * Usage:
- * ```tsx
- * const { ashborn, shadowWire, rangeCompliance, privacyCash, isReady } = useAshborn();
- * 
- * if (isReady && ashborn) {
- *   await ashborn.shield({ amount: 1_000_000_000n, mint: SOL_MINT });
- * }
- * ```
+ * The SDK is only loaded when the wallet connects, reducing initial bundle by ~500KB+
  */
 export function useAshborn(): UseAshbornResult {
     const { connection } = useConnection();
     const { publicKey, signTransaction, signAllTransactions, connected } = useWallet();
 
-    const { ashborn, shadowWire, rangeCompliance, privacyCash } = useMemo(() => {
+    const [ashborn, setAshborn] = useState<Ashborn | null>(null);
+    const [shadowWire, setShadowWire] = useState<ShadowWire | null>(null);
+    const [rangeCompliance, setRangeCompliance] = useState<RangeCompliance | null>(null);
+    const [privacyCash, setPrivacyCash] = useState<PrivacyCashOfficial | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        // Only load SDK when wallet is connected
         if (!connected || !publicKey || !signTransaction || !signAllTransactions) {
-            return { ashborn: null, shadowWire: null, rangeCompliance: null, privacyCash: null };
+            setAshborn(null);
+            setShadowWire(null);
+            setRangeCompliance(null);
+            setPrivacyCash(null);
+            return;
         }
 
-        // Create a wallet adapter compatible with Anchor's Wallet interface
-        const wallet: Wallet = {
-            publicKey,
-            signTransaction,
-            signAllTransactions,
-            payer: Keypair.generate(), // Placeholder - not used for signing
+        let cancelled = false;
+        setIsLoading(true);
+
+        // Dynamic import - SDK loads only now!
+        import('@alleyboss/ashborn-sdk').then((SDK) => {
+            if (cancelled) return;
+
+            try {
+                const wallet = {
+                    publicKey,
+                    signTransaction,
+                    signAllTransactions,
+                    payer: Keypair.generate(),
+                };
+
+                const ashbornInstance = new SDK.Ashborn(connection, wallet, {});
+                const shadowWireInstance = new SDK.ShadowWire(connection, wallet);
+                const rangeComplianceInstance = SDK.createRangeCompliance(connection, { publicKey });
+                const privacyCashInstance = new SDK.PrivacyCashOfficial({
+                    rpcUrl: connection.rpcEndpoint,
+                    owner: Keypair.generate(),
+                });
+
+                setAshborn(ashbornInstance);
+                setShadowWire(shadowWireInstance);
+                setRangeCompliance(rangeComplianceInstance);
+                setPrivacyCash(privacyCashInstance);
+            } catch (error) {
+                console.error('Failed to initialize Ashborn SDK:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }).catch((error) => {
+            console.error('Failed to load Ashborn SDK:', error);
+            setIsLoading(false);
+        });
+
+        return () => {
+            cancelled = true;
         };
-
-        try {
-            const ashbornInstance = new Ashborn(connection, wallet, {
-                // programId will use default from SDK (BzBU...)
-            });
-
-            const shadowWireInstance = new ShadowWire(connection, wallet);
-            const rangeComplianceInstance = createRangeCompliance(connection, {
-                publicKey,
-            });
-
-            // Initialize PrivacyCashOfficial adapter
-            const privacyCashInstance = new PrivacyCashOfficial({
-                rpcUrl: connection.rpcEndpoint,
-                owner: Keypair.generate() // PrivacyCash usually requires a keypair for owner, but we use adapter for public methods
-            });
-
-            return {
-                ashborn: ashbornInstance,
-                shadowWire: shadowWireInstance,
-                rangeCompliance: rangeComplianceInstance,
-                privacyCash: privacyCashInstance,
-            };
-        } catch (error) {
-            console.error('Failed to initialize Ashborn SDK:', error);
-            return { ashborn: null, shadowWire: null, rangeCompliance: null, privacyCash: null };
-        }
     }, [connection, publicKey, signTransaction, signAllTransactions, connected]);
 
     return {
@@ -89,7 +98,8 @@ export function useAshborn(): UseAshbornResult {
         shadowWire,
         rangeCompliance,
         privacyCash,
-        isReady: connected && !!ashborn,
+        isReady: connected && !!ashborn && !isLoading,
+        isLoading,
     };
 }
 
