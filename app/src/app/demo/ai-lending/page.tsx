@@ -303,8 +303,6 @@ if (isValid) {
                     filename="ai-lending.ts"
                 />
             </motion.div>
-        </motion.div>
-
-                </div >
+        </div>
     );
 }
