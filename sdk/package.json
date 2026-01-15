@@ -1,6 +1,6 @@
 {
   "name": "@alleyboss/ashborn-sdk",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The Shadow Monarch SDK - Universal Privacy Layer for Solana with ZK proofs, stealth addresses, and selective disclosure",
   "author": "AlleyBo55",
   "repository": {
