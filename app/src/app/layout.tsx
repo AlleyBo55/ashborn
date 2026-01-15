@@ -1,9 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import '@/styles/nprogress.css';
 import { Providers } from '@/components/providers/Providers';
 import { Suspense } from 'react';
 import NavigationProgress from '@/components/ui/NavigationProgress';
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+};
 
 export const metadata: Metadata = {
     title: 'Ashborn | Compliant Private Payment Protocol on Solana',
@@ -23,8 +29,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
-            <body className="font-sans">
+        <html lang="en" className="overflow-x-hidden">
+            <body className="font-sans overflow-x-hidden">
                 <Suspense fallback={null}>
                     <NavigationProgress />
                 </Suspense>
@@ -33,7 +39,7 @@ export default function RootLayout({
                     <div className="shadow-glow-bg" />
 
                     {/* Main content */}
-                    <main className="relative z-10 min-h-screen">
+                    <main className="relative z-10 min-h-screen overflow-x-hidden">
                         {children}
                     </main>
                 </Providers>

@@ -22,7 +22,17 @@ const PartnerLogo = ({ name, type = "text", path, viewBox = "0 0 24 24" }: { nam
 
 export default function GuildAlliance() {
     return (
-        <section className="relative w-full py-8 border-y border-white/5 bg-black/60 backdrop-blur-md overflow-hidden">
+        <section className="relative w-full py-12 border-y border-white/5 bg-black/60 backdrop-blur-md overflow-hidden">
+            {/* Title */}
+            <div className="text-center mb-8 px-4">
+                <h3 className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">ASHBORN ARCHITECTURE</h3>
+                <p className="text-sm text-gray-400 max-w-2xl mx-auto">
+                    <span className="text-red-400 font-semibold">Ashborn</span> = On-chain ZK program + SDK. 
+                    Integrates <span className="text-purple-400 font-semibold">Radr</span> stealth addresses + 
+                    <span className="text-blue-400 font-semibold"> PrivacyCash</span> pools + adds compliance proofs.
+                </p>
+            </div>
+
             <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 pointer-events-none" />
 
             <motion.div

@@ -17,7 +17,7 @@ type Step = 'idle' | 'shielding' | 'transferring' | 'unshielding' | 'complete';
 export default function InteropDemoPage() {
     const { connected, publicKey, sendTransaction } = useWallet();
     const { connection } = useConnection();
-    const { shadowWire, isReady } = useAshborn();
+    const { shadowWire, privacyCash, isReady } = useAshborn();
 
     // Status
     const [step, setStep] = useState<Step>('idle');
@@ -34,65 +34,56 @@ export default function InteropDemoPage() {
     };
 
     const runInteropDemo = async () => {
-        if (!connected || !publicKey || !sendTransaction) return;
+        if (!connected || !publicKey || !sendTransaction) {
+            console.log('Not ready:', { connected, publicKey: !!publicKey, sendTransaction: !!sendTransaction });
+            return;
+        }
+
+        console.log('Starting interop demo...');
 
         try {
             setStatus('loading');
             const amountLamports = Math.floor(parseFloat(amount) * LAMPORTS_PER_SOL);
+            const recipientPubkey = recipient ? new PublicKey(recipient) : publicKey;
 
-            // Step 1: Shield via PrivacyCash (real tx) OR fallback
+            // Step 1: Shield (to self - simulates pool deposit)
             setStep('shielding');
-            let shieldSig = '';
-
-            // Try to use privacyCash if available, else simple transfer
-            if (privacyCash && isReady && false) { // Skip real privacyShield for now to keep demo fast/reliable unless tested
-                // For interop smoothness, let's use sendTransaction as the "Shield" action proxy
-                // so user sees a real wallet popap.
-                // Real privacy cash might need CPI which is fine but let's stick to standard transfer for reliability
-                // if the environment isn't fully set up with prover keys.
-            }
-
-            // Check if we can do a real transfer as proxy
             const tx1 = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: publicKey,
-                    toPubkey: publicKey, // Self for demo
+                    toPubkey: publicKey,
                     lamports: amountLamports,
                 })
             );
-            shieldSig = await sendTransaction(tx1, connection);
+            const shieldSig = await sendTransaction(tx1, connection);
             await connection.confirmTransaction(shieldSig, 'confirmed');
-
             setTxHashes(prev => ({ ...prev, shield: shieldSig }));
 
-            // Step 2: Transfer (simulated delay or another real tx)
+            // Step 2: Stealth Transfer (to generated stealth address)
             setStep('transferring');
-            // Let's do another real tx for "Transfer" to show activity
+            const stealth = await shadowWire.generateStealthAddress();
             const tx2 = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: publicKey,
-                    toPubkey: publicKey,
-                    lamports: Math.floor(amountLamports * 0.9), // simulate fee
+                    toPubkey: stealth.stealthPubkey,
+                    lamports: amountLamports,
                 })
             );
             const transferSig = await sendTransaction(tx2, connection);
             await connection.confirmTransaction(transferSig, 'confirmed');
-
             setTxHashes(prev => ({ ...prev, transfer: transferSig }));
 
-            // Step 3: Unshield
+            // Step 3: Unshield (to final recipient)
             setStep('unshielding');
-            // Unshielding usually automatic or separate. Let's do one last tx.
             const tx3 = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: publicKey,
-                    toPubkey: publicKey, // Self for demo
-                    lamports: Math.floor(amountLamports * 0.9),
+                    toPubkey: recipientPubkey,
+                    lamports: amountLamports,
                 })
             );
             const unshieldSig = await sendTransaction(tx3, connection);
             await connection.confirmTransaction(unshieldSig, 'confirmed');
-
             setTxHashes(prev => ({ ...prev, unshield: unshieldSig }));
 
             setStep('complete');
@@ -210,18 +201,21 @@ export default function InteropDemoPage() {
                         }
                         privateView={
                             <div>
-                                <div className="text-gray-500 text-xs mb-1">Private Flow</div>
+                                <div className="text-gray-500 text-xs mb-1">Private Flow (Simulated)</div>
                                 <div className="text-xs space-y-2">
                                     <div className="flex items-center gap-2 text-blue-300">
-                                        <Shield02Icon className="w-3 h-3" /> Shielded 0.01 SOL
+                                        <Shield02Icon className="w-3 h-3" /> Shielded {amount} SOL → PrivacyCash Pool
                                     </div>
                                     <div className="flex justify-center text-gray-600">↓</div>
                                     <div className="flex items-center gap-2 text-purple-300 bg-purple-500/10 p-1 rounded">
-                                        <SentIcon className="w-3 h-3" /> Stealth Transfer (Internal)
+                                        <SentIcon className="w-3 h-3" /> Stealth Transfer → Unlinkable Address
                                     </div>
                                     <div className="flex justify-center text-gray-600">↓</div>
                                     <div className="flex items-center gap-2 text-green-300">
-                                        <Coins01Icon className="w-3 h-3" /> Unshielded to Recipient
+                                        <Coins01Icon className="w-3 h-3" /> Unshielded → {recipient || 'Self'}
+                                    </div>
+                                    <div className="mt-3 p-2 bg-amber-500/10 border border-amber-500/20 rounded text-amber-300 text-[10px]">
+                                        ⚠️ Demo simulation: Real PrivacyCash requires mainnet. Stealth addresses are real (step 2).
                                     </div>
                                 </div>
                             </div>
@@ -244,7 +238,7 @@ export default function InteropDemoPage() {
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:outline-none font-mono"
-                                disabled={step !== 'idle'}
+                                disabled={isLoading}
                             />
                         </div>
                         <div>
@@ -255,7 +249,7 @@ export default function InteropDemoPage() {
                                 onChange={(e) => setRecipient(e.target.value)}
                                 placeholder="Defaults to self"
                                 className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:outline-none font-mono placeholder:text-gray-600"
-                                disabled={step !== 'idle'}
+                                disabled={isLoading}
                             />
                         </div>
                     </div>
@@ -282,12 +276,19 @@ export default function InteropDemoPage() {
                 <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
                 <CodeBlock
                     language="typescript"
-                    code={`import { Ashborn, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
+                    code={`import { ShadowWire, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
 
-// Interoperability Flow
-await privacyCash.shieldSOL(0.1); // 1. Shield
-await ashborn.shadowTransfer({...}); // 2. Stealth Transfer
-await privacyCash.unshieldSOL(0.1); // 3. Unshield`}
+// 1. Shield: Deposit to PrivacyCash pool
+const shieldResult = await privacyCash.shieldSOL(0.1);
+
+// 2. Generate stealth address for recipient
+const stealth = await shadowWire.generateStealthAddress();
+
+// 3. Send to stealth address (unlinkable)
+await sendTransaction(transfer(stealth.stealthPubkey, amount));
+
+// 4. Unshield: Withdraw from pool to final recipient
+const unshieldResult = await privacyCash.unshieldSOL(0.1, recipient);`}
                     filename="interop.ts"
                 />
             </motion.div>

@@ -115,7 +115,7 @@ export function AshbornProvider({ children }: { children: ReactNode }) {
             try {
                 const instance = new Integrations.PrivacyCashOfficial({
                     rpcUrl: connection.rpcEndpoint,
-                    owner: Keypair.generate(),
+                    owner: walletAdapter,
                 });
                 setPrivacyCash(instance);
             } catch (e) {

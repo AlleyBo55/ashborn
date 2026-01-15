@@ -403,10 +403,10 @@ export default function ParallaxHero() {
                     transition={{ delay: 1, duration: 1 }}
                     className="text-center pointer-events-auto"
                 >
-                    <div className="flex gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-4 sm:px-0">
                         <a
                             href="/demo"
-                            className="group relative px-8 py-4 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400 flex items-center gap-3"
+                            className="group relative px-8 py-4 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400 flex items-center justify-center gap-3"
                         >
                             <PlayIcon className="w-4 h-4 fill-current animate-pulse" />
                             <span>Launch Demo</span>
@@ -414,7 +414,7 @@ export default function ParallaxHero() {
                         </a>
                         <a
                             href="/docs"
-                            className="group relative px-8 py-4 bg-black/40 border border-white/10 text-gray-400 font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-md rounded-sm hover:border-white/30 flex items-center gap-3"
+                            className="group relative px-8 py-4 bg-black/40 border border-white/10 text-gray-400 font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-md rounded-sm hover:border-white/30 flex items-center justify-center gap-3"
                         >
                             <ConsoleIcon className="w-4 h-4" />
                             <span>Documentation</span>

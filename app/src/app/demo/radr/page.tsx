@@ -52,8 +52,6 @@ export default function RadrDemoPage() {
             // Step 1: Generate Stealth Address
             setStep('generating');
 
-            // Implementation note: The SDK's random scalar generation might occasionally produce
-            // an invalid scalar (0 or >= curve order). We implement a retry mechanism here.
             let stealth: any = null;
             let attempts = 0;
             const maxAttempts = 5;
@@ -65,43 +63,56 @@ export default function RadrDemoPage() {
                 } catch (e: any) {
                     console.warn(`Attempt ${attempts} failed:`, e.message);
                     if (attempts === maxAttempts) throw e;
-                    await new Promise(r => setTimeout(r, 200)); // Small backoff
+                    await new Promise(r => setTimeout(r, 200));
                 }
             }
 
             if (!stealth) throw new Error("Failed to generate stealth address after retries");
 
-            // Visual delay for "computation" feel
             await new Promise(r => setTimeout(r, 600));
 
             setStealthAddress(stealth.stealthPubkey.toBase58());
             setEphemeralKey(stealth.ephemeralPubkey.toBase58());
             setViewTag(stealth.stealthPubkey.toBase58().slice(0, 2));
-
-            // Step 2: "Scanning" -> Real Transaction Verification
-            // We verify the address works by sending a tiny amount to it (on-chain proof)
-            setStep('scanning');
-
-            const transaction = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: stealth.stealthPubkey, // Send to the generated stealth address
-                    lamports: 1000, // Tiny amount (0.000001 SOL)
-                })
-            );
-
-            // Send real transaction
-            if (sendTransaction) {
-                const signature = await sendTransaction(transaction, connection);
-                await connection.confirmTransaction(signature, 'confirmed');
-                setTxSignature(signature);
-                console.log("Stealth verification tx:", signature);
-            }
-
             setStep('complete');
+
         } catch (err) {
             console.error('Radr Demo Error:', err);
             setStep('idle');
+        }
+    };
+
+    const verifyOnChain = async () => {
+        if (!connected || !publicKey || !stealthAddress) return;
+
+        try {
+            setStep('scanning');
+
+            const { PublicKey } = await import('@solana/web3.js');
+            const transaction = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: new PublicKey(stealthAddress),
+                    lamports: 1000,
+                })
+            );
+
+            const { blockhash } = await connection.getLatestBlockhash();
+            transaction.recentBlockhash = blockhash;
+            transaction.feePayer = publicKey;
+
+            if (sendTransaction) {
+                const signature = await sendTransaction(transaction, connection);
+                console.log('Transaction sent:', signature);
+                await connection.confirmTransaction(signature, 'confirmed');
+                setTxSignature(signature);
+            }
+
+            setStep('complete');
+        } catch (err: any) {
+            console.error('Verification error:', err);
+            alert(`Transaction failed: ${err.message || 'Unknown error'}`);
+            setStep('complete');
         }
     };
 
@@ -110,7 +121,7 @@ export default function RadrDemoPage() {
             <DemoPageHeader
                 badge="ShadowWire"
                 title="Radr Labs Integration"
-                description="Experience the core cryptography behind ShadowWire. Generate stealth addresses and ephemeral keys that make transactions unlinkable."
+                description="Radr provides the stealth address cryptography (ECDH). Ashborn integrates it into the SDK for easy use."
                 icon={ViewOffIcon}
             />
 
@@ -151,9 +162,16 @@ export default function RadrDemoPage() {
                             </div>
 
                             {txSignature && (
-                                <div className="flex justify-between items-center px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                                    <span className="text-xs text-blue-300">Verification Tx:</span>
-                                    <TxLink signature={txSignature} className="text-xs" />
+                                <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                                    <div className="text-xs text-gray-400 mb-2">✅ Verified on Solana Devnet</div>
+                                    <TxLink signature={txSignature} className="text-sm font-semibold" />
+                                </div>
+                            )}
+
+                            {stealthAddress && !txSignature && step === 'complete' && (
+                                <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
+                                    <div className="text-xs text-gray-400 mb-2">💡 Optional: Send SOL to verify on-chain</div>
+                                    <div className="text-xs text-gray-500">The stealth address is already generated and ready to use. You can optionally send a small amount to verify it exists on Solana.</div>
                                 </div>
                             )}
 
@@ -163,7 +181,7 @@ export default function RadrDemoPage() {
                                 loading={step === 'generating' || step === 'scanning'}
                                 loadingText={step === 'scanning' ? "Verifying on Blockchain..." : "Computing Elliptic Curve..."}
                                 icon={step === 'complete' ? RefreshIcon : ViewOffIcon}
-                                className="w-full mt-6"
+                                className="w-full"
                             >
                                 {step === 'complete' ? 'Generate Another' : 'Generate Stealth Address'}
                             </BaseButton>
@@ -194,10 +212,11 @@ console.log({
   stealth: stealth.stealthPubkey      // Public
 });
 
-// To prove ownership (Scanning):
-const isMine = await shadowWire.checkOwnership(
-  stealth.stealthPubkey, 
-  stealth.ephemeralPubkey
+// To scan for payments (recipient side):
+const matches = shadowWire.scanForPayments(
+  viewPrivKey,
+  spendPubKey,
+  [stealth.ephemeralPubkey.toBytes()]
 );`}
                         />
                     </motion.div>

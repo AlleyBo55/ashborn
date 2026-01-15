@@ -36,9 +36,9 @@ export function InfoCard({ icon, title, children, steps, color = 'blue', delay =
             className="mb-8"
         >
             {children && (
-                <BaseText variant="body" color="muted" className="mb-4">
+                <div className="mb-4 text-sm text-gray-400">
                     {children}
-                </BaseText>
+                </div>
             )}
 
             {steps && (

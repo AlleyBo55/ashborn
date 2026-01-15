@@ -589,19 +589,19 @@ const agent = new Agent({
                                 The Ashborn protocol is deployed on Solana Devnet with <strong>REAL ZK Verification</strong> enabled.
                             </p>
                             <div className="grid gap-2 font-mono text-sm">
-                                <div className="bg-black/50 p-2 rounded border border-white/10 flex justify-between items-center">
-                                    <span className="text-gray-500">Program ID:</span>
-                                    <code className="text-purple-400">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
+                                <div className="bg-black/50 p-2 rounded border border-white/10">
+                                    <span className="text-gray-500 block mb-1">Program ID:</span>
+                                    <code className="text-purple-400 break-all text-xs sm:text-sm">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
                                 </div>
-                                <div className="bg-black/50 p-2 rounded border border-white/10 flex justify-between items-center">
-                                    <span className="text-gray-500">IDL Address:</span>
-                                    <code className="text-blue-400">54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz</code>
+                                <div className="bg-black/50 p-2 rounded border border-white/10">
+                                    <span className="text-gray-500 block mb-1">IDL Address:</span>
+                                    <code className="text-blue-400 break-all text-xs sm:text-sm">54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz</code>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
-                            <table className="w-full text-sm">
+                        <div className="bg-white/5 border border-white/10 rounded-lg overflow-x-auto">
+                            <table className="w-full text-sm min-w-[600px]">
                                 <thead className="bg-white/5 text-gray-400">
                                     <tr>
                                         <th className="px-4 py-3 text-left font-medium">Network</th>
@@ -611,14 +611,14 @@ const agent = new Agent({
                                 </thead>
                                 <tbody className="divide-y divide-white/5 text-gray-300 font-mono">
                                     <tr>
-                                        <td className="px-4 py-3">Devnet</td>
-                                        <td className="px-4 py-3 text-purple-300">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</td>
-                                        <td className="px-4 py-3"><span className="text-green-400 text-xs px-2 py-0.5 bg-green-500/10 rounded-full">Live (ZK)</span></td>
+                                        <td className="px-4 py-3 whitespace-nowrap">Devnet</td>
+                                        <td className="px-4 py-3 text-purple-300 text-xs">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</td>
+                                        <td className="px-4 py-3 whitespace-nowrap"><span className="text-green-400 text-xs px-2 py-0.5 bg-green-500/10 rounded-full">Live (ZK)</span></td>
                                     </tr>
                                     <tr>
-                                        <td className="px-4 py-3">Mainnet</td>
+                                        <td className="px-4 py-3 whitespace-nowrap">Mainnet</td>
                                         <td className="px-4 py-3 text-gray-600">Pending Launch...</td>
-                                        <td className="px-4 py-3"><span className="text-gray-500 text-xs px-2 py-0.5 bg-white/5 rounded-full">Planned Q3</span></td>
+                                        <td className="px-4 py-3 whitespace-nowrap"><span className="text-gray-500 text-xs px-2 py-0.5 bg-white/5 rounded-full">Planned Q3</span></td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -8,7 +8,7 @@ const nextConfig = {
     // Force alias for privacycash to avoid resolution errors
     config.resolve.alias = {
       ...config.resolve.alias,
-      'privacycash': path.resolve(__dirname, 'node_modules/privacycash/dist/index.js')
+      'privacycash': path.resolve(__dirname, 'node_modules/privacycash')
     };
 
     if (!isServer) {

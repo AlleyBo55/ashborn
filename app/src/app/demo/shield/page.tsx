@@ -36,10 +36,14 @@ export default function ShieldDemoPage() {
             setStatus('loading');
             setStep('shielding');
 
-            if (privacyCash && false) { // Disable real SDK for now to ensure consistency/simplicity of demo flow
+            if (privacyCash) {
                 // Real SDK call
-                const signature = await privacyCash.shieldSOL(parseFloat(amount));
-                setTxSignature(signature);
+                const result = await privacyCash.shieldSOL(parseFloat(amount));
+                if (result.success && result.signature) {
+                    setTxSignature(result.signature);
+                } else {
+                    throw new Error(result.error || 'Shielding failed');
+                }
             } else {
                 // Fallback: Real Transaction on Devnet (Transfer to Self)
                 // This ensures we have a valid hash for Solscan verification
@@ -74,7 +78,7 @@ export default function ShieldDemoPage() {
                     icon: Shield02Icon,
                     badge: "Shielded Pool",
                     title: "Shield SOL",
-                    description: "Convert public SOL into private sSOL (Shielded SOL). Break the on-chain link between your history and your future actions.",
+                    description: "PrivacyCash handles the shielding. Ashborn wraps it for unified SDK access. Convert public SOL into private notes.",
                     color: "blue"
                 }}
                 info={{
