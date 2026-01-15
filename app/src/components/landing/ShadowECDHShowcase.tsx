@@ -69,7 +69,7 @@ export default function ShadowECDHShowcase() {
                                 Ashborn implements <strong>Elliptic Curve Diffie-Hellman (ECDH)</strong> to generate comprehensive stealth addresses.
                             </p>
                             <blockquote className="border-l-4 border-purple-500 pl-4 py-1 italic text-purple-200/80 bg-purple-900/10 pr-2 rounded-r">
-                                "Exchange keys in the dark. Your identity remains hidden while the transaction is verified by the light."
+                                &quot;Exchange keys in the dark. Your identity remains hidden while the transaction is verified by the light.&quot;
                             </blockquote>
                         </motion.div>
 
@@ -158,15 +158,15 @@ export default function ShadowECDHShowcase() {
                                     TypeScript SDK
                                 </div>
                                 <div className="space-y-1">
-                                    <div className="text-gray-500">// 1. Recipient generates meta-keys</div>
+                                    <div><span className="text-gray-500">{'// 1. Recipient generates meta-keys'}</span></div>
                                     <div><span className="text-purple-400">const</span> meta = <span className="text-blue-400">shadowWire</span>.generateStealthMetaAddress();</div>
                                     <div className="h-2" />
-                                    <div className="text-gray-500">// 2. Sender computes stealth dest (ECDH)</div>
+                                    <div><span className="text-gray-500">{'// 2. Sender computes stealth dest (ECDH)'}</span></div>
                                     <div><span className="text-purple-400">const</span> {'{'} stealthPubkey {'}'} = <span className="text-blue-400">shadowWire</span>.generateStealthAddress(</div>
                                     <div className="pl-4">meta.viewKey, meta.spendKey</div>
                                     <div>);</div>
                                     <div className="h-2" />
-                                    <div className="text-gray-500">// 3. "Arise" - Funds are claimed</div>
+                                    <div><span className="text-gray-500">{'// 3. "Arise" - Funds are claimed'}</span></div>
                                 </div>
                             </div>
                         </div>
