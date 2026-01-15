@@ -24,8 +24,8 @@ Built with **real ZK proofs (Groth16)**, **Circom circuits**, **Solana Alt_bn128
 
 <p align="center">
   <a href="https://privacy.cash" target="_blank">
-    <img src="https://img.shields.io/badge/Integrated%20with-Radr_Labs-purple?style=for-the-badge&logo=solana" alt="Radr Labs" />
-    <img src="https://img.shields.io/badge/Integrated%20with-PrivacyCash-blueviolet?style=for-the-badge&logo=solana" alt="PrivacyCash" />
+    <img src="https://img.shields.io/badge/Easy%20Integration%20with-Radr_Labs-purple?style=for-the-badge&logo=solana" alt="Radr Labs" />
+    <img src="https://img.shields.io/badge/Easy%20Integration%20with-PrivacyCash-blueviolet?style=for-the-badge&logo=solana" alt="PrivacyCash" />
   </a>
   <a href="https://www.npmjs.com/package/@alleyboss/micropay-solana-x402-paywall" target="_blank">
     <img src="https://img.shields.io/badge/AI%20Payments-X402%20Paywall-blue?style=for-the-badge&logo=npm" alt="X402 Paywall" />
