@@ -1,6 +1,6 @@
 {
   "name": "@alleyboss/ashborn-sdk",
-  "version": "1.1.5",
+  "version": "2.0.0",
   "description": "The Shadow Monarch SDK - Universal Privacy Layer for Solana with ZK proofs, stealth addresses, and selective disclosure",
   "author": "AlleyBo55",
   "repository": {
@@ -17,6 +17,26 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./stealth": {
+      "types": "./dist/stealth.d.ts",
+      "import": "./dist/stealth.mjs",
+      "require": "./dist/stealth.js"
+    },
+    "./zk": {
+      "types": "./dist/zk.d.ts",
+      "import": "./dist/zk.mjs",
+      "require": "./dist/zk.js"
+    },
+    "./integrations": {
+      "types": "./dist/integrations.d.ts",
+      "import": "./dist/integrations.mjs",
+      "require": "./dist/integrations.js"
+    },
+    "./security": {
+      "types": "./dist/security.d.ts",
+      "import": "./dist/security.mjs",
+      "require": "./dist/security.js"
     }
   },
   "license": "MIT",
@@ -24,7 +44,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --splitting --external @noble/curves --external @noble/hashes --external @solana/web3.js --external @solana/spl-token --external @coral-xyz/anchor --external snarkjs --external privacycash --external poseidon-lite --external bn.js",
+    "build": "tsup src/index.ts src/stealth.ts src/zk.ts src/integrations.ts src/security.ts --format cjs,esm --dts --splitting --external @noble/curves --external @noble/hashes --external @solana/web3.js --external @solana/spl-token --external @coral-xyz/anchor --external snarkjs --external privacycash --external poseidon-lite --external bn.js",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "vitest run",
     "test:watch": "vitest",

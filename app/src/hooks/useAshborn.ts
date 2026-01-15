@@ -3,13 +3,13 @@
 /**
  * useAshborn Hook - Shared SDK initialization for demo pages
  * 
- * Uses DYNAMIC IMPORTS to lazy-load the heavy SDK only when wallet connects.
- * This dramatically reduces initial bundle size and improves navigation speed.
+ * Uses DYNAMIC IMPORTS from SDK sub-packages for optimal bundle splitting.
+ * The SDK only loads when wallet connects.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
 
 // Types only - these don't bloat the bundle
 type Ashborn = any;
@@ -29,7 +29,11 @@ interface UseAshbornResult {
 /**
  * Custom hook for Ashborn SDK initialization with LAZY LOADING
  * 
- * The SDK is only loaded when the wallet connects, reducing initial bundle by ~500KB+
+ * Imports from SDK sub-packages for optimal tree-shaking:
+ * - Core: @alleyboss/ashborn-sdk (14KB)
+ * - Stealth: @alleyboss/ashborn-sdk/stealth (2.7KB)
+ * - ZK: @alleyboss/ashborn-sdk/zk (5KB)
+ * - Integrations: @alleyboss/ashborn-sdk/integrations (31KB)
  */
 export function useAshborn(): UseAshbornResult {
     const { connection } = useConnection();
@@ -42,7 +46,6 @@ export function useAshborn(): UseAshbornResult {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        // Only load SDK when wallet is connected
         if (!connected || !publicKey || !signTransaction || !signAllTransactions) {
             setAshborn(null);
             setShadowWire(null);
@@ -54,8 +57,13 @@ export function useAshborn(): UseAshbornResult {
         let cancelled = false;
         setIsLoading(true);
 
-        // Dynamic import - SDK loads only now!
-        import('@alleyboss/ashborn-sdk').then((SDK) => {
+        // Dynamic imports from sub-packages for optimal bundle splitting
+        Promise.all([
+            import('@alleyboss/ashborn-sdk'),
+            import('@alleyboss/ashborn-sdk/stealth'),
+            import('@alleyboss/ashborn-sdk/zk'),
+            import('@alleyboss/ashborn-sdk/integrations'),
+        ]).then(([Core, Stealth, ZK, Integrations]) => {
             if (cancelled) return;
 
             try {
@@ -66,10 +74,10 @@ export function useAshborn(): UseAshbornResult {
                     payer: Keypair.generate(),
                 };
 
-                const ashbornInstance = new SDK.Ashborn(connection, wallet, {});
-                const shadowWireInstance = new SDK.ShadowWire(connection, wallet);
-                const rangeComplianceInstance = SDK.createRangeCompliance(connection, { publicKey });
-                const privacyCashInstance = new SDK.PrivacyCashOfficial({
+                const ashbornInstance = new Core.Ashborn(connection, wallet, {});
+                const shadowWireInstance = new Stealth.ShadowWire(connection, wallet);
+                const rangeComplianceInstance = ZK.createRangeCompliance(connection, { publicKey });
+                const privacyCashInstance = new Integrations.PrivacyCashOfficial({
                     rpcUrl: connection.rpcEndpoint,
                     owner: Keypair.generate(),
                 });
@@ -88,9 +96,7 @@ export function useAshborn(): UseAshbornResult {
             setIsLoading(false);
         });
 
-        return () => {
-            cancelled = true;
-        };
+        return () => { cancelled = true; };
     }, [connection, publicKey, signTransaction, signAllTransactions, connected]);
 
     return {
