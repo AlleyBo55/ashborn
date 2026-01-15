@@ -1,52 +1,40 @@
 'use client';
 
-import { Loader2, LucideIcon } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, ElementType } from 'react';
+import { BaseButton } from '@/components/ui/base';
 
 interface DemoButtonProps {
     onClick: () => void;
     loading?: boolean;
     loadingText?: string;
     disabled?: boolean;
-    icon?: LucideIcon;
+    icon?: ElementType;
     children: ReactNode;
-    variant?: 'primary' | 'gradient' | 'secondary';
-    className?: string;
+    variant?: 'primary' | 'gradient'; // Map legacy variants
 }
 
 export function DemoButton({
     onClick,
-    loading = false,
-    loadingText = 'Processing...',
-    disabled = false,
-    icon: Icon,
+    loading,
+    loadingText,
+    disabled,
+    icon,
     children,
-    variant = 'primary',
-    className = '',
+    variant = 'primary'
 }: DemoButtonProps) {
-    const variants = {
-        primary: 'bg-white text-black hover:bg-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.1)]',
-        gradient: 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white',
-        secondary: 'bg-white/10 hover:bg-white/20 text-white',
-    };
-
     return (
-        <button
+        <BaseButton
             onClick={onClick}
-            disabled={disabled || loading}
-            className={`w-full py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
+            loading={loading}
+            loadingText={loadingText}
+            disabled={disabled}
+            icon={icon}
+            variant={variant}
+            fullWidth
+            size="lg"
+            className="w-full"
         >
-            {loading ? (
-                <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    {loadingText}
-                </>
-            ) : (
-                <>
-                    {Icon && <Icon className="w-5 h-5" />}
-                    {children}
-                </>
-            )}
-        </button>
+            {children}
+        </BaseButton>
     );
 }

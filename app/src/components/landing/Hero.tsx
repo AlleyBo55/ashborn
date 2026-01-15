@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Ghost } from 'lucide-react';
+import { ArrowRight01Icon, Shield02Icon, ViewOffIcon } from 'hugeicons-react';
 import SystemWindow from '@/components/ui/SystemWindow';
 
 export default function Hero() {

@@ -2,7 +2,7 @@
 'use client';
 
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Lock, Zap, Activity, Cpu, Eye, Radio, Terminal, Box, Play } from 'lucide-react';
+import { ArrowRight01Icon, SecurityValidationIcon, LockIcon, FlashIcon, Activity01Icon, CpuIcon, ViewIcon, Wifi01Icon, ConsoleIcon, CubeIcon, PlayIcon } from 'hugeicons-react';
 import { useSystemToast } from '../ui/SystemToast';
 import ScrambleText from '../ui/ScrambleText';
 import { useEffect, useState } from 'react';
@@ -70,9 +70,9 @@ const ParticleField = () => {
 };
 
 const features = [
-    { title: "PRIVACY", sub: "ZK_SNARK_PROTOCOL", icon: ShieldCheck },
-    { title: "SPEED", sub: "SOLANA_MAINNET", icon: Zap },
-    { title: "POWER", sub: "ZK_COMPRESSION", icon: Box }
+    { title: "PRIVACY", sub: "ZK_SNARK_PROTOCOL", icon: SecurityValidationIcon },
+    { title: "SPEED", sub: "SOLANA_MAINNET", icon: FlashIcon },
+    { title: "POWER", sub: "ZK_COMPRESSION", icon: CubeIcon }
 ];
 
 const FeatureHighlight = () => {
@@ -128,7 +128,7 @@ const QuestWindow = () => {
                 {/* Header Pills */}
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/20">
-                        <Box className="w-3 h-3 text-blue-400" />
+                        <CubeIcon className="w-3 h-3 text-blue-400" />
                         <span className="text-[10px] text-blue-300 font-bold tracking-wide">QUEST</span>
                     </div>
                     <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
@@ -163,7 +163,7 @@ const TerminalStatusBar = () => {
         <div className="absolute bottom-0 w-full z-50 bg-black border-t border-purple-900/50 px-4 py-2 flex items-center justify-between pointer-events-none font-mono text-[10px]">
             <div className="flex items-center gap-4 text-gray-500">
                 <div className="flex items-center gap-2 text-green-500">
-                    <Terminal className="w-3 h-3" />
+                    <ConsoleIcon className="w-3 h-3" />
                     <span className="hidden md:inline">SYSTEM_READY</span>
                     <span className="md:hidden text-[8px] tracking-widest text-green-500/80">SYS_ONLINE</span>
                 </div>
@@ -227,7 +227,7 @@ const NetworkMonitor = () => {
             {/* Header */}
             <div className="border-b border-green-500/30 pb-2 mb-4 flex items-center gap-2 justify-end">
                 <span className="text-[10px] font-mono text-green-500 tracking-widest">NETWORK_MONITOR</span>
-                <Activity className="w-3 h-3 text-green-500 animate-pulse" />
+                <Activity01Icon className="w-3 h-3 text-green-500 animate-pulse" />
             </div>
 
             {/* Logs */}
@@ -403,20 +403,20 @@ export default function ParallaxHero() {
                     transition={{ delay: 1, duration: 1 }}
                     className="text-center pointer-events-auto"
                 >
-                    <div className="flex gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-4 sm:px-0">
                         <a
                             href="/demo"
-                            className="group relative px-8 py-4 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400 flex items-center gap-3"
+                            className="group relative px-8 py-4 bg-purple-900/10 border border-purple-500/50 text-white font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-purple-500/20 transition-all duration-300 backdrop-blur-md rounded-sm shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_60px_rgba(168,85,247,0.8)] hover:border-purple-400 flex items-center justify-center gap-3"
                         >
-                            <Play className="w-4 h-4 fill-current animate-pulse" />
+                            <PlayIcon className="w-4 h-4 fill-current animate-pulse" />
                             <span>Launch Demo</span>
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
                         </a>
                         <a
                             href="/docs"
-                            className="group relative px-8 py-4 bg-black/40 border border-white/10 text-gray-400 font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-md rounded-sm hover:border-white/30 flex items-center gap-3"
+                            className="group relative px-8 py-4 bg-black/40 border border-white/10 text-gray-400 font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-md rounded-sm hover:border-white/30 flex items-center justify-center gap-3"
                         >
-                            <Terminal className="w-4 h-4" />
+                            <ConsoleIcon className="w-4 h-4" />
                             <span>Documentation</span>
                         </a>
                     </div>

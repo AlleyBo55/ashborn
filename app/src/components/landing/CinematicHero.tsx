@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield, Sparkles } from 'lucide-react';
+import { Shield02Icon, SparklesIcon } from 'hugeicons-react';
 import SystemWindow from '../../components/ui/SystemWindow';
 import { useEffect, useState } from 'react';
 import { useSystemToast } from '../ui/SystemToast';
@@ -113,7 +113,7 @@ export default function CinematicHero() {
                         transition={{ duration: 0.8, type: "spring", bounce: 0.5 }}
                     >
                         <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="text-arise-blue w-4 h-4 animate-spin-slow" />
+                            <SparklesIcon className="text-arise-blue w-4 h-4 animate-spin-slow" />
                             <h2 className="font-tech text-arise-blue tracking-[0.2em] uppercase text-sm font-bold">
                                 System Initialization
                             </h2>
@@ -147,7 +147,7 @@ export default function CinematicHero() {
                             className="relative group px-12 py-6 bg-arise-blue text-white font-manga text-3xl uppercase tracking-widest overflow-hidden hover:scale-105 transition-transform duration-200 shadow-[0_0_40px_rgba(59,130,246,0.5)] clip-path-polygon cursor-none" // hidden cursor for custom one
                         >
                             <span className="relative z-10 flex items-center gap-2">
-                                Accept Quest <Shield className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                                Accept Quest <Shield02Icon className="w-6 h-6 group-hover:rotate-12 transition-transform" />
                             </span>
                             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-100" />
                             <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />

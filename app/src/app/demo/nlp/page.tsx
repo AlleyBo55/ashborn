@@ -1,11 +1,19 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { MessageSquare, Send, Bot, User, Loader2, Coins } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    AiChat02Icon,
+    SentIcon,
+    UserIcon,
+    Loading03Icon,
+    Coins01Icon
+} from 'hugeicons-react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '@/components/ui/ClientWalletButton';
 import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
+import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
+import { BaseText } from '@/components/ui/base/BaseText';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -113,105 +121,116 @@ export default function NLPDemoPage() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
-            {/* Title Header inside the card */}
-            <div className="p-4 border-b border-white/10 bg-white/[0.02]">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
-                            <MessageSquare className="w-4 h-4" />
-                        </div>
-                        <div>
-                            <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
-                            <p className="text-[10px] text-gray-400">Powered by OpenAI &amp; x402 Paywall</p>
-                        </div>
-                    </div>
-                    {!publicKey && <WalletMultiButton className="!bg-purple-600 !h-8 !text-xs !px-3" />}
-                </div>
-                {/* How it works mini-guide */}
-                <div className="flex flex-wrap gap-1.5 text-[10px]">
-                    <span className="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20">1. Type Command</span>
-                    <span className="text-gray-600">→</span>
-                    <span className="bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded border border-amber-500/20">2. Pay 0.001 SOL</span>
-                    <span className="text-gray-600">→</span>
-                    <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded border border-green-500/20">3. AI Executes</span>
-                </div>
-            </div>
+        <div className="max-w-4xl mx-auto space-y-6">
+            <DemoPageHeader
+                badge="AI_AGENT_PROTOCOL"
+                title="Shadow Whisper"
+                description="Command privacy operations with natural language. Powered by LLMs and paid via x402 micropayments."
+                icon={AiChat02Icon}
+            />
 
-            {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((msg, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
-                    >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-blue-500/10' : 'bg-purple-500/10'}`}>
-                            {msg.role === 'user' ? <User className="w-4 h-4 text-blue-400" /> : <Bot className="w-4 h-4 text-purple-400" />}
-                        </div>
-                        <div className={`max-w-[80%]`}>
-                            <div className={`rounded-2xl px-4 py-3 text-sm ${msg.role === 'user'
-                                ? 'bg-blue-600 text-white rounded-br-sm shadow-lg'
-                                : 'bg-[#1A1A1A] border border-white/10 text-gray-200 rounded-bl-sm shadow-sm'
-                                }`}>
-                                <div className="whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{
-                                    __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-black/30 px-1 rounded font-mono text-xs">$1</code>').replace(/\n/g, '<br/>')
-                                }} />
+            <div className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
+                {/* Chat Header */}
+                <div className="p-4 border-b border-white/10 bg-white/[0.02]">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                                <AiChat02Icon className="w-4 h-4" />
                             </div>
-                            {msg.parsed && msg.role === 'user' && (
-                                <div className="mt-1 text-[10px] text-gray-600 font-mono text-right">
-                                    Parsed: {msg.parsed.action} • {Math.round(msg.parsed.confidence * 100)}%
-                                </div>
-                            )}
+                            <div>
+                                <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
+                                <p className="text-[10px] text-gray-400">Powered by OpenAI &amp; x402 Paywall</p>
+                            </div>
                         </div>
-                    </motion.div>
-                ))}
-
-                {/* Status Indicator */}
-                {(isTyping || paymentStatus === 'paying') && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center"><Bot className="w-4 h-4 text-purple-400" /></div>
-                        <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-2 text-xs text-gray-400">
-                            {paymentStatus === 'paying' ? (
-                                <>
-                                    <Coins className="w-3 h-3 text-yellow-500 animate-pulse" />
-                                    <span>Processing micropayment (0.001 SOL)...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Loader2 className="w-3 h-3 animate-spin text-purple-400" />
-                                    <span>Ashborn is thinking...</span>
-                                </>
-                            )}
-                        </div>
-                    </motion.div>
-                )}
-                <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Area */}
-            <div className="p-4 border-t border-white/10 bg-white/[0.02]">
-                <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
-                    {EXAMPLE_COMMANDS.map((cmd, i) => (
-                        <button key={i} onClick={() => setInput(cmd)} className="shrink-0 text-[10px] bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full transition text-gray-400 hover:text-white">
-                            {cmd}
-                        </button>
-                    ))}
+                        {!publicKey && <ClientWalletButton className="!bg-purple-600 !h-8 !text-xs !px-3" />}
+                    </div>
+                    {/* How it works mini-guide */}
+                    <div className="flex flex-wrap gap-1.5 text-[10px]">
+                        <span className="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20">1. Type Command</span>
+                        <span className="text-gray-600">→</span>
+                        <span className="bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded border border-amber-500/20">2. Pay 0.001 SOL</span>
+                        <span className="text-gray-600">→</span>
+                        <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded border border-green-500/20">3. AI Executes</span>
+                    </div>
                 </div>
-                <div className="flex gap-3">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        disabled={isTyping || paymentStatus !== 'idle'}
-                        placeholder="Type a command..."
-                        className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 focus:outline-none transition placeholder:text-gray-600 disabled:opacity-50"
-                    />
-                    <button onClick={handleSend} disabled={!input.trim() || isTyping || paymentStatus !== 'idle'} className="px-4 bg-white text-black hover:bg-gray-200 rounded-xl transition disabled:opacity-50 font-medium">
-                        <Send className="w-4 h-4" />
-                    </button>
+
+                {/* Chat Area */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {messages.map((msg, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                        >
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-blue-500/10' : 'bg-purple-500/10'}`}>
+                                {msg.role === 'user' ? <UserIcon className="w-4 h-4 text-blue-400" /> : <AiChat02Icon className="w-4 h-4 text-purple-400" />}
+                            </div>
+                            <div className={`max-w-[80%]`}>
+                                <div className={`rounded-2xl px-4 py-3 text-sm ${msg.role === 'user'
+                                    ? 'bg-blue-600 text-white rounded-br-sm shadow-lg'
+                                    : 'bg-[#1A1A1A] border border-white/10 text-gray-200 rounded-bl-sm shadow-sm'
+                                    }`}>
+                                    <div className="whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{
+                                        __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-black/30 px-1 rounded font-mono text-xs">$1</code>').replace(/\n/g, '<br/>')
+                                    }} />
+                                </div>
+                                {msg.parsed && msg.role === 'user' && (
+                                    <div className="mt-1 text-[10px] text-gray-600 font-mono text-right">
+                                        Parsed: {msg.parsed.action} • {Math.round(msg.parsed.confidence * 100)}%
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    ))}
+
+                    {/* Status Indicator */}
+                    <AnimatePresence>
+                        {(isTyping || paymentStatus === 'paying') && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-3">
+                                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center"><AiChat02Icon className="w-4 h-4 text-purple-400" /></div>
+                                <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-2 text-xs text-gray-400">
+                                    {paymentStatus === 'paying' ? (
+                                        <>
+                                            <Coins01Icon className="w-3 h-3 text-yellow-500 animate-pulse" />
+                                            <span>Processing micropayment (0.001 SOL)...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Loading03Icon className="w-3 h-3 animate-spin text-purple-400" />
+                                            <span>Ashborn is thinking...</span>
+                                        </>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area */}
+                <div className="p-4 border-t border-white/10 bg-white/[0.02]">
+                    <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
+                        {EXAMPLE_COMMANDS.map((cmd, i) => (
+                            <button key={i} onClick={() => setInput(cmd)} className="shrink-0 text-[10px] bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full transition text-gray-400 hover:text-white">
+                                {cmd}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="flex gap-3">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                            disabled={isTyping || paymentStatus !== 'idle'}
+                            placeholder="Type a command..."
+                            className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 focus:outline-none transition placeholder:text-gray-600 disabled:opacity-50"
+                        />
+                        <button onClick={handleSend} disabled={!input.trim() || isTyping || paymentStatus !== 'idle'} className="px-4 bg-white text-black hover:bg-gray-200 rounded-xl transition disabled:opacity-50 font-medium flex items-center justify-center">
+                            <SentIcon className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

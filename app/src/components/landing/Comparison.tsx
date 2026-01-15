@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Crosshair, Lock, ShieldAlert, XCircle, CheckCircle } from 'lucide-react';
+import { Target01Icon, LockIcon, SecurityValidationIcon, CancelCircleIcon, CheckmarkCircle01Icon } from 'hugeicons-react';
 
 const StatBar = ({ label, valueA, valueB, colorA = "bg-red-500", colorB = "bg-green-500" }: { label: string, valueA: number, valueB: number, colorA?: string, colorB?: string }) => {
     return (
@@ -38,7 +38,7 @@ export default function Comparison() {
 
             <div className="text-center mb-16">
                 <div className="inline-flex items-center gap-2 text-xs font-mono text-red-500 tracking-widest border border-red-900/50 px-3 py-1 rounded bg-red-950/20 mb-4">
-                    <Crosshair className="w-3 h-3 animate-pulse" />
+                    <Target01Icon className="w-3 h-3 animate-pulse" />
                     TARGET ANALYSIS
                 </div>
                 <h2 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter">
@@ -54,7 +54,7 @@ export default function Comparison() {
                     <div className="relative z-10">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="p-3 bg-red-950/50 border border-red-900 rounded">
-                                <ShieldAlert className="w-6 h-6 text-red-500" />
+                                <SecurityValidationIcon className="w-6 h-6 text-red-500" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-red-500 uppercase">Legacy Mixers</h3>
@@ -64,15 +64,15 @@ export default function Comparison() {
 
                         <ul className="space-y-4 font-mono text-sm text-gray-400">
                             <li className="flex items-start gap-3">
-                                <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                                <CancelCircleIcon className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                                 <span><strong className="text-red-400">Non-Compliant:</strong> Instant blacklisting by exchanges.</span>
                             </li>
                             <li className="flex items-start gap-3">
-                                <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                                <CancelCircleIcon className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                                 <span><strong className="text-red-400">Public Pool:</strong> Tainted funds mix with yours.</span>
                             </li>
                             <li className="flex items-start gap-3">
-                                <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                                <CancelCircleIcon className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                                 <span><strong className="text-red-400">High Latency:</strong> Hours to settle.</span>
                             </li>
                         </ul>
@@ -86,7 +86,7 @@ export default function Comparison() {
                     <div className="relative z-10">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="p-3 bg-green-950/50 border border-green-900 rounded">
-                                <Lock className="w-6 h-6 text-green-500" />
+                                <LockIcon className="w-6 h-6 text-green-500" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-green-500 uppercase">Ashborn Protocol</h3>
@@ -96,15 +96,15 @@ export default function Comparison() {
 
                         <ul className="space-y-4 font-mono text-sm text-gray-400">
                             <li className="flex items-start gap-3">
-                                <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                                <CheckmarkCircle01Icon className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
                                 <span><strong className="text-green-400">Audit-Ready:</strong> Prove innocence with view keys.</span>
                             </li>
                             <li className="flex items-start gap-3">
-                                <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                                <CheckmarkCircle01Icon className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
                                 <span><strong className="text-green-400">Sovereign Pool:</strong> ZK-math separates good/bad actors.</span>
                             </li>
                             <li className="flex items-start gap-3">
-                                <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                                <CheckmarkCircle01Icon className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
                                 <span><strong className="text-green-400">Instant Finality:</strong> Solana speed (400ms).</span>
                             </li>
                         </ul>

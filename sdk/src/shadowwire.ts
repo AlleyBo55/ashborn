@@ -21,7 +21,7 @@ import { ed25519 } from "@noble/curves/ed25519";
 import { sha256 } from "@noble/hashes/sha256";
 // @ts-ignore
 import * as snarkjs from "snarkjs";
-import { StealthAddress, StealthMetaAddress, TransferCommitments } from "./types";
+import { StealthMetaAddress, TransferCommitments } from "./types";
 import {
   generateCommitment,
   generateNullifier as genNullifier,
@@ -78,12 +78,12 @@ export class ShadowWire {
    *
    * @param viewPubKey - Recipient's view public key (A)
    * @param spendPubKey - Recipient's spend public key (B)
-   * @returns Stealth address with ephemeral pubkey (R) and stealth pubkey (P)
+   * @returns Stealth address with ephemeral pubkey (R) and stealth pubkey (P) as Solana PublicKeys
    */
   generateStealthAddress(
     viewPubKey?: Uint8Array,
     spendPubKey?: Uint8Array
-  ): StealthAddress {
+  ): { ephemeralPubkey: PublicKey; stealthPubkey: PublicKey } {
     // If no keys provided, generate a new meta-address (for demo/self-payment)
     if (!viewPubKey || !spendPubKey) {
       const meta = this.generateStealthMetaAddress();
@@ -96,16 +96,15 @@ export class ShadowWire {
     const R = ed25519.getPublicKey(r);
 
     // Step 2: Compute shared secret S = r*A (ECDH)
-    // In ed25519, we use X25519 key agreement
+    const rScalar = bytesToBigint(r) % ed25519.CURVE.n;
     const viewPoint = ed25519.ExtendedPoint.fromHex(viewPubKey);
-    const sharedPoint = viewPoint.multiply(bytesToBigint(r));
+    const sharedPoint = viewPoint.multiply(rScalar);
     const S = sharedPoint.toRawBytes();
 
     // Step 3: Hash the shared secret
     const hS = sha256(S);
 
     // Step 4: Compute H(S)*G
-    // We use the hash as a scalar and multiply by generator
     const hSScalar = bytesToBigint(hS) % ed25519.CURVE.n;
     const hSPoint = ed25519.ExtendedPoint.BASE.multiply(hSScalar);
 
@@ -113,9 +112,10 @@ export class ShadowWire {
     const B = ed25519.ExtendedPoint.fromHex(spendPubKey);
     const P = hSPoint.add(B);
 
+    // Convert to Solana PublicKey objects for easy integration
     return {
-      ephemeralPubkey: R,
-      stealthPubkey: P.toRawBytes(),
+      ephemeralPubkey: new PublicKey(R),
+      stealthPubkey: new PublicKey(P.toRawBytes()),
     };
   }
 

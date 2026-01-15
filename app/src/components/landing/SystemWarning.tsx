@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Eye, ShieldAlert } from 'lucide-react';
+import { ViewIcon, Shield02Icon } from 'hugeicons-react';
 
 export default function SystemWarning() {
     return (
@@ -33,13 +33,13 @@ export default function SystemWarning() {
                     <div className="mt-8 flex flex-col items-center gap-6 relative z-20">
                         <div className="relative">
                             <div className="absolute inset-0 bg-red-500 blur-2xl opacity-20 animate-pulse" />
-                            <ShieldAlert className="w-16 h-16 text-red-500 relative z-10" />
-                            <Eye className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-black animate-ping opacity-50" />
+                            <Shield02Icon className="w-16 h-16 text-red-500 relative z-10" />
+                            <ViewIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-black animate-ping opacity-50" />
                         </div>
 
-                        <div className="space-y-4 max-w-2xl">
-                            <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase drop-shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                YOUR FINANCIAL DATA IS <span className="text-red-500 bg-red-950/30 px-2 glitch-text">EXPOSED</span>
+                        <div className="space-y-4 max-w-2xl px-2">
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase drop-shadow-[0_0_10px_rgba(220,38,38,0.8)] break-words">
+                                YOUR FINANCIAL DATA IS <span className="text-red-500 bg-red-950/30 px-1 sm:px-2 glitch-text">EXPOSED</span>
                             </h2>
                             <p className="text-gray-400 font-mono text-xs md:text-sm tracking-wide leading-relaxed">
                                 <span className="text-red-400 font-bold">WARNING:</span> Every transaction you make on Solana represents a permanent, public record.
@@ -47,18 +47,18 @@ export default function SystemWarning() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-red-900/30 border border-red-900/50 w-full max-w-lg mt-4">
-                            <div className="bg-black/80 p-4 flex flex-col items-center hover:bg-red-900/10 transition-colors">
-                                <span className="text-red-500 font-bold text-2xl font-mono">100%</span>
-                                <span className="text-[10px] text-gray-500 uppercase tracking-widest">Visibility</span>
+                        <div className="grid grid-cols-3 gap-px bg-red-900/30 border border-red-900/50 w-full max-w-lg mt-4">
+                            <div className="bg-black/80 p-3 md:p-4 flex flex-col items-center hover:bg-red-900/10 transition-colors">
+                                <span className="text-red-500 font-bold text-xl md:text-2xl font-mono">100%</span>
+                                <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-widest">Visibility</span>
                             </div>
-                            <div className="bg-black/80 p-4 flex flex-col items-center hover:bg-red-900/10 transition-colors">
-                                <span className="text-red-500 font-bold text-2xl font-mono">0</span>
-                                <span className="text-[10px] text-gray-500 uppercase tracking-widest">Privacy</span>
+                            <div className="bg-black/80 p-3 md:p-4 flex flex-col items-center hover:bg-red-900/10 transition-colors">
+                                <span className="text-red-500 font-bold text-xl md:text-2xl font-mono">0</span>
+                                <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-widest">Privacy</span>
                             </div>
-                            <div className="bg-black/80 p-4 flex flex-col items-center hover:bg-red-900/10 transition-colors">
-                                <span className="text-red-500 font-bold text-2xl font-mono">FOREVER</span>
-                                <span className="text-[10px] text-gray-500 uppercase tracking-widest">Retention</span>
+                            <div className="bg-black/80 p-3 md:p-4 flex flex-col items-center hover:bg-red-900/10 transition-colors">
+                                <span className="text-red-500 font-bold text-lg md:text-2xl font-mono">FOREVER</span>
+                                <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-widest">Retention</span>
                             </div>
                         </div>
 

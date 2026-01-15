@@ -6,7 +6,7 @@ import TerminalBlock from '@/components/ui/TerminalBlock';
 // ... (existing imports, but remove Copy, Check from lucide if unused locally, mostly unused now as CodeBlock handles it)
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Shield, Ghost, Activity, Book, Terminal, Code, Cpu, Lock, Zap, Search, Menu, X, ChevronRight, Copy, Check } from 'lucide-react';
+import { ArrowRight01Icon, Shield02Icon, ViewOffIcon, Activity01Icon, BookOpen01Icon, ConsoleIcon, CodeIcon, CpuIcon, LockIcon, FlashIcon, Search01Icon, Menu01Icon, Cancel01Icon } from 'hugeicons-react';
 import Link from 'next/link';
 
 // ... (sections data remains same)
@@ -21,7 +21,7 @@ import Link from 'next/link';
         cwd="~/project"
     />
     <div className="mt-4 p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
-        <Activity className="w-5 h-5 text-amber-500 mt-0.5" />
+        <Activity01Icon className="w-5 h-5 text-amber-500 mt-0.5" />
         <div className="text-sm text-amber-200/80">
             <strong className="text-amber-400 block mb-1">Devnet Only</strong>
             The current release (v0.2.2) is deployed to Solana Devnet. Mainnet deployment is scheduled for Q3 2026.
@@ -121,30 +121,30 @@ function Step({ number, title, children }: any) {
 const sections = [
     {
         title: "Getting Started", items: [
-            { id: 'overview', title: 'Overview', icon: Book },
-            { id: 'quick-start', title: 'Quick Start', icon: Zap },
-            { id: 'installation', title: 'Installation', icon: Terminal },
+            { id: 'overview', title: 'Overview', icon: BookOpen01Icon },
+            { id: 'quick-start', title: 'Quick Start', icon: FlashIcon },
+            { id: 'installation', title: 'Installation', icon: ConsoleIcon },
         ]
     },
     {
         title: "Core Concepts", items: [
-            { id: 'how-it-works', title: 'Architecture', icon: Cpu },
-            { id: 'features', title: 'Privacy Features', icon: Shield },
-            { id: 'security', title: 'Security', icon: Lock },
+            { id: 'how-it-works', title: 'Architecture', icon: CpuIcon },
+            { id: 'features', title: 'Privacy Features', icon: Shield02Icon },
+            { id: 'security', title: 'Security', icon: LockIcon },
         ]
     },
     {
         title: "SDK Reference", items: [
-            { id: 'sdk-core', title: 'Core SDK', icon: Code },
-            { id: 'stealth', title: 'Stealth Addresses', icon: Ghost },
-            { id: 'nlp', title: 'Natural Language', icon: Activity },
-            { id: 'eliza', title: 'Eliza Plugin', icon: Ghost },
+            { id: 'sdk-core', title: 'Core SDK', icon: CodeIcon },
+            { id: 'stealth', title: 'Stealth Addresses', icon: ViewOffIcon },
+            { id: 'nlp', title: 'Natural Language', icon: Activity01Icon },
+            { id: 'eliza', title: 'Eliza Plugin', icon: ViewOffIcon },
         ]
     },
     {
         title: "guides", items: [
-            { id: 'tutorials', title: 'Tutorials', icon: Book },
-            { id: 'deployment', title: 'Deployment', icon: Activity },
+            { id: 'tutorials', title: 'Tutorials', icon: BookOpen01Icon },
+            { id: 'deployment', title: 'Deployment', icon: Activity01Icon },
         ]
     }
 ];
@@ -204,7 +204,7 @@ export default function DocsPage() {
 
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex relative group">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-gray-300 transition" />
+                        <Search01Icon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-gray-300 transition" />
                         <input
                             type="text"
                             placeholder="Search documentation..."
@@ -213,7 +213,7 @@ export default function DocsPage() {
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-600 border border-white/10 px-1 rounded bg-white/5">⌘K</span>
                     </div>
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 text-gray-400 hover:text-white">
-                        {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        {isMenuOpen ? <Cancel01Icon className="w-5 h-5" /> : <Menu01Icon className="w-5 h-5" />}
                     </button>
                     <a href="https://github.com/AlleyBo55/ashborn" className="hidden lg:block text-xs font-medium text-gray-400 hover:text-white transition">GitHub</a>
                 </div>
@@ -262,7 +262,7 @@ export default function DocsPage() {
                             <Link href="/demo" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all hover:bg-white/[0.07]">
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                                        <Zap className="w-5 h-5" />
+                                        <FlashIcon className="w-5 h-5" />
                                     </div>
                                     <span className="font-semibold text-white">Live Demo</span>
                                 </div>
@@ -271,7 +271,7 @@ export default function DocsPage() {
                             <a href="#quick-start" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]">
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="p-2 rounded-lg bg-gray-800 text-gray-300 group-hover:bg-gray-700 group-hover:text-white transition-colors">
-                                        <Terminal className="w-5 h-5" />
+                                        <ConsoleIcon className="w-5 h-5" />
                                     </div>
                                     <span className="font-semibold text-white">Quick Start</span>
                                 </div>
@@ -289,17 +289,17 @@ export default function DocsPage() {
                         </h2>
                         <div className="grid md:grid-cols-3 gap-6">
                             <FeatureCard
-                                icon={Shield}
+                                icon={Shield02Icon}
                                 title="Shielded Pool"
                                 desc="Deposit SOL/SPL tokens into a global anonymity set. On-chain amounts are hidden."
                             />
                             <FeatureCard
-                                icon={Ghost}
+                                icon={ViewOffIcon}
                                 title="Stealth Addresses"
                                 desc="Receive assets at one-time addresses unlinkable to your main identity."
                             />
                             <FeatureCard
-                                icon={Lock}
+                                icon={LockIcon}
                                 title="Compliance Proofs"
                                 desc="Prove solvability or clean funds (ZK) without revealing balances."
                             />
@@ -315,7 +315,7 @@ export default function DocsPage() {
                             filename="Installation"
                         />
                         <div className="mt-4 p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
-                            <Activity className="w-5 h-5 text-amber-500 mt-0.5" />
+                            <Activity01Icon className="w-5 h-5 text-amber-500 mt-0.5" />
                             <div className="text-sm text-amber-200/80">
                                 <strong className="text-amber-400 block mb-1">Devnet Only</strong>
                                 The current release (v0.2.2) is deployed to Solana Devnet. Mainnet deployment is scheduled for Q3 2026.
@@ -354,7 +354,7 @@ export default function DocsPage() {
                         <div className="bg-gradient-to-br from-[#1a1b26] to-black border border-purple-500/20 rounded-xl p-8 mb-8 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-32 bg-purple-500/5 blur-3xl rounded-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <Lock className="w-5 h-5 text-purple-400" />
+                                <LockIcon className="w-5 h-5 text-purple-400" />
                                 The &quot;Glass Vault&quot; Analogy
                             </h3>
                             <div className="space-y-4 text-gray-400 leading-relaxed">
@@ -388,7 +388,7 @@ export default function DocsPage() {
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="p-6 rounded-xl bg-white/[0.03] border border-white/5">
                                 <h3 className="font-medium text-white mb-3 flex items-center gap-2">
-                                    <Shield className="w-4 h-4 text-green-400" />
+                                    <Shield02Icon className="w-4 h-4 text-green-400" />
                                     Non-Custodial
                                 </h3>
                                 <p className="text-sm text-gray-400">
@@ -397,7 +397,7 @@ export default function DocsPage() {
                             </div>
                             <div className="p-6 rounded-xl bg-white/[0.03] border border-white/5">
                                 <h3 className="font-medium text-white mb-3 flex items-center gap-2">
-                                    <Terminal className="w-4 h-4 text-blue-400" />
+                                    <ConsoleIcon className="w-4 h-4 text-blue-400" />
                                     Smart Contract Pool
                                 </h3>
                                 <p className="text-sm text-gray-400">
@@ -409,7 +409,7 @@ export default function DocsPage() {
                         {/* Technical ZK Flow */}
                         <div className="mt-8">
                             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                <Cpu className="w-4 h-4 text-purple-400" />
+                                <CpuIcon className="w-4 h-4 text-purple-400" />
                                 Cryptographic Flow
                             </h3>
                             <div className="grid md:grid-cols-3 gap-4 mb-6">
@@ -445,7 +445,7 @@ export default function DocsPage() {
                         <h2 className="text-2xl font-semibold mb-6">Security Model</h2>
                         <div className="bg-red-900/10 border border-red-500/20 rounded-xl p-6">
                             <h3 className="text-red-400 font-medium mb-2 flex items-center gap-2">
-                                <Shield className="w-4 h-4" />
+                                <Shield02Icon className="w-4 h-4" />
                                 Audited Compliance
                             </h3>
                             <p className="text-gray-400 text-sm mb-4">
@@ -589,19 +589,19 @@ const agent = new Agent({
                                 The Ashborn protocol is deployed on Solana Devnet with <strong>REAL ZK Verification</strong> enabled.
                             </p>
                             <div className="grid gap-2 font-mono text-sm">
-                                <div className="bg-black/50 p-2 rounded border border-white/10 flex justify-between items-center">
-                                    <span className="text-gray-500">Program ID:</span>
-                                    <code className="text-purple-400">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
+                                <div className="bg-black/50 p-2 rounded border border-white/10">
+                                    <span className="text-gray-500 block mb-1">Program ID:</span>
+                                    <code className="text-purple-400 break-all text-xs sm:text-sm">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
                                 </div>
-                                <div className="bg-black/50 p-2 rounded border border-white/10 flex justify-between items-center">
-                                    <span className="text-gray-500">IDL Address:</span>
-                                    <code className="text-blue-400">54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz</code>
+                                <div className="bg-black/50 p-2 rounded border border-white/10">
+                                    <span className="text-gray-500 block mb-1">IDL Address:</span>
+                                    <code className="text-blue-400 break-all text-xs sm:text-sm">54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz</code>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
-                            <table className="w-full text-sm">
+                        <div className="bg-white/5 border border-white/10 rounded-lg overflow-x-auto">
+                            <table className="w-full text-sm min-w-[600px]">
                                 <thead className="bg-white/5 text-gray-400">
                                     <tr>
                                         <th className="px-4 py-3 text-left font-medium">Network</th>
@@ -611,14 +611,14 @@ const agent = new Agent({
                                 </thead>
                                 <tbody className="divide-y divide-white/5 text-gray-300 font-mono">
                                     <tr>
-                                        <td className="px-4 py-3">Devnet</td>
-                                        <td className="px-4 py-3 text-purple-300">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</td>
-                                        <td className="px-4 py-3"><span className="text-green-400 text-xs px-2 py-0.5 bg-green-500/10 rounded-full">Live (ZK)</span></td>
+                                        <td className="px-4 py-3 whitespace-nowrap">Devnet</td>
+                                        <td className="px-4 py-3 text-purple-300 text-xs">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</td>
+                                        <td className="px-4 py-3 whitespace-nowrap"><span className="text-green-400 text-xs px-2 py-0.5 bg-green-500/10 rounded-full">Live (ZK)</span></td>
                                     </tr>
                                     <tr>
-                                        <td className="px-4 py-3">Mainnet</td>
+                                        <td className="px-4 py-3 whitespace-nowrap">Mainnet</td>
                                         <td className="px-4 py-3 text-gray-600">Pending Launch...</td>
-                                        <td className="px-4 py-3"><span className="text-gray-500 text-xs px-2 py-0.5 bg-white/5 rounded-full">Planned Q3</span></td>
+                                        <td className="px-4 py-3 whitespace-nowrap"><span className="text-gray-500 text-xs px-2 py-0.5 bg-white/5 rounded-full">Planned Q3</span></td>
                                     </tr>
                                 </tbody>
                             </table>

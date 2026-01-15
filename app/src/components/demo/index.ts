@@ -4,3 +4,4 @@ export { InfoCard } from './InfoCard';
 export { DemoButton } from './DemoButton';
 export { TxLink } from './TxLink';
 export { PrivacyVisualizer } from './PrivacyVisualizer';
+export { DemoLayout } from './DemoLayout';

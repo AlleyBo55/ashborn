@@ -10,12 +10,22 @@
   --background-end-rgb: 10, 10, 15;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: black;
   /* Default fallback */
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  max-width: 100vw;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Custom Scrollbar */

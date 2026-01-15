@@ -1,6 +1,7 @@
 'use client';
 
-import { ExternalLink } from 'lucide-react';
+import { LinkSquare02Icon } from 'hugeicons-react';
+import { BaseButton } from '@/components/ui/base';
 
 interface TxLinkProps {
     signature: string;
@@ -20,7 +21,7 @@ export function TxLink({ signature, cluster = 'devnet', label = 'View on Solscan
             className={`inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 transition ${className}`}
         >
             {label}
-            <ExternalLink className="w-3.5 h-3.5" />
+            <LinkSquare02Icon className="w-3.5 h-3.5" />
         </a>
     );
 }

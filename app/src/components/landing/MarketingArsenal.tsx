@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Zap, EyeOff, Ghost, Network, Users, Terminal, Code, Cpu, Skull } from 'lucide-react';
+import { Shield02Icon, FlashIcon, ViewOffIcon, Share01Icon, UserGroupIcon, ConsoleIcon, CodeIcon, CpuIcon, Alert01Icon } from 'hugeicons-react';
 import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 
@@ -8,7 +8,7 @@ import ScrambleText from '../ui/ScrambleText';
 const SHADOW_SKILLS = [
     {
         id: 'RULE_OF_SILENCE',
-        icon: Ghost,
+        icon: ViewOffIcon,
         name: "STEALTH CLOAK",
         rank: "GENERAL",
         desc: "Absolute invisibility. Generates phantom addresses for each transaction. No footprint remains.",
@@ -16,7 +16,7 @@ const SHADOW_SKILLS = [
     },
     {
         id: 'DOMAIN_EXPANSION',
-        icon: Shield,
+        icon: Shield02Icon,
         name: "VOID SHIELD",
         rank: "MARSHAL",
         desc: "ZK-SNARK proof generation. Encapsulates assets in an impenetrable barrier of mathematics.",
@@ -24,7 +24,7 @@ const SHADOW_SKILLS = [
     },
     {
         id: 'SHADOW_EXCHANGE',
-        icon: Users,
+        icon: UserGroupIcon,
         name: "SHADOW ARMY",
         rank: "COMMANDER",
         desc: "Summons decoy outputs. Your transaction hides amongst thousands of shadow soldiers.",
@@ -32,7 +32,7 @@ const SHADOW_SKILLS = [
     },
     {
         id: 'KINGS_AUTHORITY',
-        icon: EyeOff,
+        icon: ViewOffIcon,
         name: "VIEW KEY",
         rank: "RULER",
         desc: "Selective revelation. Grant vision only to those you deem worthy (Auditors).",
@@ -40,7 +40,7 @@ const SHADOW_SKILLS = [
     },
     {
         id: 'SHADOW_STEP',
-        icon: Zap,
+        icon: FlashIcon,
         name: "FLASH STRIKE",
         rank: "ELITE",
         desc: "Instantaneous execution. Move across the Solana network faster than light (<400ms).",
@@ -48,7 +48,7 @@ const SHADOW_SKILLS = [
     },
     {
         id: 'PHANTOM_TOUCH',
-        icon: Network,
+        icon: Share01Icon,
         name: "GHOST RELAY",
         rank: "ASSASSIN",
         desc: "Gasless interaction. Your wallet remains untouched; the shadows pay the fee.",
@@ -138,7 +138,7 @@ export default function MarketingArsenal() {
                 {/* Header: System Message */}
                 <div className="text-center mb-24">
                     <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-purple-900/50 bg-purple-900/10 text-purple-400 font-mono text-xs mb-6">
-                        <Skull className="w-3 h-3" />
+                        <Alert01Icon className="w-3 h-3" />
                         <span>SYSTEM NOTIFICATION</span>
                     </div>
                     <h2 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter mb-4">
@@ -159,7 +159,7 @@ export default function MarketingArsenal() {
                 {/* System Console Footer */}
                 <div className="mt-12 flex justify-between items-center text-[10px] font-mono text-gray-700 uppercase tracking-widest">
                     <div className="flex items-center gap-2">
-                        <Terminal className="w-4 h-4" />
+                        <ConsoleIcon className="w-4 h-4" />
                         <span>SYSTEM: ACCESS_GRANTED</span>
                     </div>
                     <div>
@@ -167,7 +167,7 @@ export default function MarketingArsenal() {
                     </div>
                     <div className="flex items-center gap-2">
                         <span>CLASS: NECROMANCER</span>
-                        <Code className="w-4 h-4" />
+                        <CodeIcon className="w-4 h-4" />
                     </div>
                 </div>
 
