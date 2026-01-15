@@ -322,15 +322,19 @@ async function payPrivately(amount: number) {
 
             {/* Footer */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 text-center">
-                <p className="text-xs text-gray-600 mb-2">Powered by</p>
-                <div className="flex items-center justify-center gap-4 text-xs">
-                    <Link href="https://www.npmjs.com/package/@alleyboss/micropay-solana-x402-paywall" target="_blank" className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                        X402 Paywall <ExternalLink className="w-3 h-3" />
+                <p className="text-xs text-gray-600 mb-2">Integrated with</p>
+                <div className="flex items-center justify-center gap-6">
+                    <Link href="https://privacy.cash" target="_blank" className="text-gray-400 hover:text-white transition flex items-center gap-1">
+                        PrivacyCash <ExternalLink className="w-3 h-3" />
                     </Link>
-                    <span className="text-gray-700">+</span>
-                    <span className="text-purple-400">PrivacyCash (Sender)</span>
-                    <span className="text-gray-700">+</span>
-                    <span className="text-green-400">Ashborn (Receiver)</span>
+                    <span className="text-gray-700">|</span>
+                    <span className="text-purple-400 font-semibold flex items-center gap-1">
+                        Radr Labs <Zap className="w-3 h-3" />
+                    </span>
+                    <span className="text-gray-700">|</span>
+                    <span className="text-blue-400 font-semibold">
+                        X402 Paywall
+                    </span>
                 </div>
             </motion.div>
         </div>

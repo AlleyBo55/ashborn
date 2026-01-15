@@ -285,13 +285,15 @@ await privacyCash.unshieldSOL(0.1, recipientAddress);`}
                 transition={{ delay: 0.3 }}
                 className="mt-8 text-center"
             >
-                <p className="text-xs text-gray-600 mb-2">Powered by</p>
+                <p className="text-xs text-gray-600 mb-2">Integrated with</p>
                 <div className="flex items-center justify-center gap-6">
                     <Link href="https://privacy.cash" target="_blank" className="text-gray-400 hover:text-white transition flex items-center gap-1">
                         PrivacyCash <ExternalLink className="w-3 h-3" />
                     </Link>
-                    <span className="text-gray-700">×</span>
-                    <span className="text-purple-400 font-semibold">Ashborn Protocol</span>
+                    <span className="text-gray-700">|</span>
+                    <span className="text-purple-400 font-semibold flex items-center gap-1">
+                        Radr Labs <Zap className="w-3 h-3" />
+                    </span>
                 </div>
             </motion.div>
         </div>
