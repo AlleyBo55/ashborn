@@ -140,6 +140,8 @@ npm run build
 |----------|---------|
 | **Ashborn Program** | [`BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe`](https://explorer.solana.com/address/BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe?cluster=devnet) |
 | **IDL** | `54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz` |
+| **PrivacyCash Program** | [`ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS`](https://explorer.solana.com/address/ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS?cluster=devnet) (deployed by @alleyboss from [Privacy-Cash/privacy-cash](https://github.com/Privacy-Cash/privacy-cash)) |
+| **PrivacyCash** | [`ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS`](https://explorer.solana.com/address/ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS?cluster=devnet) (deployed by @alleyboss from [Privacy-Cash/privacy-cash-sdk](https://github.com/Privacy-Cash/privacy-cash-sdk)) |
 
 ---
 

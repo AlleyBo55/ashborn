@@ -226,8 +226,28 @@ const ashborn = new Ashborn(connection, wallet, {
 
 | Network | Status | Program ID |
 |---------|--------|------------|
-| Devnet | ✅ Ready | `BzBU...5Qe` |
+| Devnet | ✅ Ready | `BzBU...5Qe` (Ashborn) |
 | Mainnet | 🔜 Coming | TBD |
+
+### PrivacyCash Integration
+
+Ashborn integrates with [PrivacyCash](https://github.com/Privacy-Cash/privacy-cash) for shielded pool operations:
+
+| Network | PrivacyCash Program ID |
+|---------|------------------------|
+| Devnet | `ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS` (deployed by @alleyboss from official repo) |
+| Mainnet | Official PrivacyCash deployment |
+
+```typescript
+// Use custom PrivacyCash devnet deployment
+import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
+
+const privacyCash = new PrivacyCashOfficial({
+  rpcUrl: 'https://api.devnet.solana.com',
+  owner: wallet,
+  programId: 'ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS', // Optional: defaults to mainnet
+});
+```
 
 ---
 

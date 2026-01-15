@@ -116,6 +116,8 @@ export function AshbornProvider({ children }: { children: ReactNode }) {
                 const instance = new Integrations.PrivacyCashOfficial({
                     rpcUrl: connection.rpcEndpoint,
                     owner: walletAdapter,
+                    // PrivacyCash devnet deployment by @alleyboss from official Privacy-Cash/privacy-cash-sdk
+                    programId: 'ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS',
                 });
                 setPrivacyCash(instance);
             } catch (e) {
