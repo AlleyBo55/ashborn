@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { Shield, CheckCircle, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { useAshborn, getSolscanUrl, SOL_MINT } from '@/hooks/useAshborn';
+import { useAshborn, SOL_MINT } from '@/hooks/useAshborn';
 import { PublicKey } from '@solana/web3.js';
+import { DemoPageHeader, InfoCard, DemoButton, TxLink, PrivacyVisualizer } from '@/components/demo';
+import { useDemoStatus } from '@/hooks/useDemoStatus';
 
 const DENOMINATIONS = [
     { label: '0.1 SOL', value: BigInt(100_000_000), display: '0.1' },
@@ -14,26 +16,21 @@ const DENOMINATIONS = [
     { label: '10 SOL', value: BigInt(10_000_000_000), display: '10' },
 ];
 
-type DemoStatus = 'idle' | 'confirming' | 'processing' | 'success' | 'error';
-
 export default function ShieldDemoPage() {
     const { connected, publicKey } = useWallet();
     const { ashborn, isReady } = useAshborn();
     const [selectedAmount, setSelectedAmount] = useState(DENOMINATIONS[0]);
-    const [status, setStatus] = useState<DemoStatus>('idle');
+    const { status, error, setStatus, setError, reset, isSuccess, isError, isLoading } = useDemoStatus();
+
     const [txSignature, setTxSignature] = useState<string | null>(null);
     const [noteAddress, setNoteAddress] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
 
     const handleShield = async () => {
         if (!connected || !publicKey || !ashborn || !isReady) return;
 
-        setStatus('confirming');
-        setError(null);
+        setStatus('loading');
 
         try {
-            setStatus('processing');
-
             // Execute real shield operation on devnet
             const result = await ashborn.shield({
                 amount: selectedAmount.value,
@@ -43,66 +40,45 @@ export default function ShieldDemoPage() {
             setTxSignature(result.signature);
             setNoteAddress(result.noteAddress.toBase58());
             setStatus('success');
-        } catch (err) {
+        } catch (err: any) {
             console.error('Shield error:', err);
-            setError(err instanceof Error ? err.message : 'Shield transaction failed');
-            setStatus('error');
+            setError(err.message || 'Shield transaction failed');
         }
     };
 
-    const resetDemo = () => {
-        setStatus('idle');
+    const handleReset = () => {
+        reset();
         setTxSignature(null);
         setNoteAddress(null);
-        setError(null);
     };
 
     return (
         <div className="max-w-2xl mx-auto">
-            {/* Title */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center mb-8"
-            >
-                <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-300 px-4 py-2 rounded-full text-sm mb-6 border border-purple-500/20">
-                    <Shield className="w-4 h-4" />
-                    Interactive Demo
-                </div>
-                <h1 className="text-4xl font-bold mb-4 tracking-tight">Shadow Extraction</h1>
-                <p className="text-gray-400 max-w-md mx-auto">
-                    Extract SOL into the Shadow Domain. Your assets become invisible to the public ledger.
-                </p>
-            </motion.div>
+            <DemoPageHeader
+                icon={Shield}
+                badge="Interactive Demo"
+                title="Shadow Extraction"
+                description="Extract SOL into the Shadow Domain. Your assets become invisible to the public ledger."
+                color="purple"
+            />
 
-            {/* What is Shadow Extraction? */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 }}
-                className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-6 mb-8"
+            <InfoCard
+                icon={Shield}
+                title="What is Shadow Extraction?"
+                color="blue"
+                steps={[
+                    { label: '1. Deposit SOL', color: 'blue' },
+                    { label: '2. Generate Commitment', color: 'purple' },
+                    { label: '3. Receive Note', color: 'green' }
+                ]}
             >
-                <h3 className="font-bold text-white mb-3 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-blue-400" />
-                    What is Shadow Extraction?
-                </h3>
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                    Shielding converts your <strong className="text-white">public SOL</strong> into a <strong className="text-purple-300">private ZK commitment</strong> (Shadow Note).
-                    After extraction, your balance is hidden from blockchain explorers. Only you can spend it using your private key.
-                </p>
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <span className="bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/30">1. Deposit SOL</span>
-                    <span className="text-gray-600">→</span>
-                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-lg border border-purple-500/30">2. Generate Commitment</span>
-                    <span className="text-gray-600">→</span>
-                    <span className="bg-green-500/20 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/30">3. Receive Note</span>
-                </div>
+                Shielding converts your <strong className="text-white">public SOL</strong> into a <strong className="text-purple-300">private ZK commitment</strong> (Shadow Note).
+                After extraction, your balance is hidden from blockchain explorers. Only you can spend it using your private key.
                 <p className="text-[10px] text-gray-600 mt-3 font-mono">
                     C = Poseidon(amount, blinding, nullifier) → Stored on-chain as encrypted commitment
                 </p>
-            </motion.div>
+            </InfoCard>
 
-            {/* Demo Card */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -116,39 +92,22 @@ export default function ShieldDemoPage() {
                         </div>
                         <h3 className="text-xl font-semibold mb-2">Connect Your Wallet</h3>
                         <p className="text-gray-400 mb-6">Connect a Solana wallet to initiate extraction.</p>
-                        {/* Wallet Button is in Layout, so we point user there or show a placeholder hint */}
-                        <div className="text-sm text-purple-300 animate-pulse">
-                            (Use button in top right)
-                        </div>
+                        <div className="text-sm text-purple-300 animate-pulse">(Use button in top right)</div>
                     </div>
-                ) : status === 'success' ? (
+                ) : isSuccess ? (
                     <div className="text-center py-8">
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center"
-                        >
-                            <CheckCircle className="w-8 h-8 text-green-400" />
-                        </motion.div>
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                            <Shield className="w-8 h-8 text-green-400" />
+                        </div>
                         <h3 className="text-xl font-semibold mb-2 text-green-400">Extraction Complete</h3>
-                        <p className="text-gray-400 mb-4">
-                            {selectedAmount.display} SOL is now in the Shadow Domain.
-                        </p>
+                        <p className="text-gray-400 mb-4">{selectedAmount.display} SOL is now in the Shadow Domain.</p>
+
                         <div className="bg-black/40 rounded-lg p-4 mb-6 text-left border border-white/5 space-y-3">
                             <div>
                                 <div className="text-xs text-gray-500 mb-1">Transaction Signature</div>
                                 <div className="flex items-center gap-2">
                                     <code className="text-xs text-purple-300 break-all font-mono flex-1">{txSignature}</code>
-                                    {txSignature && (
-                                        <a
-                                            href={getSolscanUrl(txSignature)}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-blue-400 hover:text-blue-300 transition"
-                                        >
-                                            <ExternalLink className="w-4 h-4" />
-                                        </a>
-                                    )}
+                                    {txSignature && <TxLink signature={txSignature} label="View" />}
                                 </div>
                             </div>
                             {noteAddress && (
@@ -158,38 +117,17 @@ export default function ShieldDemoPage() {
                                 </div>
                             )}
                         </div>
-                        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-left mb-6">
-                            <div className="text-sm text-purple-300 mb-2">Extraction Analysis:</div>
-                            <ul className="text-xs text-gray-400 space-y-1">
-                                <li>• Commitment Forged: <code className="text-purple-300">C = Poseidon(amount, blinding)</code></li>
-                                <li>• Note encrypted with view key</li>
-                                <li>• <span className="text-green-400">✓ Live on Solana Devnet</span></li>
-                            </ul>
-                        </div>
-                        <button
-                            onClick={resetDemo}
-                            className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
-                        >
-                            Try Again
-                        </button>
+
+                        <DemoButton onClick={handleReset} variant="secondary">Try Again</DemoButton>
                     </div>
-                ) : status === 'error' ? (
+                ) : isError ? (
                     <div className="text-center py-8">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-                            <AlertCircle className="w-8 h-8 text-red-400" />
-                        </div>
                         <h3 className="text-xl font-semibold mb-2 text-red-400">Transaction Failed</h3>
                         <p className="text-gray-400 mb-6">{error}</p>
-                        <button
-                            onClick={resetDemo}
-                            className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
-                        >
-                            Try Again
-                        </button>
+                        <DemoButton onClick={handleReset} variant="secondary">Try Again</DemoButton>
                     </div>
                 ) : (
                     <>
-                        {/* Wallet Info */}
                         <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
                             <div>
                                 <div className="text-xs text-gray-500 mb-1 font-mono">CONNECTED_WALLET</div>
@@ -200,13 +138,11 @@ export default function ShieldDemoPage() {
                             <div className="text-right">
                                 <div className="text-xs text-gray-500 mb-1 font-mono">NETWORK</div>
                                 <span className="text-sm text-yellow-400 flex items-center justify-end gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
-                                    Devnet
+                                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" /> Devnet
                                 </span>
                             </div>
                         </div>
 
-                        {/* Amount Selection */}
                         <div className="mb-8">
                             <label className="block text-sm text-gray-400 mb-3 font-medium">Select Amount (Fixed Denominations)</label>
                             <div className="grid grid-cols-3 gap-3">
@@ -223,61 +159,34 @@ export default function ShieldDemoPage() {
                                     </button>
                                 ))}
                             </div>
-                            <p className="text-xs text-gray-500 mt-2">
-                                * Fixed amounts prevent fingerprinting analysis.
-                            </p>
+                            <p className="text-xs text-gray-500 mt-2">* Fixed amounts prevent fingerprinting analysis.</p>
                         </div>
 
-                        {/* Shield Button */}
-                        <button
+                        <DemoButton
                             onClick={handleShield}
-                            disabled={status === 'processing' || status === 'confirming'}
-                            className="w-full py-4 bg-white text-black hover:bg-gray-200 rounded-xl font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                            loading={isLoading}
+                            disabled={isLoading}
+                            icon={Shield}
                         >
-                            {status === 'processing' || status === 'confirming' ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    {status === 'confirming' ? 'Check Wallet...' : 'Processing...'}
-                                </>
-                            ) : (
-                                <>
-                                    <Shield className="w-5 h-5" />
-                                    Extract {selectedAmount.display} SOL
-                                </>
-                            )}
-                        </button>
+                            Extract {selectedAmount.display} SOL
+                        </DemoButton>
 
-                        {/* Info Box */}
                         <div className="mt-6 bg-green-500/5 border border-green-500/20 rounded-lg p-4">
                             <p className="text-xs text-green-200/60 leading-relaxed">
-                                <strong>🔴 Live Devnet:</strong> This executes a real blockchain transaction on Solana Devnet. Ensure you have devnet SOL. Get some at <a href="https://faucet.solana.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-300">faucet.solana.com</a>
+                                <strong>🔴 Live Devnet:</strong> This executes a real blockchain transaction.
                             </p>
                         </div>
                     </>
                 )}
             </motion.div>
 
-            {/* Privacy Visualizer */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="grid md:grid-cols-2 gap-6 mt-8"
-            >
-                {/* Public View (Solscan) */}
-                <div className="bg-[#1a1b26] border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-                    <div className="px-4 py-3 bg-[#13141f] border-b border-white/5 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-[10px] font-bold">S</div>
-                            <span className="text-xs font-medium text-gray-400">Solscan (Public Ledger)</span>
-                        </div>
-                        <span className="text-[10px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20">PUBLIC</span>
-                    </div>
-                    <div className="p-5 font-mono text-sm space-y-4">
+            <PrivacyVisualizer
+                publicView={
+                    <>
                         <div>
                             <div className="text-gray-500 text-xs mb-1">Wallet Balance</div>
                             <div className="text-red-400 font-bold flex items-center gap-2">
-                                {status === 'success' ? (
+                                {isSuccess ? (
                                     <>
                                         <span>0.50 SOL</span>
                                         <span className="text-[10px] text-gray-500 font-normal line-through">1.0 SOL</span>
@@ -289,7 +198,7 @@ export default function ShieldDemoPage() {
                         </div>
                         <div className="border-t border-dashed border-gray-700/50 pt-4">
                             <div className="text-gray-500 text-xs mb-2">Recent Activity</div>
-                            {status === 'success' ? (
+                            {isSuccess ? (
                                 <div className="text-xs space-y-2">
                                     <div className="flex justify-between">
                                         <span className="text-blue-400">Tx: {txSignature?.slice(0, 6)}...</span>
@@ -305,23 +214,14 @@ export default function ShieldDemoPage() {
                                 <div className="text-xs text-gray-600 italic">No recent transactions</div>
                             )}
                         </div>
-                    </div>
-                </div>
-
-                {/* Private View (Ashborn) */}
-                <div className="bg-[#0E0E0E] border border-purple-500/30 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.1)]">
-                    <div className="px-4 py-3 bg-purple-900/10 border-b border-purple-500/20 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] font-bold">A</div>
-                            <span className="text-xs font-medium text-purple-200">Ashborn Vault (Private)</span>
-                        </div>
-                        <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded border border-purple-500/30">ENCRYPTED</span>
-                    </div>
-                    <div className="p-5 font-mono text-sm space-y-4">
+                    </>
+                }
+                privateView={
+                    <>
                         <div>
                             <div className="text-gray-500 text-xs mb-1">Shadow Balance</div>
                             <div className="text-green-400 font-bold flex items-center gap-2">
-                                {status === 'success' ? (
+                                {isSuccess ? (
                                     <>
                                         <span>0.50 SOL</span>
                                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-green-400">spendable</span>
@@ -333,7 +233,7 @@ export default function ShieldDemoPage() {
                         </div>
                         <div className="border-t border-dashed border-gray-800 pt-4">
                             <div className="text-gray-500 text-xs mb-2">Encrypted Notes</div>
-                            {status === 'success' ? (
+                            {isSuccess ? (
                                 <div className="text-xs space-y-2">
                                     <div className="flex justify-between items-center bg-white/5 p-2 rounded">
                                         <span className="text-purple-300">Note #1</span>
@@ -347,17 +247,11 @@ export default function ShieldDemoPage() {
                                 <div className="text-xs text-gray-600 italic">Vault empty</div>
                             )}
                         </div>
-                    </div>
-                </div>
-            </motion.div>
+                    </>
+                }
+            />
 
-            {/* Code Example */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mt-8"
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-8">
                 <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
                 <CodeBlock
                     language="typescript"

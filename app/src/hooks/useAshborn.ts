@@ -3,21 +3,19 @@
 /**
  * useAshborn Hook - Shared SDK initialization for demo pages
  * 
- * Provides initialized Ashborn, ShadowWire, and RangeCompliance instances
- * connected to the user's wallet on Solana devnet.
+ * Uses DYNAMIC IMPORTS from SDK sub-packages for optimal bundle splitting.
+ * The SDK only loads when wallet connects.
  */
 
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Keypair, PublicKey } from '@solana/web3.js';
-import { Wallet } from '@coral-xyz/anchor';
-import {
-    Ashborn,
-    ShadowWire,
-    RangeCompliance,
-    PrivacyCashOfficial,
-    createRangeCompliance,
-} from '@alleyboss/ashborn-sdk';
+import { Keypair } from '@solana/web3.js';
+
+// Types only - these don't bloat the bundle
+type Ashborn = any;
+type ShadowWire = any;
+type RangeCompliance = any;
+type PrivacyCashOfficial = any;
 
 interface UseAshbornResult {
     ashborn: Ashborn | null;
@@ -25,63 +23,80 @@ interface UseAshbornResult {
     rangeCompliance: RangeCompliance | null;
     privacyCash: PrivacyCashOfficial | null;
     isReady: boolean;
+    isLoading: boolean;
 }
 
 /**
- * Custom hook for Ashborn SDK initialization
+ * Custom hook for Ashborn SDK initialization with LAZY LOADING
  * 
- * Usage:
- * ```tsx
- * const { ashborn, shadowWire, rangeCompliance, privacyCash, isReady } = useAshborn();
- * 
- * if (isReady && ashborn) {
- *   await ashborn.shield({ amount: 1_000_000_000n, mint: SOL_MINT });
- * }
- * ```
+ * Imports from SDK sub-packages for optimal tree-shaking:
+ * - Core: @alleyboss/ashborn-sdk (14KB)
+ * - Stealth: @alleyboss/ashborn-sdk/stealth (2.7KB)
+ * - ZK: @alleyboss/ashborn-sdk/zk (5KB)
+ * - Integrations: @alleyboss/ashborn-sdk/integrations (31KB)
  */
 export function useAshborn(): UseAshbornResult {
     const { connection } = useConnection();
     const { publicKey, signTransaction, signAllTransactions, connected } = useWallet();
 
-    const { ashborn, shadowWire, rangeCompliance, privacyCash } = useMemo(() => {
+    const [ashborn, setAshborn] = useState<Ashborn | null>(null);
+    const [shadowWire, setShadowWire] = useState<ShadowWire | null>(null);
+    const [rangeCompliance, setRangeCompliance] = useState<RangeCompliance | null>(null);
+    const [privacyCash, setPrivacyCash] = useState<PrivacyCashOfficial | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
         if (!connected || !publicKey || !signTransaction || !signAllTransactions) {
-            return { ashborn: null, shadowWire: null, rangeCompliance: null, privacyCash: null };
+            setAshborn(null);
+            setShadowWire(null);
+            setRangeCompliance(null);
+            setPrivacyCash(null);
+            return;
         }
 
-        // Create a wallet adapter compatible with Anchor's Wallet interface
-        const wallet: Wallet = {
-            publicKey,
-            signTransaction,
-            signAllTransactions,
-            payer: Keypair.generate(), // Placeholder - not used for signing
-        };
+        let cancelled = false;
+        setIsLoading(true);
 
-        try {
-            const ashbornInstance = new Ashborn(connection, wallet, {
-                programId: new PublicKey('ASHByNYwKq8NJFgLbQPePnM4hmg57rPyMY1cFk44bpW8'), // Devnet program
-            });
+        // Dynamic imports from sub-packages for optimal bundle splitting
+        Promise.all([
+            import('@alleyboss/ashborn-sdk'),
+            import('@alleyboss/ashborn-sdk/stealth'),
+            import('@alleyboss/ashborn-sdk/zk'),
+            import('@alleyboss/ashborn-sdk/integrations'),
+        ]).then(([Core, Stealth, ZK, Integrations]) => {
+            if (cancelled) return;
 
-            const shadowWireInstance = new ShadowWire(connection, wallet);
-            const rangeComplianceInstance = createRangeCompliance(connection, {
-                publicKey,
-            });
+            try {
+                const wallet = {
+                    publicKey,
+                    signTransaction,
+                    signAllTransactions,
+                    payer: Keypair.generate(),
+                };
 
-            // Initialize PrivacyCashOfficial adapter
-            const privacyCashInstance = new PrivacyCashOfficial({
-                rpcUrl: connection.rpcEndpoint,
-                owner: Keypair.generate() // PrivacyCash usually requires a keypair for owner, but we use adapter for public methods
-            });
+                const ashbornInstance = new Core.Ashborn(connection, wallet, {});
+                const shadowWireInstance = new Stealth.ShadowWire(connection, wallet);
+                const rangeComplianceInstance = ZK.createRangeCompliance(connection, { publicKey });
+                const privacyCashInstance = new Integrations.PrivacyCashOfficial({
+                    rpcUrl: connection.rpcEndpoint,
+                    owner: Keypair.generate(),
+                });
 
-            return {
-                ashborn: ashbornInstance,
-                shadowWire: shadowWireInstance,
-                rangeCompliance: rangeComplianceInstance,
-                privacyCash: privacyCashInstance,
-            };
-        } catch (error) {
-            console.error('Failed to initialize Ashborn SDK:', error);
-            return { ashborn: null, shadowWire: null, rangeCompliance: null, privacyCash: null };
-        }
+                setAshborn(ashbornInstance);
+                setShadowWire(shadowWireInstance);
+                setRangeCompliance(rangeComplianceInstance);
+                setPrivacyCash(privacyCashInstance);
+            } catch (error) {
+                console.error('Failed to initialize Ashborn SDK:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }).catch((error) => {
+            console.error('Failed to load Ashborn SDK:', error);
+            setIsLoading(false);
+        });
+
+        return () => { cancelled = true; };
     }, [connection, publicKey, signTransaction, signAllTransactions, connected]);
 
     return {
@@ -89,7 +104,8 @@ export function useAshborn(): UseAshbornResult {
         shadowWire,
         rangeCompliance,
         privacyCash,
-        isReady: connected && !!ashborn,
+        isReady: connected && !!ashborn && !isLoading,
+        isLoading,
     };
 }
 

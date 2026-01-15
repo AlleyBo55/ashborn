@@ -28,5 +28,5 @@ startup_wait = 5000
 url = "https://api.devnet.solana.com"
 
 [[test.genesis]]
-address = "ASHBrnShdwMnrch1111111111111111111111111"
+address = "BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe"
 program = "target/deploy/ashborn.so"

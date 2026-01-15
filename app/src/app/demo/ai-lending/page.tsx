@@ -8,7 +8,12 @@ import CodeBlock from '@/components/ui/CodeBlock';
 import Link from 'next/link';
 import { useAshborn, getSolscanUrl } from '@/hooks/useAshborn';
 import { Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { randomBytes } from '@alleyboss/ashborn-sdk';
+// Local utility to avoid importing heavy SDK for just one function
+const randomBytes = (length: number): Uint8Array => {
+    const bytes = new Uint8Array(length);
+    crypto.getRandomValues(bytes);
+    return bytes;
+};
 
 type Step = 'idle' | 'proving' | 'lending' | 'confirming' | 'complete';
 

@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/AlleyBo55/ashborn/main/app/public/assets/hero-eye-override.png" alt="Ashborn Shadow Monarch" width="400" />
-</p>
+
 
 <h1 align="center">🌑 @alleyboss/ashborn-sdk</h1>
 
@@ -13,8 +11,8 @@
   <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/dm/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="downloads" /></a>
   <a href="https://github.com/AlleyBo55/ashborn/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="license" /></a>
   <br />
-  <img src="https://img.shields.io/badge/Integrated%20with-Radr_Labs-purple?style=flat-square&logo=solana" alt="Radr Labs" />
-  <img src="https://img.shields.io/badge/Integrated%20with-PrivacyCash-blueviolet?style=flat-square&logo=solana" alt="PrivacyCash" />
+  <img src="https://img.shields.io/badge/Easy%20Integration-Radr_Labs-purple?style=flat-square&logo=solana" alt="Radr Labs" />
+  <img src="https://img.shields.io/badge/Easy%20Integration-PrivacyCash-blueviolet?style=flat-square&logo=solana" alt="PrivacyCash" />
 </p>
 
 <p align="center">
@@ -228,7 +226,7 @@ const ashborn = new Ashborn(connection, wallet, {
 
 | Network | Status | Program ID |
 |---------|--------|------------|
-| Devnet | ✅ Ready | `ASHBrn...` |
+| Devnet | ✅ Ready | `BzBU...5Qe` |
 | Mainnet | 🔜 Coming | TBD |
 
 ---

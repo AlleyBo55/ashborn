@@ -36,7 +36,7 @@ export default function InteropDemoPage() {
             const shieldTx = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: publicKey,
-                    toPubkey: new PublicKey('ASHByNYwKq8NJFgLbQPePnM4hmg57rPyMY1cFk44bpW8'), // Ashborn program
+                    toPubkey: new PublicKey('BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe'), // Ashborn program
                     lamports: amountLamports,
                 })
             );

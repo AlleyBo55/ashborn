@@ -98,7 +98,7 @@ export class RangeCompliance {
   constructor(
     connection: Connection,
     wallet: { publicKey: PublicKey; signMessage?: (msg: Uint8Array) => Promise<Uint8Array> },
-    programId: PublicKey = new PublicKey("ASHBrnShdwMnrch1111111111111111111111111")
+    programId: PublicKey = new PublicKey("BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe")
   ) {
     this._connection = connection;
     this.wallet = wallet;

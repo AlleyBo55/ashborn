@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@/styles/nprogress.css';
 import { Providers } from '@/components/Providers';
-
-// const inter = Inter({ subsets: ['latin'] });
+import { Suspense } from 'react';
+import NavigationProgress from '@/components/NavigationProgress';
 
 export const metadata: Metadata = {
     title: 'Ashborn | Compliant Private Payment Protocol on Solana',
@@ -24,6 +25,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className="font-sans">
+                <Suspense fallback={null}>
+                    <NavigationProgress />
+                </Suspense>
                 <Providers>
                     {/* Background glow effect */}
                     <div className="shadow-glow-bg" />

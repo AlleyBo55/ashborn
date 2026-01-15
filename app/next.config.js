@@ -33,6 +33,7 @@ const nextConfig = {
       asyncWebAssembly: true,
       layers: true,
     };
+
     return config;
   },
   // Optimize for Solana web3.js
