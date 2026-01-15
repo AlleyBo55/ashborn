@@ -43,7 +43,7 @@ export function DemoLayout({ header, info, code, children, maxWidth = "max-w-3xl
                 icon={info.icon}
                 title={info.title}
                 color={info.color}
-                steps={info.steps}
+                steps={info.steps?.map(s => typeof s === 'string' ? { label: s, color: 'blue' as const } : { ...s, color: (s.color as any) || 'blue' })}
             >
                 {info.description}
             </InfoCard>

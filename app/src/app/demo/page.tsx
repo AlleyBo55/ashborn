@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Cube01Icon,
+    CubeIcon,
     SentIcon,
     Shield02Icon,
     AiChat02Icon,
@@ -11,11 +11,11 @@ import {
     FlashIcon,
     SparklesIcon,
     ViewIcon,
-    Lock01Icon,
-    UserGroup01Icon,
-    CommandLine01Icon,
+    LockIcon,
+    UserGroupIcon,
+    ConsoleIcon,
     Activity01Icon,
-    GhostIcon
+    ViewOffIcon
 } from 'hugeicons-react';
 import { useState } from 'react';
 
@@ -55,7 +55,7 @@ const demos = [
         subtitle: 'STEALTH_PRIMITIVES',
         desc: "Generate unlinkable stealth addresses and ephemeral keys. The cryptographic core of private transfers.",
         href: '/demo/radr',
-        icon: GhostIcon,
+        icon: ViewOffIcon,
         gradient: 'from-purple-500 to-indigo-600',
         glow: 'shadow-[0_0_60px_rgba(139,92,246,0.3)]',
         flow: ['Gen Ephemeral Key', 'Derive Shared Secret', 'Comput Stealth Addr', 'Scan Outputs'],
@@ -69,7 +69,7 @@ const demos = [
         subtitle: 'ARISE_PROTOCOL',
         desc: "Convert public SOL into invisible Shadow Notes. Your transaction history ends here.",
         href: '/demo/shield',
-        icon: Cube01Icon,
+        icon: CubeIcon,
         gradient: 'from-blue-600 to-purple-600',
         glow: 'shadow-[0_0_60px_rgba(59,130,246,0.3)]',
         flow: ['Deposit SOL', 'Generate Commitment', 'Encrypt Note', 'Store On-Chain'],
@@ -276,9 +276,9 @@ const HowItWorksSection = () => (
 
         <div className="grid md:grid-cols-4 gap-4">
             {[
-                { icon: Cube01Icon, title: 'Extract', desc: 'Deposit SOL into pool', color: 'text-blue-400', num: '01' },
-                { icon: Lock01Icon, title: 'Encrypt', desc: 'Generate ZK commitment', color: 'text-purple-400', num: '02' },
-                { icon: UserGroup01Icon, title: 'Anonymize', desc: 'Join global anonymity set', color: 'text-green-400', num: '03' },
+                { icon: CubeIcon, title: 'Extract', desc: 'Deposit SOL into pool', color: 'text-blue-400', num: '01' },
+                { icon: LockIcon, title: 'Encrypt', desc: 'Generate ZK commitment', color: 'text-purple-400', num: '02' },
+                { icon: UserGroupIcon, title: 'Anonymize', desc: 'Join global anonymity set', color: 'text-green-400', num: '03' },
                 { icon: SentIcon, title: 'Command', desc: 'Spend with ZK proof', color: 'text-amber-400', num: '04' },
             ].map((step, i) => (
                 <motion.div
@@ -404,7 +404,7 @@ export default function DemoIndexPage() {
                         href="/docs"
                         className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-medium text-sm hover:bg-gray-200 transition-colors"
                     >
-                        <CommandLine01Icon className="w-4 h-4" />
+                        <ConsoleIcon className="w-4 h-4" />
                         View Docs
                     </Link>
                 </div>

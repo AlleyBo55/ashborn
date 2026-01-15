@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { Shield02Icon, Lock01Icon, ViewIcon, ViewOffIcon, ArrowRight01Icon, CheckmarkCircle01Icon, Loading03Icon } from 'hugeicons-react'; // Assumed names
+import { Shield02Icon, LockIcon, ViewIcon, ViewOffIcon, ArrowRight01Icon, CheckmarkCircle01Icon, Loading03Icon } from 'hugeicons-react'; // Assumed names
 import { DemoLayout, DemoButton, TxLink, PrivacyVisualizer } from '@/components/demo';
 import { useAshborn } from '@/hooks/useAshborn';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
@@ -64,7 +64,7 @@ export default function ShieldDemoPage() {
                     color: "blue"
                 }}
                 info={{
-                    icon: Lock01Icon,
+                    icon: LockIcon,
                     title: "How Shielding Works",
                     color: "blue",
                     steps: [
@@ -158,7 +158,7 @@ const txSignature = await privacyCash.shieldSOL(0.1);
                                 onClick={runShieldDemo}
                                 loading={isLoading}
                                 disabled={isLoading}
-                                icon={Lock01Icon}
+                                icon={LockIcon}
                                 variant="gradient"
                             >
                                 Shield Funds

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { File02Icon, ViewOffIcon, Lock01Icon, Unlock01Icon, Database01Icon } from 'hugeicons-react';
+import { File02Icon, ViewOffIcon, LockIcon, SquareUnlock01Icon, Database01Icon } from 'hugeicons-react';
 import { useState } from 'react';
 
 const DataLogEntry = ({
@@ -35,7 +35,7 @@ const DataLogEntry = ({
 
             <div className="relative z-10">
                 <h4 className="text-gray-200 font-bold mb-1 flex items-center gap-2">
-                    {status === 'decrypted' ? <Unlock01Icon className="w-3 h-3 text-green-500" /> : <Lock01Icon className="w-3 h-3 text-red-500" />}
+                    {status === 'decrypted' ? <SquareUnlock01Icon className="w-3 h-3 text-green-500" /> : <LockIcon className="w-3 h-3 text-red-500" />}
                     {title}
                 </h4>
                 <p className={`text-xs leading-relaxed ${status === 'corrupted' ? 'text-red-400/80 blur-[0.5px]' : 'text-gray-400'}`}>

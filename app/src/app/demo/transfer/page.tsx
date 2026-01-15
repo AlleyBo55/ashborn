@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { SentIcon, UserGroup01Icon } from 'hugeicons-react';
+import { SentIcon, UserGroupIcon } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
 import { useAshborn } from '@/hooks/useAshborn';
 import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
@@ -89,7 +89,7 @@ export default function TransferDemoPage() {
                     color: "blue"
                 }}
                 info={{
-                    icon: UserGroup01Icon,
+                    icon: UserGroupIcon,
                     title: "How Stealth Addresses Work",
                     color: "blue",
                     steps: [

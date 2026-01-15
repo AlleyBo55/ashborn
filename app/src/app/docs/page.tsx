@@ -6,7 +6,7 @@ import TerminalBlock from '@/components/ui/TerminalBlock';
 // ... (existing imports, but remove Copy, Check from lucide if unused locally, mostly unused now as CodeBlock handles it)
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight01Icon, Shield02Icon, GhostIcon, Activity01Icon, BookOpen01Icon, CommandLine01Icon, CodeIcon, CpuIcon, Lock01Icon, FlashIcon, Search01Icon, Menu01Icon, Cancel01Icon, ChevronRight01Icon } from 'hugeicons-react';
+import { ArrowRight01Icon, Shield02Icon, ViewOffIcon, Activity01Icon, BookOpen01Icon, ConsoleIcon, CodeIcon, CpuIcon, LockIcon, FlashIcon, Search01Icon, Menu01Icon, Cancel01Icon } from 'hugeicons-react';
 import Link from 'next/link';
 
 // ... (sections data remains same)
@@ -123,28 +123,28 @@ const sections = [
         title: "Getting Started", items: [
             { id: 'overview', title: 'Overview', icon: BookOpen01Icon },
             { id: 'quick-start', title: 'Quick Start', icon: FlashIcon },
-            { id: 'installation', title: 'Installation', icon: CommandLine01Icon },
+            { id: 'installation', title: 'Installation', icon: ConsoleIcon },
         ]
     },
     {
         title: "Core Concepts", items: [
             { id: 'how-it-works', title: 'Architecture', icon: CpuIcon },
             { id: 'features', title: 'Privacy Features', icon: Shield02Icon },
-            { id: 'security', title: 'Security', icon: Lock01Icon },
+            { id: 'security', title: 'Security', icon: LockIcon },
         ]
     },
     {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: CodeIcon },
-            { id: 'stealth', title: 'Stealth Addresses', icon: GhostIcon },
+            { id: 'stealth', title: 'Stealth Addresses', icon: ViewOffIcon },
             { id: 'nlp', title: 'Natural Language', icon: Activity01Icon },
-            { id: 'eliza', title: 'Eliza Plugin', icon: GhostIcon },
+            { id: 'eliza', title: 'Eliza Plugin', icon: ViewOffIcon },
         ]
     },
     {
         title: "guides", items: [
-            { id: 'tutorials', title: 'Tutorials', icon: Book },
-            { id: 'deployment', title: 'Deployment', icon: Activity },
+            { id: 'tutorials', title: 'Tutorials', icon: BookOpen01Icon },
+            { id: 'deployment', title: 'Deployment', icon: Activity01Icon },
         ]
     }
 ];
@@ -271,7 +271,7 @@ export default function DocsPage() {
                             <a href="#quick-start" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]">
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="p-2 rounded-lg bg-gray-800 text-gray-300 group-hover:bg-gray-700 group-hover:text-white transition-colors">
-                                        <CommandLine01Icon className="w-5 h-5" />
+                                        <ConsoleIcon className="w-5 h-5" />
                                     </div>
                                     <span className="font-semibold text-white">Quick Start</span>
                                 </div>
@@ -294,12 +294,12 @@ export default function DocsPage() {
                                 desc="Deposit SOL/SPL tokens into a global anonymity set. On-chain amounts are hidden."
                             />
                             <FeatureCard
-                                icon={GhostIcon}
+                                icon={ViewOffIcon}
                                 title="Stealth Addresses"
                                 desc="Receive assets at one-time addresses unlinkable to your main identity."
                             />
                             <FeatureCard
-                                icon={Lock01Icon}
+                                icon={LockIcon}
                                 title="Compliance Proofs"
                                 desc="Prove solvability or clean funds (ZK) without revealing balances."
                             />
@@ -354,7 +354,7 @@ export default function DocsPage() {
                         <div className="bg-gradient-to-br from-[#1a1b26] to-black border border-purple-500/20 rounded-xl p-8 mb-8 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-32 bg-purple-500/5 blur-3xl rounded-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <Lock01Icon className="w-5 h-5 text-purple-400" />
+                                <LockIcon className="w-5 h-5 text-purple-400" />
                                 The &quot;Glass Vault&quot; Analogy
                             </h3>
                             <div className="space-y-4 text-gray-400 leading-relaxed">
@@ -397,7 +397,7 @@ export default function DocsPage() {
                             </div>
                             <div className="p-6 rounded-xl bg-white/[0.03] border border-white/5">
                                 <h3 className="font-medium text-white mb-3 flex items-center gap-2">
-                                    <CommandLine01Icon className="w-4 h-4 text-blue-400" />
+                                    <ConsoleIcon className="w-4 h-4 text-blue-400" />
                                     Smart Contract Pool
                                 </h3>
                                 <p className="text-sm text-gray-400">

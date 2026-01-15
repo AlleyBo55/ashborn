@@ -19,7 +19,7 @@ jest.mock('@solana/wallet-adapter-react', () => ({
 // Mock HugeIcons to avoid rendering issues
 jest.mock('hugeicons-react', () => ({
     Shield02Icon: () => <div data-testid="icon-shield" />,
-    Lock01Icon: () => <div data-testid="icon-lock" />,
+    LockIcon: () => <div data-testid="icon-lock" />,
     ViewIcon: () => <div data-testid="icon-view" />,
     ViewOffIcon: () => <div data-testid="icon-view-off" />,
     ArrowRight01Icon: () => <div data-testid="icon-arrow-right" />,

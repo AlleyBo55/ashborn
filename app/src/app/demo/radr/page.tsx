@@ -4,19 +4,18 @@ import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
 import {
-    GhostIcon,
+    ViewOffIcon,
     Key01Icon,
     Shield02Icon,
     RefreshIcon,
-    Loading03Icon,
-    ViewOffIcon
+    Loading03Icon
 } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
 import { useAshborn } from '@/hooks/useAshborn';
-import DemoPageHeader from '@/components/demo/DemoPageHeader';
-import BaseCard from '@/components/ui/base/BaseCard';
-import InfoCard from '@/components/demo/InfoCard';
-import BaseButton from '@/components/ui/base/BaseButton';
+import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
+import { BaseCard } from '@/components/ui/base/BaseCard';
+import { InfoCard } from '@/components/demo/InfoCard';
+import { BaseButton } from '@/components/ui/base/BaseButton';
 
 type Step = 'idle' | 'generating' | 'scanning' | 'complete';
 
@@ -74,8 +73,7 @@ export default function RadrDemoPage() {
                 badge="ShadowWire"
                 title="Radr Labs Integration"
                 description="Experience the core cryptography behind ShadowWire. Generate stealth addresses and ephemeral keys that make transactions unlinkable."
-                icon={GhostIcon}
-                status={step === 'generating' || step === 'scanning' ? 'processing' : 'active'}
+                icon={ViewOffIcon}
             />
 
             <div className="grid md:grid-cols-2 gap-8">
@@ -93,7 +91,7 @@ export default function RadrDemoPage() {
                         <div className="space-y-6">
                             <div className={`p-4 rounded-xl border transition-all duration-500 ${step === 'generating' || stealthAddress ? 'bg-purple-500/10 border-purple-500/20' : 'bg-white/5 border-white/5'}`}>
                                 <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                                    <GhostIcon className="w-3 h-3" /> Ephemeral Key (R)
+                                    <ViewOffIcon className="w-3 h-3" /> Ephemeral Key (R)
                                 </div>
                                 <div className="font-mono text-xs md:text-sm text-purple-200 break-all">
                                     {ephemeralKey || 'waiting to generate...'}
@@ -119,7 +117,7 @@ export default function RadrDemoPage() {
                                 disabled={!connected || (step !== 'idle' && step !== 'complete')}
                                 loading={step === 'generating' || step === 'scanning'}
                                 loadingText="Computing Elliptic Curve..."
-                                icon={step === 'complete' ? RefreshIcon : GhostIcon}
+                                icon={step === 'complete' ? RefreshIcon : ViewOffIcon}
                                 className="w-full mt-6"
                             >
                                 {step === 'complete' ? 'Generate Another' : 'Generate Stealth Address'}
@@ -132,11 +130,11 @@ export default function RadrDemoPage() {
                 <div className="space-y-6">
                     <InfoCard
                         title="How ShadowWire Works"
-                        icon={GhostIcon}
+                        icon={ViewOffIcon}
                         steps={[
-                            'Sender generates random keypair (r, R)',
-                            'Shared secret derived via ECDH (S = r*A)',
-                            'Stealth Address P constructed (P = H(S)*G + B)'
+                            { label: 'Sender generates random keypair (r, R)', color: 'blue' },
+                            { label: 'Shared secret derived via ECDH (S = r*A)', color: 'purple' },
+                            { label: 'Stealth Address P constructed (P = H(S)*G + B)', color: 'green' }
                         ]}
                     />
 

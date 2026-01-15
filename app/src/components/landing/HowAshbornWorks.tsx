@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Cube01Icon, Lock01Icon, UserGroup01Icon, SentIcon, ViewIcon, ArrowRight01Icon, FlashIcon, Shield02Icon } from 'hugeicons-react';
+import { CubeIcon, LockIcon, UserGroupIcon, SentIcon, ViewIcon, ArrowRight01Icon, FlashIcon, Shield02Icon } from 'hugeicons-react';
 import Link from 'next/link';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -12,7 +12,7 @@ import Link from 'next/link';
 const steps = [
     {
         num: '01',
-        icon: Cube01Icon,
+        icon: CubeIcon,
         title: 'Extract',
         subtitle: 'SHIELD_PROTOCOL',
         desc: 'Deposit SOL into the Shadow Pool. Your public balance becomes a hidden ZK commitment.',
@@ -22,7 +22,7 @@ const steps = [
     },
     {
         num: '02',
-        icon: Lock01Icon,
+        icon: LockIcon,
         title: 'Encrypt',
         subtitle: 'ZK_COMMITMENT',
         desc: 'Generate cryptographic proof. Only you possess the private key to spend.',
@@ -32,7 +32,7 @@ const steps = [
     },
     {
         num: '03',
-        icon: UserGroup01Icon,
+        icon: UserGroupIcon,
         title: 'Anonymize',
         subtitle: 'ANONYMITY_SET',
         desc: 'Join the global anonymity pool. Your deposit is indistinguishable from millions.',

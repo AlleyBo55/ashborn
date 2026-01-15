@@ -66,11 +66,21 @@ export default function AILendingDemoPage() {
             }
             setLoanData(prev => ({ ...prev, proofHash }));
 
-            // Step 2: Lender transfers 
+            // Step 2: Lender transfers (Real Tx)
             setStep('lending');
-            await new Promise(r => setTimeout(r, 1000));
-            // Simulate transfer
-            setLoanData(prev => ({ ...prev, signature: '2jK9...1mP3' }));
+
+            // Real transfer simulation (Lender -> Borrower/Stealth)
+            const transaction = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: publicKey, // Self for demo purposes
+                    lamports: Math.floor(parseFloat(loanAmount) * LAMPORTS_PER_SOL),
+                })
+            );
+            const signature = await sendTransaction(transaction, connection);
+            await connection.confirmTransaction(signature, 'confirmed');
+
+            setLoanData(prev => ({ ...prev, signature }));
 
             // Generate stealth address (simulation)
             const stealthString = `stealth_${publicKey.toBase58().slice(0, 10)}`;
@@ -192,84 +202,93 @@ export default function AILendingDemoPage() {
                                         <span className="text-gray-400">Proof Hash:</span>
                                         <span className="text-gray-500 font-mono truncate max-w-[120px]">{loanData.proofHash}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-400">Loan Tx:</span>
-                                        {loanData.signature && <TxLink signature={loanData.signature} />}
-                                    </div>
+                                    <span className="text-gray-400">Loan Tx:</span>
+                                    {loanData.signature && <TxLink signature={loanData.signature} className="text-xs" />}
                                 </div>
                             </div>
-                        }
-                        privateView={
-                            <div>
-                                <div className="text-gray-500 text-xs mb-1">Private State</div>
-                                <div className="text-xs space-y-2">
-                                    <div className="flex justify-between border-b border-purple-500/20 pb-1">
-                                        <span className="text-purple-300">Actual Balance:</span>
-                                        <span className="text-white font-mono blur-[2px] hover:blur-none transition">50.0 SOL (Hidden)</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-purple-500/20 pb-1">
-                                        <span className="text-purple-300">Borrower Identity:</span>
-                                        <span className="text-white font-mono blur-[2px] hover:blur-none transition">{publicKey?.toBase58().slice(0, 8)}...</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-purple-300">Receiver Stealth:</span>
-                                        <span className="text-green-400 font-mono">{loanData.stealthAddr?.slice(0, 8)}...</span>
-                                    </div>
-                                </div>
                             </div>
                         }
+            privateView={
+                <div>
+                    <div className="text-gray-500 text-xs mb-1">Private State</div>
+                    <div className="text-xs space-y-2">
+                        <div className="flex justify-between border-b border-purple-500/20 pb-1">
+                            <span className="text-purple-300">Actual Balance:</span>
+                            <span className="text-white font-mono blur-[2px] hover:blur-none transition">50.0 SOL (Hidden)</span>
+                        </div>
+                        <div className="flex justify-between border-b border-purple-500/20 pb-1">
+                            <span className="text-purple-300">Borrower Identity:</span>
+                            <span className="text-white font-mono blur-[2px] hover:blur-none transition">{publicKey?.toBase58().slice(0, 8)}...</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-purple-300">Receiver Stealth:</span>
+                        }
+                            privateView={
+                                <div>
+                                    <div className="text-gray-500 text-xs mb-1">Private State</div>
+                                    <div className="text-xs space-y-2">
+                                        <div className="flex justify-between border-b border-purple-500/20 pb-1">
+                                            <span className="text-purple-300">Actual Balance:</span>
+                                            <span className="text-white font-mono blur-[2px] hover:blur-none transition">50.0 SOL (Hidden)</span>
+                                        </div>
+                                        <div className="flex justify-between border-b border-purple-500/20 pb-1">
+                                            <span className="text-purple-300">Borrower Identity:</span>
+                                            <span className="text-white font-mono blur-[2px] hover:blur-none transition">{publicKey?.toBase58().slice(0, 8)}...</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-purple-300">Receiver Stealth:</span>
+                                            <span className="text-green-400 font-mono">{loanData.stealthAddr?.slice(0, 8)}...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                     />
 
-                    <div className="flex justify-center">
-                        <DemoButton onClick={resetDemo} icon={Money03Icon}>
-                            Simulate Another Loan
-                        </DemoButton>
-                    </div>
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    <div className="grid grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Loan Amount</label>
-                            <input type="number" value={loanAmount} onChange={(e) => setLoanAmount(e.target.value)}
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
+                            <div className="flex justify-center">
+                                <DemoButton onClick={resetDemo} icon={Money03Icon}>
+                                    Make Another Loan
+                                </DemoButton>
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Collateral Min</label>
-                            <input type="number" value={collateralRange.min} onChange={(e) => setCollateralRange(p => ({ ...p, min: e.target.value }))}
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
-                        </div>
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Collateral Max</label>
-                            <input type="number" value={collateralRange.max} onChange={(e) => setCollateralRange(p => ({ ...p, max: e.target.value }))}
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
-                        </div>
-                    </div>
+                        ) : (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm text-gray-400 mb-2">Loan Amount</label>
+                                    <input type="number" value={loanAmount} onChange={(e) => setLoanAmount(e.target.value)}
+                                        className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-400 mb-2">Collateral Min</label>
+                                    <input type="number" value={collateralRange.min} onChange={(e) => setCollateralRange(p => ({ ...p, min: e.target.value }))}
+                                        className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-400 mb-2">Collateral Max</label>
+                                    <input type="number" value={collateralRange.max} onChange={(e) => setCollateralRange(p => ({ ...p, max: e.target.value }))}
+                                        className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
+                                </div>
+                            </div>
 
-                    {!connected ? (
-                        <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
-                            <p className="text-gray-400 text-sm">Connect wallet to simulate AI lending</p>
+                            {!connected ? (
+                                <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
+                                    <p className="text-gray-400 text-sm">Connect wallet to execute AI lending</p>
+                                </div>
+                            ) : (
+                                <DemoButton
+                                    onClick={runLendingDemo}
+                                    loading={isLoading}
+                                    disabled={isLoading}
+                                    icon={Money03Icon}
+                                    variant="gradient"
+                                >
+                                    Execute Lending
+                                </DemoButton>
+                            )}
                         </div>
-                    ) : (
-                        <DemoButton
-                            onClick={runLendingDemo}
-                            loading={isLoading}
-                            disabled={isLoading}
-                            icon={Money03Icon}
-                            variant="gradient"
-                        >
-                            Simulate Lending
-                        </DemoButton>
-                    )}
-                </div>
             )}
-
-            {/* SDK Code */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
-                <CodeBlock
-                    language="typescript"
-                    code={`import { Ashborn, AshbornRangeCompliance, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
+                        language="typescript"
+                        code={`import { Ashborn, AshbornRangeCompliance, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
 
 // 1. Borrower generates ZK collateral proof
 const compliance = createRangeCompliance(ashborn);
@@ -284,10 +303,10 @@ const isValid = await compliance.verifyRangeProof(proof);
 if (isValid) {
     await privacyCash.unshieldSOL(1.0, stealth.address);
 }`}
-                    filename="ai-lending.ts"
-                />
-            </motion.div>
+                        filename="ai-lending.ts"
+    />
+                    </motion.div>
 
-        </div>
+                </div >
     );
 }

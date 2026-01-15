@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BotIcon, GhostIcon, SecurityValidationIcon, FlashIcon, Globe02Icon, Lock01Icon, CodeIcon, LinkSquare02Icon } from 'hugeicons-react';
+import { BotIcon, ViewOffIcon, SecurityValidationIcon, FlashIcon, Globe02Icon, LockIcon, CodeIcon, LinkSquare02Icon } from 'hugeicons-react';
 import Link from 'next/link';
 
 const DemoCard = ({ icon: Icon, title, desc, link, tech, color }: any) => (
@@ -92,8 +92,10 @@ export default function SystemCapabilities() {
                     />
 
                     {/* Card 2: Stealth Transfer */}
+                    {/* Card 2: Stealth Transfer */}
+                    {/* Card 2: Stealth Transfer */}
                     <DemoCard
-                        icon={GhostIcon}
+                        icon={ViewOffIcon}
                         title="Shadow Transfer"
                         desc="Mathematical invisibility for P2P payments. Send SOL to anyone without revealing their main wallet. Radr Labs integration active."
                         link="/demo/transfer"

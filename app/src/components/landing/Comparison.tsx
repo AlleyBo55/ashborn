@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Target01Icon, Lock01Icon, SecurityValidationIcon, CancelCircleIcon, CheckmarkCircle01Icon } from 'hugeicons-react';
+import { Target01Icon, LockIcon, SecurityValidationIcon, CancelCircleIcon, CheckmarkCircle01Icon } from 'hugeicons-react';
 
 const StatBar = ({ label, valueA, valueB, colorA = "bg-red-500", colorB = "bg-green-500" }: { label: string, valueA: number, valueB: number, colorA?: string, colorB?: string }) => {
     return (
@@ -86,7 +86,7 @@ export default function Comparison() {
                     <div className="relative z-10">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="p-3 bg-green-950/50 border border-green-900 rounded">
-                                <Lock01Icon className="w-6 h-6 text-green-500" />
+                                <LockIcon className="w-6 h-6 text-green-500" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-green-500 uppercase">Ashborn Protocol</h3>

@@ -20,7 +20,7 @@ interface Step {
 interface InfoCardProps {
     icon: ElementType;
     title: string;
-    children: ReactNode;
+    children?: ReactNode;
     steps?: Step[];
     color?: keyof typeof variantMap;
     delay?: number;
@@ -35,9 +35,11 @@ export function InfoCard({ icon, title, children, steps, color = 'blue', delay =
             delay={delay}
             className="mb-8"
         >
-            <BaseText variant="body" color="muted" className="mb-4">
-                {children}
-            </BaseText>
+            {children && (
+                <BaseText variant="body" color="muted" className="mb-4">
+                    {children}
+                </BaseText>
+            )}
 
             {steps && (
                 <div className="flex flex-wrap items-center gap-2">

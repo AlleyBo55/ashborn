@@ -12,8 +12,8 @@ import {
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import ClientWalletButton from '@/components/ui/ClientWalletButton';
 import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
-import DemoPageHeader from '@/components/demo/DemoPageHeader';
-import BaseText from '@/components/ui/base/BaseText';
+import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
+import { BaseText } from '@/components/ui/base/BaseText';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -127,7 +127,6 @@ export default function NLPDemoPage() {
                 title="Shadow Whisper"
                 description="Command privacy operations with natural language. Powered by LLMs and paid via x402 micropayments."
                 icon={AiChat02Icon}
-                status={paymentStatus === 'paying' ? 'processing' : 'active'}
             />
 
             <div className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">

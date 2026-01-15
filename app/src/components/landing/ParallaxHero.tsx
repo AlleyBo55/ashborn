@@ -2,7 +2,7 @@
 'use client';
 
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { ArrowRight01Icon, SecurityValidationIcon, Lock01Icon, FlashIcon, Activity01Icon, CpuIcon, ViewIcon, Wifi01Icon, CommandLine01Icon, Cube01Icon, PlayIcon } from 'hugeicons-react';
+import { ArrowRight01Icon, SecurityValidationIcon, LockIcon, FlashIcon, Activity01Icon, CpuIcon, ViewIcon, Wifi01Icon, ConsoleIcon, CubeIcon, PlayIcon } from 'hugeicons-react';
 import { useSystemToast } from '../ui/SystemToast';
 import ScrambleText from '../ui/ScrambleText';
 import { useEffect, useState } from 'react';
@@ -72,7 +72,7 @@ const ParticleField = () => {
 const features = [
     { title: "PRIVACY", sub: "ZK_SNARK_PROTOCOL", icon: SecurityValidationIcon },
     { title: "SPEED", sub: "SOLANA_MAINNET", icon: FlashIcon },
-    { title: "POWER", sub: "ZK_COMPRESSION", icon: Cube01Icon }
+    { title: "POWER", sub: "ZK_COMPRESSION", icon: CubeIcon }
 ];
 
 const FeatureHighlight = () => {
@@ -128,7 +128,7 @@ const QuestWindow = () => {
                 {/* Header Pills */}
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/20">
-                        <Cube01Icon className="w-3 h-3 text-blue-400" />
+                        <CubeIcon className="w-3 h-3 text-blue-400" />
                         <span className="text-[10px] text-blue-300 font-bold tracking-wide">QUEST</span>
                     </div>
                     <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
@@ -163,7 +163,7 @@ const TerminalStatusBar = () => {
         <div className="absolute bottom-0 w-full z-50 bg-black border-t border-purple-900/50 px-4 py-2 flex items-center justify-between pointer-events-none font-mono text-[10px]">
             <div className="flex items-center gap-4 text-gray-500">
                 <div className="flex items-center gap-2 text-green-500">
-                    <CommandLine01Icon className="w-3 h-3" />
+                    <ConsoleIcon className="w-3 h-3" />
                     <span className="hidden md:inline">SYSTEM_READY</span>
                     <span className="md:hidden text-[8px] tracking-widest text-green-500/80">SYS_ONLINE</span>
                 </div>
@@ -416,7 +416,7 @@ export default function ParallaxHero() {
                             href="/docs"
                             className="group relative px-8 py-4 bg-black/40 border border-white/10 text-gray-400 font-tech tracking-[0.2em] text-xs uppercase overflow-hidden hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-md rounded-sm hover:border-white/30 flex items-center gap-3"
                         >
-                            <CommandLine01Icon className="w-4 h-4" />
+                            <ConsoleIcon className="w-4 h-4" />
                             <span>Documentation</span>
                         </a>
                     </div>

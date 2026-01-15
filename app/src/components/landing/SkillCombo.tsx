@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight01Icon, Cube01Icon, Sword01Icon, SkullIcon, FlashIcon } from 'hugeicons-react';
+import { ArrowRight01Icon, CubeIcon, Sword01Icon, SkullIcon, FlashIcon } from 'hugeicons-react';
 import { useState, useEffect } from 'react';
 
 const ComboStep = ({
@@ -83,7 +83,7 @@ export default function SkillCombo() {
                                 exit={{ opacity: 0, scale: 1.5, filter: "blur(10px)" }}
                                 className="text-center"
                             >
-                                <Cube01Icon className="w-32 h-32 text-blue-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]" />
+                                <CubeIcon className="w-32 h-32 text-blue-500 mx-auto mb-4 drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]" />
                                 <h4 className="text-4xl font-black text-white italic">SHIELD UP</h4>
                                 <span className="text-blue-500 font-mono text-xs">ZK-PROOF GENERATED</span>
                             </motion.div>
@@ -141,7 +141,7 @@ export default function SkillCombo() {
                         <ComboStep
                             step={1}
                             title="EXTRACT"
-                            icon={Cube01Icon}
+                            icon={CubeIcon}
                             desc="Deposit assets into the Shadow Domain. Convert public tokens into shadow notes via ZK-SNARKs."
                             active={activeStep === 1}
                         />

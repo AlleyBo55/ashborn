@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield02Icon, FlashIcon, ViewOffIcon, GhostIcon, Share01Icon, UserGroup01Icon, CommandLine01Icon, CodeIcon, CpuIcon, AlertTriangleIcon } from 'hugeicons-react';
+import { Shield02Icon, FlashIcon, ViewOffIcon, Share01Icon, UserGroupIcon, ConsoleIcon, CodeIcon, CpuIcon, Alert01Icon } from 'hugeicons-react';
 import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 
@@ -8,7 +8,7 @@ import ScrambleText from '../ui/ScrambleText';
 const SHADOW_SKILLS = [
     {
         id: 'RULE_OF_SILENCE',
-        icon: GhostIcon,
+        icon: ViewOffIcon,
         name: "STEALTH CLOAK",
         rank: "GENERAL",
         desc: "Absolute invisibility. Generates phantom addresses for each transaction. No footprint remains.",
@@ -24,7 +24,7 @@ const SHADOW_SKILLS = [
     },
     {
         id: 'SHADOW_EXCHANGE',
-        icon: UserGroup01Icon,
+        icon: UserGroupIcon,
         name: "SHADOW ARMY",
         rank: "COMMANDER",
         desc: "Summons decoy outputs. Your transaction hides amongst thousands of shadow soldiers.",
@@ -138,7 +138,7 @@ export default function MarketingArsenal() {
                 {/* Header: System Message */}
                 <div className="text-center mb-24">
                     <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-purple-900/50 bg-purple-900/10 text-purple-400 font-mono text-xs mb-6">
-                        <AlertTriangleIcon className="w-3 h-3" />
+                        <Alert01Icon className="w-3 h-3" />
                         <span>SYSTEM NOTIFICATION</span>
                     </div>
                     <h2 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter mb-4">
@@ -159,7 +159,7 @@ export default function MarketingArsenal() {
                 {/* System Console Footer */}
                 <div className="mt-12 flex justify-between items-center text-[10px] font-mono text-gray-700 uppercase tracking-widest">
                     <div className="flex items-center gap-2">
-                        <CommandLine01Icon className="w-4 h-4" />
+                        <ConsoleIcon className="w-4 h-4" />
                         <span>SYSTEM: ACCESS_GRANTED</span>
                     </div>
                     <div>

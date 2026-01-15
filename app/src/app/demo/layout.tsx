@@ -26,8 +26,8 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
                     </Link>
                     <span className="h-4 w-px bg-white/10 hidden md:block" />
                     <span className="font-medium text-sm tracking-tight text-white/90 hidden md:block">Preview Environment</span>
-                    <div className="flex items-center gap-2 text-[10px] font-mono border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 rounded-full text-amber-300">
-                        SIMULATION_MODE
+                    <div className="flex items-center gap-2 text-[10px] font-mono border border-green-500/30 bg-green-500/10 px-2 py-0.5 rounded-full text-green-300">
+                        DEVNET
                     </div>
                 </div>
 

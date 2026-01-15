@@ -9,12 +9,12 @@ import {
     Loading03Icon,
     Shield02Icon,
     ViewOffIcon,
-    AlertTriangleIcon
+    Alert01Icon
 } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
 import { useAshborn } from '@/hooks/useAshborn';
 import { DemoLayout } from '@/components/demo';
-import BaseButton from '@/components/ui/base/BaseButton';
+import { BaseButton } from '@/components/ui/base/BaseButton';
 
 // Local utility to avoid importing heavy SDK for just one function
 const randomBytes = (length: number): Uint8Array => {
@@ -109,7 +109,7 @@ export default function ProveDemoPage() {
                     icon: ChartHistogramIcon,
                     badge: "ZK_RANGE_PROOF",
                     title: "Compliance Seal",
-                    description: <span>Prove your balance falls within a range using real Groth16 proofs. {snarkjsLoaded ? 'Powered by snarkjs.' : 'Demo mode.'}</span>,
+                    description: `Prove your balance falls within a range using real Groth16 proofs. ${snarkjsLoaded ? 'Powered by snarkjs.' : 'Demo mode.'}`,
                     color: status === 'generating' || status === 'verifying' ? 'purple' : 'blue' // Using valid color prop
                 }}
                 info={{
@@ -119,7 +119,7 @@ export default function ProveDemoPage() {
                     steps: ['Define Range', 'Generate Proof', 'Verify On-Chain'],
                     description: (
                         <span>
-                            A Range Proof lets you prove your balance is within a range (e.g., <strong className="text-white">"I have between $0 and $10,000"</strong>)
+                            A Range Proof lets you prove your balance is within a range (e.g., <strong className="text-white">&quot;I have between $0 and $10,000&quot;</strong>)
                             without revealing the exact amount. Uses <strong className="text-amber-300">Groth16 ZK-SNARKs</strong> for on-chain verification.
                         </span>
                     )
@@ -196,7 +196,7 @@ const isValid = await ashborn.submitProof(proof);`}
                             </BaseButton>
                             {error && (
                                 <div className="mt-4 flex items-center gap-2 text-red-400 text-sm justify-center">
-                                    <AlertTriangleIcon className="w-4 h-4" />
+                                    <Alert01Icon className="w-4 h-4" />
                                     <span>{error}</span>
                                 </div>
                             )}

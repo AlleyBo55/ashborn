@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { SentIcon, CheckmarkCircle01Icon, Loading03Icon, UserGroup01Icon, ViewIcon, ViewOffIcon, ArrowRight01Icon } from 'hugeicons-react'; // Assumed names
+import { SentIcon, CheckmarkCircle01Icon, Loading03Icon, UserGroupIcon, ViewIcon, ViewOffIcon, ArrowRight01Icon } from 'hugeicons-react'; // Assumed names
 import CodeBlock from '@/components/ui/CodeBlock';
 import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAshborn } from '@/hooks/useAshborn';
-import { DemoPageHeader, InfoCard, DemoButton, PrivacyVisualizer } from '@/components/demo';
+import { DemoPageHeader, InfoCard, DemoButton, PrivacyVisualizer, TxLink } from '@/components/demo';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
 import { useConnection } from '@solana/wallet-adapter-react';
 
@@ -91,7 +91,7 @@ export default function AITransferDemoPage() {
 
     const steps = [
         { id: 'generating', label: 'Generate Stealth Address', icon: ViewIcon, desc: 'One-time address for recipient' },
-        { id: 'transferring', label: 'Transfer + Decoys', icon: UserGroup01Icon, desc: '1 real + 3 fake outputs' },
+        { id: 'transferring', label: 'Transfer + Decoys', icon: UserGroupIcon, desc: '1 real + 3 fake outputs' },
         { id: 'scanning', label: 'Recipient Scans', icon: ViewOffIcon, desc: 'Only recipient can identify real output' },
     ];
 
@@ -115,7 +115,7 @@ export default function AITransferDemoPage() {
             />
 
             <InfoCard
-                icon={UserGroup01Icon}
+                icon={UserGroupIcon}
                 title="How Decoys Work"
                 color="purple"
                 steps={[
@@ -189,8 +189,12 @@ export default function AITransferDemoPage() {
                                         <span className="text-gray-400">Output #3 (0.5 SOL)</span>
                                         <span className="text-gray-600">Addr: {txData.decoys?.[1]}</span>
                                     </div>
+                                    <div className="flex justify-between border-t border-white/5 pt-2">
+                                        <span className="text-gray-400">Scan Tx:</span>
+                                        {txData.signature && <TxLink signature={txData.signature} className="text-xs" />}
+                                    </div>
                                     <div className="mt-2 text-center text-gray-500 italic">
-                                        "Which one is the real payment?"
+                                        &quot;Which one is the real payment?&quot;
                                     </div>
                                 </div>
                             </div>
@@ -221,8 +225,8 @@ export default function AITransferDemoPage() {
                     />
 
                     <div className="flex justify-center">
-                        <DemoButton onClick={resetDemo} icon={UserGroup01Icon}>
-                            Simulate Another Transfer
+                        <DemoButton onClick={resetDemo} icon={UserGroupIcon}>
+                            Make Another Transfer
                         </DemoButton>
                     </div>
                 </div>
@@ -244,7 +248,7 @@ export default function AITransferDemoPage() {
 
                     {!connected ? (
                         <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
-                            <p className="text-gray-400 text-sm">Connect wallet to simulate AI transfer</p>
+                            <p className="text-gray-400 text-sm">Connect wallet to send AI transfer</p>
                         </div>
                     ) : (
                         <DemoButton
@@ -254,7 +258,7 @@ export default function AITransferDemoPage() {
                             icon={SentIcon}
                             variant="gradient"
                         >
-                            Simulate Stealth Transfer
+                            Send Stealth Transfer
                         </DemoButton>
                     )}
                 </div>
