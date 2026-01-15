@@ -279,15 +279,19 @@ export default function InteropDemoPage() {
                     code={`import { ShadowWire, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
 
 // 1. Shield: Deposit to PrivacyCash pool
+// Uses: PrivacyCash Program (ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS)
 const shieldResult = await privacyCash.shieldSOL(0.1);
 
 // 2. Generate stealth address for recipient
+// Uses: Ashborn SDK (client-side ECDH)
 const stealth = await shadowWire.generateStealthAddress();
 
 // 3. Send to stealth address (unlinkable)
+// Uses: Solana System Program
 await sendTransaction(transfer(stealth.stealthPubkey, amount));
 
 // 4. Unshield: Withdraw from pool to final recipient
+// Uses: PrivacyCash Program (ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS)
 const unshieldResult = await privacyCash.unshieldSOL(0.1, recipient);`}
                     filename="interop.ts"
                 />

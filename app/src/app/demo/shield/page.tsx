@@ -101,8 +101,10 @@ export default function ShieldDemoPage() {
                 code={`import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
 
 const privacyCash = new PrivacyCashOfficial({
-  rpcUrl: "https://api.mainnet-beta.solana.com",
-  owner: wallet.payer, // Optional: for signing
+  rpcUrl: "https://api.devnet.solana.com",
+  owner: wallet.payer,
+  // Uses PrivacyCash Program: ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS
+  programId: "ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS"
 });
 
 // Shield 0.1 SOL (Deposit into pool)
@@ -125,6 +127,10 @@ const txSignature = await privacyCash.shieldSOL(0.1);
                                         <div className="flex justify-between border-b border-white/5 pb-1">
                                             <span className="text-gray-400">Amount:</span>
                                             <span className="text-white">{amount} SOL</span>
+                                        </div>
+                                        <div className="flex justify-between border-b border-white/5 pb-1">
+                                            <span className="text-gray-400">Program:</span>
+                                            <span className="text-blue-300 text-[10px] font-mono">PrivacyCash</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="text-gray-400">Tx:</span>

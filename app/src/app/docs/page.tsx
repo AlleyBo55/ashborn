@@ -592,10 +592,12 @@ const agent = new Agent({
                                 <div className="bg-black/50 p-2 rounded border border-white/10">
                                     <span className="text-gray-500 block mb-1">Ashborn Program ID:</span>
                                     <code className="text-purple-400 break-all text-xs sm:text-sm">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
+                                    <span className="text-gray-400 text-xs block mt-1">Handles: Shadow vaults, ZK proofs, compliance</span>
                                 </div>
                                 <div className="bg-black/50 p-2 rounded border border-white/10">
                                     <span className="text-gray-500 block mb-1">PrivacyCash Program ID:</span>
                                     <code className="text-blue-400 break-all text-xs sm:text-sm">ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS</code>
+                                    <span className="text-gray-400 text-xs block mt-1">Handles: Shielded pool deposits/withdrawals</span>
                                     <span className="text-gray-500 text-xs block mt-1">Deployed by @alleyboss from <a href="https://github.com/Privacy-Cash/privacy-cash" className="text-blue-300 hover:underline" target="_blank" rel="noopener">Privacy-Cash/privacy-cash</a></span>
                                 </div>
                             </div>
