@@ -5,16 +5,17 @@ import { BaseCard, BaseBadge, BaseText } from '@/components/ui/base';
 import { ArrowRight01Icon } from 'hugeicons-react';
 
 // Legacy mapping: InfoCard uses gradient logic that matches BaseCard variants
-const variantMap: Record<string, "gradient-blue" | "gradient-purple" | "gradient-green" | "gradient-amber"> = {
+const variantMap: Record<string, "gradient-blue" | "gradient-purple" | "gradient-green" | "gradient-amber" | "gradient-red"> = {
     blue: 'gradient-blue',
     purple: 'gradient-purple',
     green: 'gradient-green',
     amber: 'gradient-amber',
+    red: 'gradient-red',
 };
 
 interface Step {
     label: string;
-    color: 'blue' | 'purple' | 'green' | 'amber';
+    color: 'blue' | 'purple' | 'green' | 'amber' | 'red';
 }
 
 interface InfoCardProps {

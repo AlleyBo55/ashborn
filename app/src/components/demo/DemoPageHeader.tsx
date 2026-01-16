@@ -3,14 +3,15 @@
 import { motion } from 'framer-motion';
 import { ElementType } from 'react';
 import { BaseBadge, BaseText, BaseButton } from '@/components/ui/base';
-import { ArrowLeft01Icon } from 'hugeicons-react';
+import { ArrowLeft01Icon, Shield02Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 
-const colorMap: Record<string, "blue" | "purple" | "green" | "amber"> = {
+const colorMap: Record<string, "blue" | "purple" | "green" | "amber" | "red"> = {
     blue: 'blue',
     purple: 'purple',
     green: 'green',
     amber: 'amber',
+    red: 'red',
 };
 
 interface DemoPageHeaderProps {
@@ -19,9 +20,11 @@ interface DemoPageHeaderProps {
     title: string;
     description: string;
     color?: keyof typeof colorMap;
+    /** Show "Privacy Relay" badge indicating server-side relay */
+    privacyRelay?: boolean;
 }
 
-export function DemoPageHeader({ icon: Icon, badge, title, description, color = 'purple' }: DemoPageHeaderProps) {
+export function DemoPageHeader({ icon: Icon, badge, title, description, color = 'purple', privacyRelay = false }: DemoPageHeaderProps) {
     const router = useRouter();
 
     return (
@@ -37,10 +40,15 @@ export function DemoPageHeader({ icon: Icon, badge, title, description, color = 
                 </BaseButton>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-                <div className="mb-6">
+                <div className="mb-6 flex flex-wrap justify-center gap-2">
                     <BaseBadge variant={colorMap[color]} icon={Icon} animate>
                         {badge}
                     </BaseBadge>
+                    {privacyRelay && (
+                        <BaseBadge variant="green" icon={Shield02Icon}>
+                            🔒 Privacy Relay
+                        </BaseBadge>
+                    )}
                 </div>
                 <BaseText variant="h1" className="mb-4">
                     {title}
@@ -52,3 +60,4 @@ export function DemoPageHeader({ icon: Icon, badge, title, description, color = 
         </>
     );
 }
+

@@ -8,6 +8,7 @@ import PoweredBySolana from '@/components/ui/PoweredBySolana';
 const ParallaxHero = dynamic(() => import('@/components/landing/ParallaxHero'), { ssr: true });
 const SystemWarning = dynamic(() => import('@/components/landing/SystemWarning'), { ssr: true });
 const SkillCombo = dynamic(() => import('@/components/landing/SkillCombo'), { ssr: true });
+const ShadowAgentHighlight = dynamic(() => import('@/components/landing/ShadowAgentHighlight'), { ssr: true });
 const Comparison = dynamic(() => import('@/components/landing/Comparison'), { ssr: true });
 const MarketingArsenal = dynamic(() => import('@/components/landing/MarketingArsenal'), { ssr: true });
 const MarketingWhy = dynamic(() => import('@/components/landing/MarketingWhy'), { ssr: true });
@@ -15,6 +16,7 @@ const HowAshbornWorks = dynamic(() => import('@/components/landing/HowAshbornWor
 const GuildAlliance = dynamic(() => import('@/components/landing/GuildAlliance'), { ssr: true });
 const SystemCapabilities = dynamic(() => import('@/components/landing/SystemCapabilities'), { ssr: true });
 const ShadowECDHShowcase = dynamic(() => import('@/components/landing/ShadowECDHShowcase'), { ssr: true });
+const PrivacyRelayShowcase = dynamic(() => import('@/components/landing/PrivacyRelayShowcase'), { ssr: true });
 
 // Non-critical UI effects - load client-side only
 const ShadowCursor = dynamic(() => import('@/components/ui/ShadowCursor'), { ssr: false });
@@ -36,13 +38,19 @@ export default function Home() {
 
                 <GuildAlliance />
 
-                {/* ECDH SHOWCASE - NEW */}
-                <ShadowECDHShowcase />
+                {/* SHADOW AGENT HIGHLIGHT - Featured Demo */}
+                <ShadowAgentHighlight />
 
-                {/* System Alert - Slant Right ("Opening the wound") */}
-                <SlashSection slant="right" className="relative z-20">
+                {/* PRIVACY RELAY SHOWCASE - Hard Sell */}
+                <PrivacyRelayShowcase />
+
+                {/* ECDH SHOWCASE - HIDDEN as per request */}
+                {/* <ShadowECDHShowcase /> */}
+
+                {/* System Alert - Slant Right ("Opening the wound") - HIDDEN as per request */}
+                {/* <SlashSection slant="right" className="relative z-20">
                     <SystemWarning />
-                </SlashSection>
+                </SlashSection> */}
 
                 {/* THE WHY - Slant Left ("The History") */}
                 <SlashSection slant="left" className="relative z-20">
@@ -64,10 +72,10 @@ export default function Home() {
                     <MarketingArsenal />
                 </SlashSection>
 
-                {/* Skill Combo - Slant Left ("The Technique") */}
-                <SlashSection slant="left" className="relative z-30">
+                {/* Skill Combo - HIDDEN for hackathon focus on Shadow Agent */}
+                {/* <SlashSection slant="left" className="relative z-30">
                     <SkillCombo />
-                </SlashSection>
+                </SlashSection> */}
 
                 {/* Comparison - No slant (Stable ground) */}
                 <SlashSection slant="none" className="relative z-40">

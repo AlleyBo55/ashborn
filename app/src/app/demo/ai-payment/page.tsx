@@ -1,22 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { Coins01Icon, CreditCardIcon, CheckmarkCircle01Icon, Loading03Icon, Shield02Icon, ArrowRight01Icon } from 'hugeicons-react';
-import CodeBlock from '@/components/ui/CodeBlock';
-import { useAshborn } from '@/hooks/useAshborn';
-import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
-import { Transaction, SystemProgram } from '@solana/web3.js';
+import { Coins01Icon, CreditCardIcon, CheckmarkCircle01Icon, Loading03Icon, Shield02Icon, ArrowRight01Icon, AlertCircleIcon } from 'hugeicons-react';
 import { DemoLayout, DemoButton, TxLink, PrivacyVisualizer } from '@/components/demo';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
-import { useConnection } from '@solana/wallet-adapter-react';
+
+const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
 type Step = 'idle' | 'shielding' | 'paying' | 'unshielding' | 'complete';
 
 export default function AIPaymentDemoPage() {
-    const { connected, publicKey, sendTransaction } = useWallet();
-    const { privacyCash, isReady } = useAshborn();
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
 
     const [step, setStep] = useState<Step>('idle');
@@ -29,62 +23,43 @@ export default function AIPaymentDemoPage() {
     };
 
     const runPaymentDemo = async () => {
-        if (!connected || !publicKey) return;
-
         try {
             setStatus('loading');
 
-            // Step 1: Shield Funds (or simulate shield if balance sufficient)
-            // Ideally we'd check balance but for demo we can do a shield or transfer.
-            // Let's do a real simple transfer to self as "shielding/payment" proxy if privacyCash undefined
-            // OR use privacyCash.shieldSOL if available.
-
-            let txSig = '';
-
+            // Step 1: Shield Funds via server API
             setStep('shielding');
-            if (privacyCash) {
-                // Real Shield
-                txSig = await privacyCash.shieldSOL(0.05); // Shield 0.05
-            } else {
-                // Fallback to simpler transfer to self to generate a hash
-                const transaction = new Transaction().add(
-                    SystemProgram.transfer({
-                        fromPubkey: publicKey,
-                        toPubkey: publicKey,
-                        lamports: 0.05 * 1_000_000_000,
-                    })
-                );
-                txSig = await sendTransaction(transaction, connection);
-                await connection.confirmTransaction(txSig, 'confirmed');
+            const shieldRes = await fetch('/api/privacycash', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'shield', amount: 0.01 })
+            });
+            const shieldData = await shieldRes.json();
+            if (!shieldData.success) {
+                throw new Error(shieldData.error || 'Shield failed');
             }
 
-            // Step 2: Private Payment (Real Simulated Tx)
+            // Step 2: Private Payment (simulated in-pool transfer)
             setStep('paying');
-            // Execute a tiny self-transfer to create a transaction record for "Private Payment"
-            const payTx = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: publicKey,
-                    lamports: 1000, // tiny amount
-                })
-            );
-            const paySig = await sendTransaction(payTx, connection);
-            await connection.confirmTransaction(paySig, 'confirmed');
+            // In a real scenario, this would be a private transfer within the shielded pool
+            await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Step 3: Merchant Unshields (Real Simulated Tx)
+            // Step 3: Merchant Unshields via server API
             setStep('unshielding');
-            const unshieldTx = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: publicKey,
-                    lamports: 1000,
-                })
-            );
-            const unshieldSig = await sendTransaction(unshieldTx, connection);
-            await connection.confirmTransaction(unshieldSig, 'confirmed');
+            const unshieldRes = await fetch('/api/privacycash', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'unshield', amount: 0.01 })
+            });
+            const unshieldData = await unshieldRes.json();
+            if (!unshieldData.success) {
+                throw new Error(unshieldData.error || 'Unshield failed');
+            }
 
-            // Store the REAL signature (from Step 1)
-            setMockData({ amount: 0.05, recipient: 'MerchantAgent_X', signature: txSig });
+            setMockData({
+                amount: 0.01,
+                recipient: 'MerchantAgent_X',
+                signature: shieldData.signature
+            });
             setStep('complete');
             setStatus('success');
         } catch (err) {
@@ -111,6 +86,30 @@ export default function AIPaymentDemoPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">
+            {/* Demo Wallet Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo Wallet</p>
+                        <p className="text-amber-200/70 text-xs leading-relaxed">
+                            PrivacyCash SDK requires a raw keypair for signing (no browser wallet support).
+                            This demo uses a shared server-side wallet for demonstration purposes.
+                        </p>
+                        <div className="mt-2 flex items-center gap-2">
+                            <span className="text-amber-400/60 text-xs">Demo Signer:</span>
+                            <code className="text-amber-300 text-xs font-mono bg-amber-500/10 px-2 py-0.5 rounded">
+                                {DEMO_WALLET}
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoLayout
                 header={{
                     icon: CreditCardIcon,
@@ -138,19 +137,25 @@ export default function AIPaymentDemoPage() {
                 }}
                 code={`import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
 
-// 1. Initialize SDK
-const privacyCash = new PrivacyCashOfficial({ cluster: 'mainnet' });
+// PrivacyCash requires a raw Keypair (designed for AI agents)
+// Keys stay on your server, never exposed to clients
+const privacyCash = new PrivacyCashOfficial({
+  rpcUrl: process.env.RPC_URL,
+  owner: agentKeypair, // Server-side keypair
+});
+
+// 1. Shield funds into private pool
+await privacyCash.shieldSOL(0.05);
 
 // 2. Perform Private Transfer (within Shielded Pool)
 // No on-chain trace of sender or receiver addresses
 const txId = await privacyCash.transfer({
   amount: 0.05,
   recipient: merchantShieldedAddress,
-  memo: "API Access Tier 1"
 });
 
 // 3. Merchant Unshields (Optional)
-// Merchant can withdraw to public SOL address anytime`}
+await privacyCash.unshieldSOL(0.05, merchantPublicAddress);`}
             >
                 {/* Custom Progress */}
                 <motion.div
@@ -204,9 +209,13 @@ const txId = await privacyCash.transfer({
                                             <span className="text-gray-400">Payer:</span>
                                             <span className="text-gray-500 italic">Unknown (Shielded)</span>
                                         </div>
-                                        <div className="flex justify-between">
+                                        <div className="flex justify-between border-b border-white/5 pb-1">
                                             <span className="text-gray-400">Recipient:</span>
                                             <span className="text-gray-500 italic">Unknown (Shielded)</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-400">Signer:</span>
+                                            <span className="text-amber-300 text-[10px] font-mono">{DEMO_WALLET.slice(0, 8)}...</span>
                                         </div>
                                         <div className="mt-2 text-center text-gray-500 italic">
                                             &quot;Zero knowledge of participants or amount&quot;
@@ -225,7 +234,7 @@ const txId = await privacyCash.transfer({
                                     <div className="text-xs space-y-2">
                                         <div className="flex justify-between border-b border-purple-500/20 pb-1">
                                             <span className="text-purple-300">Amount:</span>
-                                            <span className="text-white">0.05 sSOL</span>
+                                            <span className="text-white">0.01 sSOL</span>
                                         </div>
                                         <div className="flex justify-between border-b border-purple-500/20 pb-1">
                                             <span className="text-purple-300">Merchant:</span>
@@ -247,22 +256,20 @@ const txId = await privacyCash.transfer({
                         </div>
                     </div>
                 ) : (
-                    <div className="text-center">
-                        {!connected ? (
-                            <div className="p-8 border border-dashed border-gray-700 rounded-xl">
-                                <p className="text-gray-400 mb-4">Connect wallet to send private agent payment</p>
-                            </div>
-                        ) : (
-                            <DemoButton
-                                onClick={runPaymentDemo}
-                                loading={isLoading}
-                                disabled={isLoading}
-                                icon={CreditCardIcon}
-                                variant="gradient"
-                            >
-                                Send Agent Payment (0.05 SOL)
-                            </DemoButton>
-                        )}
+                    <div className="text-center space-y-4">
+                        <DemoButton
+                            onClick={runPaymentDemo}
+                            loading={isLoading}
+                            disabled={isLoading}
+                            icon={CreditCardIcon}
+                            variant="gradient"
+                        >
+                            {isLoading ? 'Processing...' : 'Send Agent Payment (0.01 SOL)'}
+                        </DemoButton>
+
+                        <p className="text-xs text-gray-500">
+                            Uses demo wallet • No wallet connection required
+                        </p>
                     </div>
                 )}
             </DemoLayout>

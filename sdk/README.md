@@ -1,36 +1,40 @@
 
-
 <h1 align="center">🌑 @alleyboss/ashborn-sdk</h1>
 
 <p align="center">
-  <strong>The Shadow Monarch SDK — Privacy Layer for Solana</strong>
+  <strong>THE SHADOW RELAY — Privacy Layer for Solana</strong>
 </p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/v/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/dm/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="downloads" /></a>
   <a href="https://github.com/AlleyBo55/ashborn/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="license" /></a>
-  <br />
-  <img src="https://img.shields.io/badge/Easy%20Integration-Radr_Labs-purple?style=flat-square&logo=solana" alt="Radr Labs" />
-  <img src="https://img.shields.io/badge/Easy%20Integration-PrivacyCash-blueviolet?style=flat-square&logo=solana" alt="PrivacyCash" />
 </p>
 
 <p align="center">
-  <em>"I alone level up."</em> — Build private dApps on Solana with real ZK proofs.
+  <img src="https://img.shields.io/badge/🔒_Shadow_Relay-Protocol_Anonymity-red?style=flat-square" alt="Shadow Relay" />
+  <img src="https://img.shields.io/badge/Integration-PrivacyCash-blueviolet?style=flat-square" alt="PrivacyCash" />
+  <img src="https://img.shields.io/badge/Integration-Radr_Labs-purple?style=flat-square" alt="Radr Labs" />
 </p>
 
 ---
 
-## ✨ Why Ashborn?
+## ⚡ THE SHADOW RELAY
 
-Every Solana transaction is **public**. Your wallet balance, transaction history, and business dealings are visible to everyone. **Ashborn changes that.**
+**Stop exposing yourself to every protocol.**
 
-| Feature | Without Ashborn | With Ashborn |
-|---------|-----------------|--------------|
-| Balance | 👁️ Public | 🔒 Hidden in commitments |
-| Transfers | 👁️ Sender/recipient visible | 👻 Stealth addresses |
-| Amounts | 👁️ Exact amounts exposed | 📊 Range proofs only |
-| Compliance | ❌ All or nothing | ✅ Selective disclosure |
+When you use PrivacyCash directly → **PrivacyCash knows your wallet.**  
+When you use Radr Labs directly → **Radr Labs knows your identity.**  
+
+### With Ashborn? **They see NOTHING.**
+
+```
+YOU ───▶ ASHBORN RELAY ───▶ PrivacyCash (sees "Ashborn")
+                       ───▶ Radr Labs   (sees "Ashborn")
+                       ───▶ Light Proto (sees "Ashborn")
+```
+
+**K-Anonymity Amplified.** You hide in Ashborn's traffic + the protocol's pool.
 
 ---
 
@@ -40,241 +44,94 @@ Every Solana transaction is **public**. Your wallet balance, transaction history
 npm install @alleyboss/ashborn-sdk
 ```
 
+### Server-Side Privacy Relay
+
+```typescript
+import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
+
+const relay = new PrivacyRelay({
+  relayKeypair: serverKeypair,
+  rpcUrl: 'https://api.devnet.solana.com',
+});
+
+// PrivacyCash NEVER sees your user
+await relay.shield({ amount: 0.1 });
+
+// Radr Labs NEVER sees your user
+await relay.generateStealth({ viewPubKey, spendPubKey });
+
+// ZK proof WITHOUT identity exposure  
+await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
+```
+
+### Client-Side (Direct SDK)
+
 ```typescript
 import { Ashborn } from '@alleyboss/ashborn-sdk';
-import { Connection } from '@solana/web3.js';
 
-const connection = new Connection('https://api.devnet.solana.com');
 const ashborn = new Ashborn(connection, wallet);
-
-// 🛡️ Shield: Deposit into privacy pool
-await ashborn.shield({
-  amount: 1_000_000_000n,  // 1 SOL
-  mint: 'So11111111111111111111111111111111111111112',
-});
-
-// 👻 Transfer: Send privately with decoys
-await ashborn.shadowTransfer({
-  amount: 500_000_000n,
-  recipientStealth: '<stealth-address>',
-});
-
-// 📊 Prove: Show compliance without revealing balance
-await ashborn.proveRange({
-  min: 0n,
-  max: 10_000_000_000_000n,  // Prove balance < $10,000
-});
-
-// 💰 Unshield: Exit privacy pool
-await ashborn.unshield({
-  amount: 200_000_000n,
-});
+await ashborn.shield({ amount: 1_000_000_000n, mint: SOL_MINT });
 ```
 
 ---
 
-## 🔥 Key Features
+## 🔥 What Protocols See
 
-### 🛡️ Shielded Transfers
-Hide sender, recipient, and amount in a single transaction.
+| Protocol | Without Ashborn | With Shadow Relay |
+|----------|-----------------|-------------------|
+| **PrivacyCash** | Your wallet address | `Ashborn Relay` |
+| **Radr Labs** | Your stealth meta | `Ashborn Relay` |
+| **Light Protocol** | Your ZK identity | `Ashborn Relay` |
 
-```typescript
-await ashborn.shield({ amount: 1_000_000_000n });
-// ✅ Amount hidden in Pedersen commitment
-// ✅ Encrypted with your view key
-// ✅ Only you can see your balance
-```
+---
 
-### 👻 Stealth Addresses (Proper ECDH)
-Generate one-time addresses using Vitalik's stealth address formula: `P = H(r*A)*G + B`
+## 🛡️ Features
 
-```typescript
-// Recipient: Generate view/spend keys ONCE
-const meta = shadowWire.generateStealthMetaAddress();
-// Share meta.viewPubKey and meta.spendPubKey with senders
+| Feature | Description |
+|---------|-------------|
+| **Shadow Relay** | Protocols see Ashborn, not you |
+| **K-Anonymity²** | Hide in Ashborn pool + protocol pool |
+| **ECDH Stealth** | Vitalik's formula: `P = H(r*A)*G + B` |
+| **ZK Compliance** | Prove statements without revealing data |
+| **Ring Signatures** | 4+ decoys per transfer |
 
-// Sender: Generate stealth address for recipient
-const { ephemeralPubkey, stealthPubkey } = shadowWire.generateStealthAddress(
-  recipientViewPubKey,
-  recipientSpendPubKey
-);
-// ✅ Publish ephemeralPubkey with tx
-// ✅ Send funds to stealthPubkey
+---
 
-// Recipient: Scan for incoming payments
-const matches = shadowWire.scanForPayments(
-  meta.viewPrivKey,
-  meta.spendPubKey,
-  [ephemeralPubkey1, ephemeralPubkey2, ...]
-);
-
-// Recipient: Derive spending key
-const spendKey = shadowWire.deriveStealthPrivateKey(
-  meta.viewPrivKey,
-  meta.spendPrivKey,
-  ephemeralPubkey
-);
-// ✅ Use spendKey to claim funds
-```
-
-### 📊 Range Proofs (Compliance-Ready)
-Prove statements about your balance without revealing the exact amount.
+## 📦 Modules
 
 ```typescript
-// Prove to a lender you have > $10,000 collateral
-const proof = await ashborn.proveRange({
-  min: 10_000_000_000n,  // $10,000 minimum
-  max: BigInt(Number.MAX_SAFE_INTEGER),
-});
-// ✅ Lender knows you qualify
-// ❌ Lender doesn't know your exact wealth
-```
+// Core
+import { Ashborn, PrivacyRelay } from '@alleyboss/ashborn-sdk';
 
-### 🎭 Decoy Outputs (ZachXBT-Proof)
-Every transfer includes 3+ fake outputs to break graph analysis.
+// Stealth (ECDH)
+import { ShadowWire, generateDecoys } from '@alleyboss/ashborn-sdk/stealth';
 
-```typescript
-await ashborn.shadowTransfer({
-  amount: 100_000_000n,
-  recipientStealth: stealthAddr,
-  useDecoys: true,  // Adds 3 indistinguishable outputs
-});
-// Even chain analysts can't determine the real recipient
-```
+// ZK Proofs
+import { RangeCompliance } from '@alleyboss/ashborn-sdk/zk';
 
-### 🤖 AI-Powered Commands
-Execute complex privacy operations with natural language.
-
-```typescript
-import { NaturalLanguageAshborn } from '@ashborn/sdk';
-
-const nlp = new NaturalLanguageAshborn(ashborn);
-await nlp.execute("send 0.5 SOL privately to alice.sol");
-// Parses → Resolves → Shields → Transfers
-```
-
-### 🖼️ NFT Privacy
-Prove you own an NFT with specific traits without revealing which one.
-
-```typescript
-await ashborn.nftPrivacy.proveOwnership({
-  collection: 'DeGods',
-  trait: { background: 'Gold' },
-});
-// ✅ Proves: "I own a DeGod with Gold background"
-// ❌ Doesn't reveal: Which specific DeGod ID
+// Integrations
+import { PrivacyCashOfficial, HeliusEnhanced } from '@alleyboss/ashborn-sdk/integrations';
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🔒 Security
 
-```
-┌────────────────────────────────────────────────┐
-│              YOUR DAPP                         │
-└────────────────────────────────────────────────┘
-                    │
-                    ▼
-┌────────────────────────────────────────────────┐
-│          @ashborn/sdk (this package)           │
-│  ┌──────────┬──────────┬──────────┬─────────┐  │
-│  │ ShadowWire│ Privacy │ Range    │ Crypto  │  │
-│  │ (Stealth) │ Cash    │ Compliance│ Poseidon│  │
-│  └──────────┴──────────┴──────────┴─────────┘  │
-│  • snarkjs Groth16 proofs                      │
-│  • @noble/curves EC operations                 │
-│  • WebCrypto AES-256-GCM encryption            │
-└────────────────────────────────────────────────┘
-                    │
-                    ▼
-┌────────────────────────────────────────────────┐
-│       Solana Program (Rust/Anchor)             │
-│  • ark_groth16 on-chain verification           │
-│  • Poseidon Merkle trees                       │
-│  • Nullifier registry (anti-double-spend)      │
-└────────────────────────────────────────────────┘
-```
-
----
-
-## 📦 What's Included
-
-| Module | Description |
-|--------|-------------|
-| `Ashborn` | Main SDK class with all operations |
-| `ShadowWire` | Stealth address generation & scanning |
-| `PrivacyCash` | Shielded pool deposits/withdrawals |
-| `RangeCompliance` | ZK range proofs for compliance |
-| `NaturalLanguageAshborn` | AI command parsing |
-| `NFTPrivacy` | Private NFT ownership proofs |
-
----
-
-## ⚙️ Configuration
-
-```typescript
-const ashborn = new Ashborn(connection, wallet, {
-  programId: '<custom-program-id>',  // Default: devnet
-  heliusApiKey: '<key>',             // Enhanced indexing
-  relayerEndpoint: '<url>',          // Privacy relay
-});
-```
-
----
-
-## 🌐 Network Support
-
-| Network | Status | Program ID |
-|---------|--------|------------|
-| Devnet | ✅ Ready | `BzBU...5Qe` (Ashborn) |
-| Mainnet | 🔜 Coming | TBD |
-
-### PrivacyCash Integration
-
-Ashborn integrates with [PrivacyCash](https://github.com/Privacy-Cash/privacy-cash) for shielded pool operations:
-
-| Network | PrivacyCash Program ID |
-|---------|------------------------|
-| Devnet | `ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS` (deployed by @alleyboss from official repo) |
-| Mainnet | Official PrivacyCash deployment |
-
-```typescript
-// Use custom PrivacyCash devnet deployment
-import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
-
-const privacyCash = new PrivacyCashOfficial({
-  rpcUrl: 'https://api.devnet.solana.com',
-  owner: wallet,
-  programId: 'ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS', // Optional: defaults to mainnet
-});
-```
-
----
-
-## 🔐 Security
-
-- **Real ZK Proofs**: Groth16 via snarkjs (not simulated)
-- **Audited Crypto**: @noble/curves, WebCrypto APIs
-- **On-Chain Verification**: ark_groth16 on Solana
-- **Open Source**: Full transparency
+- **Non-Custodial**: Ashborn is a RELAY. Funds transit through, never stored.
+- **Real ECDH**: Uses @noble/curves for proper elliptic curve operations.
+- **Groth16 Proofs**: Real ZK via snarkjs (not simulated).
+- **Metadata Stripped**: IP, User-Agent removed at relay layer.
 
 ---
 
 ## 📚 Resources
 
-- 📖 [Full Documentation](https://github.com/AlleyBo55/ashborn#readme)
 - 🎮 [Live Demo](https://ashborn.vercel.app)
-- 💬 [Discord](https://discord.gg/ashborn)
-- 🐦 [Twitter](https://twitter.com/ashborn_sol)
-
----
-
-## 📄 License
-
-MIT © [AlleyBo55](https://github.com/AlleyBo55)
+- 📖 [Documentation](https://github.com/AlleyBo55/ashborn#readme)
 
 ---
 
 <p align="center">
+  <strong>PrivacyCash sees nothing. Radr Labs sees nothing.</strong><br/>
   <strong>ARISE.</strong> 🌑
 </p>

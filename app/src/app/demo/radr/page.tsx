@@ -1,193 +1,132 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import {
-    ViewOffIcon,
-    Key01Icon,
-    Shield02Icon,
-    RefreshIcon,
-    Loading03Icon
-} from 'hugeicons-react';
+import { ViewOffIcon, Key01Icon, Shield02Icon, RefreshIcon, AlertCircleIcon } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { useAshborn } from '@/hooks/useAshborn';
-import { Transaction, SystemProgram } from '@solana/web3.js';
-import { useConnection } from '@solana/wallet-adapter-react';
-import { TxLink } from '@/components/demo';
-import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
-import { BaseCard } from '@/components/ui/base/BaseCard';
-import { InfoCard } from '@/components/demo/InfoCard';
-import { BaseButton } from '@/components/ui/base/BaseButton';
-
-type Step = 'idle' | 'generating' | 'scanning' | 'complete';
+import { DemoPageHeader, InfoCard, DemoButton } from '@/components/demo';
+import { useDemoStatus } from '@/hooks/useDemoStatus';
 
 export default function RadrDemoPage() {
-    const { connected, publicKey, sendTransaction } = useWallet();
-    const { connection } = useConnection();
-    const { shadowWire, isReady } = useAshborn();
-    const [step, setStep] = useState<Step>('idle');
+    const [step, setStep] = useState<'idle' | 'generating' | 'complete'>('idle');
+    const { status, setStatus, reset, isSuccess, isLoading } = useDemoStatus();
     const [stealthAddress, setStealthAddress] = useState<string | null>(null);
     const [ephemeralKey, setEphemeralKey] = useState<string | null>(null);
     const [viewTag, setViewTag] = useState<string | null>(null);
-    const [txSignature, setTxSignature] = useState<string | null>(null);
 
     const resetDemo = () => {
         setStep('idle');
+        reset();
         setStealthAddress(null);
         setEphemeralKey(null);
         setViewTag(null);
-        setTxSignature(null);
     };
 
     const runRadrDemo = async () => {
-        if (!connected || !publicKey) return;
-
-        if (!shadowWire || !isReady) {
-            alert("SDK is still initializing. Please wait a moment.");
-            return;
-        }
-
         try {
-            // Step 1: Generate Stealth Address
+            setStatus('loading');
             setStep('generating');
 
-            let stealth: any = null;
-            let attempts = 0;
-            const maxAttempts = 5;
+            // Generate stealth address via API
+            const res = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stealth', params: { recipient: 'demo-user' } })
+            });
 
-            while (!stealth && attempts < maxAttempts) {
-                try {
-                    attempts++;
-                    stealth = await shadowWire.generateStealthAddress();
-                } catch (e: any) {
-                    console.warn(`Attempt ${attempts} failed:`, e.message);
-                    if (attempts === maxAttempts) throw e;
-                    await new Promise(r => setTimeout(r, 200));
-                }
-            }
-
-            if (!stealth) throw new Error("Failed to generate stealth address after retries");
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Generation failed');
 
             await new Promise(r => setTimeout(r, 600));
 
-            setStealthAddress(stealth.stealthPubkey.toBase58());
-            setEphemeralKey(stealth.ephemeralPubkey.toBase58());
-            setViewTag(stealth.stealthPubkey.toBase58().slice(0, 2));
-            setStep('complete');
+            setStealthAddress(data.stealthAddress);
+            setEphemeralKey(data.viewKey);
+            setViewTag(data.stealthAddress.slice(0, 4));
 
+            setStep('complete');
+            setStatus('success');
         } catch (err) {
-            console.error('Radr Demo Error:', err);
+            console.error('Radr error:', err);
             setStep('idle');
         }
     };
 
-    const verifyOnChain = async () => {
-        if (!connected || !publicKey || !stealthAddress) return;
-
-        try {
-            setStep('scanning');
-
-            const { PublicKey } = await import('@solana/web3.js');
-            const transaction = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: new PublicKey(stealthAddress),
-                    lamports: 1000,
-                })
-            );
-
-            const { blockhash } = await connection.getLatestBlockhash();
-            transaction.recentBlockhash = blockhash;
-            transaction.feePayer = publicKey;
-
-            if (sendTransaction) {
-                const signature = await sendTransaction(transaction, connection);
-                console.log('Transaction sent:', signature);
-                await connection.confirmTransaction(signature, 'confirmed');
-                setTxSignature(signature);
-            }
-
-            setStep('complete');
-        } catch (err: any) {
-            console.error('Verification error:', err);
-            alert(`Transaction failed: ${err.message || 'Unknown error'}`);
-            setStep('complete');
-        }
-    };
-
     return (
-        <div className="max-w-4xl mx-auto space-y-12">
+        <div className="max-w-4xl mx-auto space-y-8">
+            {/* Demo Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo</p>
+                        <p className="text-amber-200/70 text-xs">Stealth addresses generated via /api/ashborn. No wallet required.</p>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoPageHeader
                 badge="ShadowWire"
                 title="Radr Labs Integration"
-                description="Radr provides the stealth address cryptography (ECDH). Ashborn integrates it into the SDK for easy use."
+                description="Generate stealth addresses. Ashborn Privacy Relay keeps your identity hidden from underlying protocols."
                 icon={ViewOffIcon}
+                privacyRelay
             />
 
             <div className="grid md:grid-cols-2 gap-8">
-                {/* Visualizer Panel */}
-                <BaseCard
-                    title="Stealth Generator"
-                    icon={Key01Icon}
-                    className="relative overflow-hidden group"
+                {/* Generator Panel */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-white/[0.03] border border-white/10 rounded-2xl p-6"
                 >
-                    {!connected ? (
-                        <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-xl">
-                            <p className="text-gray-400 mb-4">Connect wallet to generate keys</p>
+                    <div className="flex items-center gap-2 mb-6">
+                        <Key01Icon className="w-5 h-5 text-purple-400" />
+                        <h3 className="font-semibold">Stealth Generator</h3>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className={`p-4 rounded-xl border transition-all ${stealthAddress ? 'bg-purple-500/10 border-purple-500/20' : 'bg-white/5 border-white/5'}`}>
+                            <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
+                                <ViewOffIcon className="w-3 h-3" /> Ephemeral Key (R)
+                            </div>
+                            <div className="font-mono text-xs text-purple-200 break-all">
+                                {ephemeralKey || 'waiting to generate...'}
+                            </div>
                         </div>
-                    ) : (
-                        <div className="space-y-6">
-                            <div className={`p-4 rounded-xl border transition-all duration-500 ${step === 'generating' || stealthAddress ? 'bg-purple-500/10 border-purple-500/20' : 'bg-white/5 border-white/5'}`}>
-                                <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                                    <ViewOffIcon className="w-3 h-3" /> Ephemeral Key (R)
-                                </div>
-                                <div className="font-mono text-xs md:text-sm text-purple-200 break-all">
-                                    {ephemeralKey || 'waiting to generate...'}
-                                </div>
+
+                        <div className="text-center text-xs text-gray-600">↓ Derived via ECDH Shared Secret ↓</div>
+
+                        <div className={`p-4 rounded-xl border transition-all ${stealthAddress ? 'bg-green-500/10 border-green-500/20' : 'bg-white/5 border-white/5'}`}>
+                            <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
+                                <ViewOffIcon className="w-3 h-3" /> Stealth Address (P)
                             </div>
-
-                            <div className="flex justify-center text-gray-600">
-                                <span className="text-xs px-2 bg-[#0A0A0A] z-10 relative">Derived via ECDH Shared Secret</span>
-                                <div className="absolute w-full h-px bg-white/5 top-1/2 -z-0"></div>
+                            <div className="font-mono text-xs text-green-200 break-all">
+                                {stealthAddress || 'waiting to generate...'}
                             </div>
-
-                            <div className={`p-4 rounded-xl border transition-all duration-500 ${step === 'generating' || stealthAddress ? 'bg-green-500/10 border-green-500/20' : 'bg-white/5 border-white/5'}`}>
-                                <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                                    <ViewOffIcon className="w-3 h-3" /> Stealth Address (P)
-                                </div>
-                                <div className="font-mono text-xs md:text-sm text-green-200 break-all">
-                                    {stealthAddress || 'waiting to generate...'}
-                                </div>
-                            </div>
-
-                            {txSignature && (
-                                <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                                    <div className="text-xs text-gray-400 mb-2">✅ Verified on Solana Devnet</div>
-                                    <TxLink signature={txSignature} className="text-sm font-semibold" />
-                                </div>
-                            )}
-
-                            {stealthAddress && !txSignature && step === 'complete' && (
-                                <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
-                                    <div className="text-xs text-gray-400 mb-2">💡 Optional: Send SOL to verify on-chain</div>
-                                    <div className="text-xs text-gray-500">The stealth address is already generated and ready to use. You can optionally send a small amount to verify it exists on Solana.</div>
-                                </div>
-                            )}
-
-                            <BaseButton
-                                onClick={step === 'complete' ? resetDemo : runRadrDemo}
-                                disabled={!connected || (step !== 'idle' && step !== 'complete')}
-                                loading={step === 'generating' || step === 'scanning'}
-                                loadingText={step === 'scanning' ? "Verifying on Blockchain..." : "Computing Elliptic Curve..."}
-                                icon={step === 'complete' ? RefreshIcon : ViewOffIcon}
-                                className="w-full"
-                            >
-                                {step === 'complete' ? 'Generate Another' : 'Generate Stealth Address'}
-                            </BaseButton>
                         </div>
-                    )}
-                </BaseCard>
+
+                        {stealthAddress && (
+                            <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                <div className="text-xs text-gray-400">View Tag</div>
+                                <code className="text-sm text-blue-300 font-mono">{viewTag}</code>
+                            </div>
+                        )}
+
+                        <DemoButton
+                            onClick={step === 'complete' ? resetDemo : runRadrDemo}
+                            loading={isLoading}
+                            disabled={isLoading}
+                            icon={step === 'complete' ? RefreshIcon : ViewOffIcon}
+                            variant="gradient"
+                        >
+                            {step === 'complete' ? 'Generate Another' : 'Generate Stealth Address'}
+                        </DemoButton>
+                    </div>
+                </motion.div>
 
                 {/* Info Panel */}
                 <div className="space-y-6">
@@ -196,30 +135,24 @@ export default function RadrDemoPage() {
                         icon={ViewOffIcon}
                         steps={[
                             { label: 'Sender generates random keypair (r, R)', color: 'blue' },
-                            { label: 'Shared secret derived via ECDH (S = r*A)', color: 'purple' },
-                            { label: 'Stealth Address P constructed (P = H(S)*G + B)', color: 'green' }
+                            { label: 'Shared secret via ECDH (S = r*A)', color: 'purple' },
+                            { label: 'Stealth Address P = H(S)*G + B', color: 'green' }
                         ]}
                     />
 
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-                        <CodeBlock
-                            language="typescript"
-                            code={`// Real ShadowWire SDK Usage
-const stealth = await shadowWire.generateStealthAddress();
-
-console.log({
-  ephemeral: stealth.ephemeralPubkey, // Public
-  stealth: stealth.stealthPubkey      // Public
+                    <CodeBlock
+                        language="typescript"
+                        code={`// Generate via API (no SDK required)
+const res = await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({
+    action: 'stealth',
+    params: { recipient: 'wallet_address' }
+  })
 });
 
-// To scan for payments (recipient side):
-const matches = shadowWire.scanForPayments(
-  viewPrivKey,
-  spendPubKey,
-  [stealth.ephemeralPubkey.toBytes()]
-);`}
-                        />
-                    </motion.div>
+const { stealthAddress, viewKey, spendKey } = await res.json();`}
+                    />
                 </div>
             </div>
         </div>

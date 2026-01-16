@@ -5,7 +5,7 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ElementType } from 'react';
 
-type CardVariant = 'default' | 'gradient-blue' | 'gradient-purple' | 'gradient-green' | 'gradient-amber' | 'glass';
+type CardVariant = 'default' | 'gradient-blue' | 'gradient-purple' | 'gradient-green' | 'gradient-amber' | 'gradient-red' | 'glass';
 
 interface BaseCardProps extends Omit<HTMLMotionProps<"div">, "children"> {
     children: ReactNode;
@@ -21,6 +21,7 @@ const variants = {
     'gradient-purple': 'bg-gradient-to-br from-purple-900/20 to-black border-purple-500/20',
     'gradient-green': 'bg-gradient-to-br from-green-900/20 to-black border-green-500/20',
     'gradient-amber': 'bg-gradient-to-br from-amber-900/20 to-black border-amber-500/20',
+    'gradient-red': 'bg-gradient-to-br from-red-900/20 to-black border-red-500/20',
     glass: 'bg-white/5 backdrop-blur-md border-white/10',
 };
 
@@ -30,6 +31,7 @@ const iconColors = {
     'gradient-purple': 'text-purple-400',
     'gradient-green': 'text-green-400',
     'gradient-amber': 'text-amber-400',
+    'gradient-red': 'text-red-400',
     glass: 'text-white',
 };
 

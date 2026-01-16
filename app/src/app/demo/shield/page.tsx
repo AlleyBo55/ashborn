@@ -1,27 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { Shield02Icon, LockIcon, ViewIcon, ViewOffIcon, ArrowRight01Icon, CheckmarkCircle01Icon, Loading03Icon } from 'hugeicons-react'; // Assumed names
-import { Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { Shield02Icon, LockIcon, CheckmarkCircle01Icon, Loading03Icon, AlertCircleIcon } from 'hugeicons-react';
 import { DemoLayout, DemoButton, TxLink, PrivacyVisualizer } from '@/components/demo';
-import { useAshborn } from '@/hooks/useAshborn';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
+
+const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
 type Step = 'idle' | 'shielding' | 'complete';
 
 export default function ShieldDemoPage() {
-    const { connected, publicKey, sendTransaction } = useWallet();
-    const { connection } = useConnection();
-    const { privacyCash } = useAshborn();
-
-    // Use the optimized reducer hook
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
     const [step, setStep] = useState<Step>('idle');
     const [txSignature, setTxSignature] = useState<string | null>(null);
-    const [amount, setAmount] = useState('0.1');
+    const [amount, setAmount] = useState('0.01');
 
     const resetDemo = () => {
         setStep('idle');
@@ -30,38 +23,23 @@ export default function ShieldDemoPage() {
     };
 
     const runShieldDemo = async () => {
-        if (!connected || !publicKey) return;
-
         try {
             setStatus('loading');
             setStep('shielding');
 
-            if (privacyCash) {
-                // Real SDK call
-                const result = await privacyCash.shieldSOL(parseFloat(amount));
-                if (result.success && result.signature) {
-                    setTxSignature(result.signature);
-                } else {
-                    throw new Error(result.error || 'Shielding failed');
-                }
-            } else {
-                // Fallback: Real Transaction on Devnet (Transfer to Self)
-                // This ensures we have a valid hash for Solscan verification
-                const transaction = new Transaction().add(
-                    SystemProgram.transfer({
-                        fromPubkey: publicKey,
-                        toPubkey: publicKey,
-                        lamports: parseFloat(amount) * LAMPORTS_PER_SOL,
-                    })
-                );
+            // Call server-side API that uses the demo keypair
+            const res = await fetch('/api/privacycash', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'shield', amount: parseFloat(amount) })
+            });
 
-                // Use the captured hook values
-                if (!sendTransaction) throw new Error("Wallet not ready");
-                const signature = await sendTransaction(transaction, connection);
-                await connection.confirmTransaction(signature, 'confirmed');
-                setTxSignature(signature);
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Shielding failed');
             }
 
+            setTxSignature(data.signature);
             setStep('complete');
             setStatus('success');
         } catch (err) {
@@ -73,6 +51,30 @@ export default function ShieldDemoPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">
+            {/* Demo Wallet Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo Wallet</p>
+                        <p className="text-amber-200/70 text-xs leading-relaxed">
+                            PrivacyCash SDK requires a raw keypair for signing (no browser wallet support).
+                            This demo uses a shared server-side wallet for demonstration purposes.
+                        </p>
+                        <div className="mt-2 flex items-center gap-2">
+                            <span className="text-amber-400/60 text-xs">Demo Signer:</span>
+                            <code className="text-amber-300 text-xs font-mono bg-amber-500/10 px-2 py-0.5 rounded">
+                                {DEMO_WALLET}
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoLayout
                 header={{
                     icon: Shield02Icon,
@@ -100,15 +102,16 @@ export default function ShieldDemoPage() {
                 }}
                 code={`import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
 
+// PrivacyCash requires a raw Keypair (no browser wallet support)
+// This is by design for maximum security - keys never leave your control
 const privacyCash = new PrivacyCashOfficial({
   rpcUrl: "https://api.devnet.solana.com",
-  owner: wallet.payer,
-  // Uses PrivacyCash Program: ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS
+  owner: keypair, // Keypair, not wallet adapter
   programId: "ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS"
 });
 
 // Shield 0.1 SOL (Deposit into pool)
-const txSignature = await privacyCash.shieldSOL(0.1);
+const result = await privacyCash.shieldSOL(0.1);
 
 // Result: 0.1 sSOL note added to your private vault`}
             >
@@ -129,6 +132,10 @@ const txSignature = await privacyCash.shieldSOL(0.1);
                                             <span className="text-white">{amount} SOL</span>
                                         </div>
                                         <div className="flex justify-between border-b border-white/5 pb-1">
+                                            <span className="text-gray-400">Signer:</span>
+                                            <span className="text-amber-300 text-[10px] font-mono">{DEMO_WALLET.slice(0, 8)}...</span>
+                                        </div>
+                                        <div className="flex justify-between border-b border-white/5 pb-1">
                                             <span className="text-gray-400">Program:</span>
                                             <span className="text-blue-300 text-[10px] font-mono">PrivacyCash</span>
                                         </div>
@@ -147,7 +154,7 @@ const txSignature = await privacyCash.shieldSOL(0.1);
                                             note_7x9... (Saved to Vault)
                                         </div>
                                         <p className="text-gray-500 italic text-[10px]">
-                                            Only you hold the key to spend this note.
+                                            Only the keypair holder can spend this note.
                                         </p>
                                     </div>
                                 </div>
@@ -170,24 +177,24 @@ const txSignature = await privacyCash.shieldSOL(0.1);
                                 onChange={(e) => setAmount(e.target.value)}
                                 className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-blue-500/50 focus:outline-none font-mono"
                                 disabled={step !== 'idle'}
+                                min="0.001"
+                                step="0.01"
                             />
                         </div>
 
-                        {!connected ? (
-                            <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
-                                <p className="text-gray-400 text-sm">Connect wallet to shield funds</p>
-                            </div>
-                        ) : (
-                            <DemoButton
-                                onClick={runShieldDemo}
-                                loading={isLoading}
-                                disabled={isLoading}
-                                icon={LockIcon}
-                                variant="gradient"
-                            >
-                                Shield Funds
-                            </DemoButton>
-                        )}
+                        <DemoButton
+                            onClick={runShieldDemo}
+                            loading={isLoading}
+                            disabled={isLoading}
+                            icon={LockIcon}
+                            variant="gradient"
+                        >
+                            {isLoading ? 'Shielding...' : 'Shield Funds'}
+                        </DemoButton>
+
+                        <p className="text-center text-xs text-gray-500">
+                            Uses demo wallet • No wallet connection required
+                        </p>
                     </div>
                 )}
             </DemoLayout>

@@ -4,191 +4,152 @@
 
 > *"I alone level up."* — Sung Jin-Woo
 
-**Ashborn** is a **Compliant Private Payment Protocol** on Solana that enables:
-*   **⚔️ Private Transfers** — Send SOL/tokens without revealing sender, recipient, or amount
-*   **🔮 Selective Disclosure** — Prove balance ranges without revealing exact amounts
-*   **👻 Stealth Addresses** — Receive payments at unlinkable addresses
-*   **🛡️ NFT Privacy** — Own and prove NFT traits without revealing which NFT
-
-> 🚨 **PRODUCTION READY** — Deployed on **Solana Devnet** with **Real ZK Verification**
-> Program ID: `BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe`
-
-Built with **real ZK proofs (Groth16)**, **Circom circuits**, **Solana Alt_bn128 syscalls**, and a robust **compliance-friendly** design.
-
-> 🎮 **Live Demo:** [https://ashborn.vercel.app](https://ashborn.vercel.app)
-> Now featuring the **Shadow Monarch Aesthetic** experience.
-
 ---
 
-## 🧩 Easy Integration
+## ⚡ THE SHADOW RELAY — Your Identity Dies Here
 
-<p align="center">
-  <a href="https://privacy.cash" target="_blank">
-    <img src="https://img.shields.io/badge/Easy%20Integration%20with-Radr_Labs-purple?style=for-the-badge&logo=solana" alt="Radr Labs" />
-    <img src="https://img.shields.io/badge/Easy%20Integration%20with-PrivacyCash-blueviolet?style=for-the-badge&logo=solana" alt="PrivacyCash" />
-  </a>
-  <a href="https://www.npmjs.com/package/@alleyboss/micropay-solana-x402-paywall" target="_blank">
-    <img src="https://img.shields.io/badge/AI%20Payments-X402%20Paywall-blue?style=for-the-badge&logo=npm" alt="X402 Paywall" />
-  </a>
-</p>
+**Stop exposing yourself to every protocol.**
 
-### AI-to-AI Privacy Commerce Suite
+When you use PrivacyCash directly → **PrivacyCash knows your wallet.**  
+When you use Radr Labs directly → **Radr Labs knows your identity.**  
+When you use *any* privacy protocol → **That protocol sees YOU.**
 
-Ashborn integrates with **PrivacyCash** and **X402 Paywall** to enable autonomous AI agent commerce:
-
-| Demo | Path | Use Case |
-|------|------|----------|
-| **Interop** | `/demo/interop` | Shield → Stealth Transfer → Unshield |
-| **AI Payment** | `/demo/ai-payment` | Agent pays for API via X402 |
-| **AI Lending** | `/demo/ai-lending` | ZK Collateral Proofs |
-| **AI Transfer** | `/demo/ai-transfer` | Stealth + Decoy Outputs |
-
----
-
-## 📦 SDK Status
-
-> ✅ **PUBLISHED to npm** — The SDK is available as `@alleyboss/ashborn-sdk`.
-> ```bash
-> npm install @alleyboss/ashborn-sdk
-> ```
-
----
-
-## 🏗️ Architecture: The Real ZK Stack
-
-Simulations are over. Ashborn uses a production-grade ZK stack.
+### With Ashborn? **They see nothing.**
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        YOUR APPLICATION                         │
-│                  (Next.js Demo at localhost:3000)               │
-│                            │                                    │
-│  Gen Proof (WASM)          │                                    │
-│  [client-side]             ▼                                    │
-└─────────────────────────────────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     SOLANA BLOCKCHAIN                           │
-│                     (Program: BzBU...5Qe)                       │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  ZK VERIFIER (verifier.rs)                                │  │
-│  │  - Uses Solana's native `alt_bn128_pairing` syscall       │  │
-│  │  - Verifies Groth16 proofs < 200k CUs                     │  │
-│  │  - Keys: Real generated from Powers of Tau                │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                              │                                  │
-│                              ▼                                  │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  STATE MANAGEMENT                                         │  │
-│  │  - Nullifiers: PDA-based double-spend protection          │  │
-│  │  - State: Merkle Trees (20 levels)                        │  │
-│  └───────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│      YOU        │ ───▶ │  ASHBORN RELAY  │ ───▶ │  PrivacyCash    │
+│   (Invisible)   │      │ "The Monarch"   │      │  (Sees Ashborn) │
+└─────────────────┘      └─────────────────┘      └─────────────────┘
+                                │
+                                ▼
+                         ┌─────────────────┐
+                         │   Radr Labs     │
+                         │  (Sees Ashborn) │
+                         └─────────────────┘
 ```
 
-### Technology Stack
-
-| Component | Technology | Real Status |
-|-----------|------------|-------------|
-| **Circuits** | Circom 2.1 | ✅ Compiled (Shield, Transfer) |
-| **Proof System** | Groth16 | ✅ Active |
-| **Verification** | Solana Syscalls | ✅ `alt_bn128` utilized |
-| **Trusted Setup** | Powers of Tau | ✅ Hermez Protocol Ceremony |
-| **Client** | snarkjs (WASM) | ✅ Browser-compatible |
+**PrivacyCash sees "Ashborn Relay."**  
+**Radr Labs sees "Ashborn Relay."**  
+**You? You're a ghost.**
 
 ---
 
-## 🚀 Running the Project
+## 🔥 Why The Shadow Relay Changes Everything
 
-### Prerequisites
-*   Node.js 18+
-*   Solana CLI
-*   Anchor 0.30+
-
-### Quick Start (Docker)
-```bash
-docker-compose up --build -d
-# Open http://localhost:3000
-```
-
-### Manual Development
-```bash
-# 1. Clone & Install
-git clone https://github.com/alleyboss/ashborn.git
-cd ashborn
-npm install
-
-# 2. Run the Demo App
-cd app
-npm install
-npm run dev
-# App runs at http://localhost:3000
-
-# 3. Build the SDK
-cd ../sdk
-npm install
-npm run build
-# Outputs: dist/index.js (CJS), dist/index.mjs (ESM)
-```
+| Without Ashborn | With Ashborn Shadow Relay |
+|-----------------|---------------------------|
+| PrivacyCash knows your wallet | PrivacyCash sees **Ashborn** |
+| Radr Labs tracks your stealth | Radr Labs sees **Ashborn** |
+| Light Protocol links your proofs | Light Protocol sees **Ashborn** |
+| You hide in 1 protocol's pool | You hide in **Ashborn + ALL protocols** |
+| 1 protocol breach = you're exposed | **K-Anonymity Amplified** |
 
 ---
 
-## 🌐 Deployed Addresses (Devnet)
+## 🛡️ How It Works
 
-| Contract | Address |
-|----------|---------|
-| **Ashborn Program** | [`BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe`](https://explorer.solana.com/address/BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe?cluster=devnet) |
-| **IDL** | `54Fp3foQ9XkLpykGaYKF7Hnb2YywpfLebRpZ637AGoxz` |
-| **PrivacyCash Program** | [`ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS`](https://explorer.solana.com/address/ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS?cluster=devnet) (deployed by @alleyboss from [Privacy-Cash/privacy-cash](https://github.com/Privacy-Cash/privacy-cash)) |
-| **PrivacyCash** | [`ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS`](https://explorer.solana.com/address/ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS?cluster=devnet) (deployed by @alleyboss from [Privacy-Cash/privacy-cash-sdk](https://github.com/Privacy-Cash/privacy-cash-sdk)) |
+### The Shadow Monarch Principle
+> *"The Shadow Army sees only the Monarch. The Enemy sees nothing."*
+
+1. **You send intent to Ashborn** (shield 1 SOL, transfer 0.5 SOL privately)
+2. **Ashborn wraps it in a Shadow Envelope** (strips your IP, wallet, metadata)
+3. **Ashborn calls PrivacyCash/Radr with ITS OWN identity**
+4. **Protocols execute** — they only see Ashborn's omnibus wallet
+5. **You receive results** — unlinkable, anonymous, untraceable
 
 ---
 
-## 🔮 SDK Usage
+## 🚀 Quick Start
 
-### Installation
 ```bash
 npm install @alleyboss/ashborn-sdk
 ```
 
-### Basic Usage
+### Server-Side (Maximum Privacy)
+
 ```typescript
-import { Ashborn } from '@alleyboss/ashborn-sdk';
-import { Connection } from '@solana/web3.js';
+import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
 
-const connection = new Connection('https://api.devnet.solana.com');
-const ashborn = new Ashborn(connection, wallet);
-
-// Shield SOL (deposit into privacy pool)
-// Generates REAL ZK proof of deposit
-await ashborn.shield({
-  amount: 1_000_000_000n,  // 1 SOL
-  mint: 'So11111111111111111111111111111111111111112',
+const relay = new PrivacyRelay({
+  relayKeypair: serverKeypair,
+  rpcUrl: 'https://api.devnet.solana.com',
 });
 
-// Private transfer with decoys
-// Generates REAL ZK proof of transfer
-await ashborn.shadowTransfer({
-  amount: 500_000_000n,
-  recipientStealth: '<stealth-address>',
-});
+// PrivacyCash NEVER sees your user
+await relay.shield({ amount: 0.1 });
+
+// Radr Labs NEVER sees your user  
+await relay.generateStealth({ viewPubKey, spendPubKey });
+
+// ZK Proof WITHOUT identity exposure
+await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
 ```
 
 ---
 
-## 📚 Documentation
+## 🤝 Protocol Integrations
 
-Visit the **Documentation** page in the live demo (`/docs`) to learn about:
-- **Core Concepts** — Commitments, nullifiers, stealth addresses
-- **API Reference** — Full SDK method documentation
-- **Circuit Logic** — How the ZK proofs enforce integrity
+| Protocol | What They See | What They DON'T See |
+|----------|---------------|---------------------|
+| **PrivacyCash** | Ashborn Relay wallet | Your wallet, IP, identity |
+| **Radr Labs** | Ashborn Relay ephemeral key | Your stealth meta-address |
+| **Light Protocol** | Ashborn's ZK commitment | Your balance, history |
 
 ---
 
-## 🤝 Contributing
+## 🎭 The K-Anonymity Amplification
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Traditional privacy:
+- You → PrivacyCash pool → 100 users → **You're 1 of 100**
+
+With Ashborn Shadow Relay:
+- You → Ashborn pool → 1000 users → PrivacyCash pool → 100 users
+- **You're 1 of 100,000** (1000 × 100 = K-Anonymity squared)
+
+**PrivacyCash can't identify you because they only see Ashborn.**  
+**Even if PrivacyCash is compromised, you're still anonymous.**
+
+---
+
+## 🔒 Compliance Without Exposure
+
+Need to prove you're not a criminal? No problem.
+
+```typescript
+// Prove balance > $10,000 (for lender)
+// WITHOUT revealing your wallet or exact balance
+await relay.prove({ 
+  balance: 50000, 
+  min: 10000, 
+  max: Infinity 
+});
+// ✅ Lender knows you qualify
+// ❌ Lender doesn't know your wallet
+// ❌ PrivacyCash doesn't know either
+```
+
+---
+
+## 🌐 Live Demos
+
+| Demo | What It Shows |
+|------|---------------|
+| [Shadow Agent](/demo/shadow-agent) | AI-to-AI private commerce via Relay |
+| [Interop](/demo/interop) | Shield → Stealth → Unshield (all via Relay) |
+| [AI Lending](/demo/ai-lending) | ZK Collateral proofs via Relay |
+| [Stealth Transfer](/demo/ai-transfer) | Ring signatures via Relay |
+
+> 🎮 **Try it:** [ashborn.vercel.app](https://ashborn.vercel.app)
+
+---
+
+## 📦 Deployed (Devnet)
+
+| Component | Address |
+|-----------|---------|
+| **Ashborn Program** | [`BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe`](https://explorer.solana.com/address/BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe?cluster=devnet) |
+| **PrivacyCash** | [`ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS`](https://explorer.solana.com/address/ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS?cluster=devnet) |
 
 ---
 
@@ -199,5 +160,7 @@ MIT — See [LICENSE](LICENSE)
 ---
 
 <p align="center">
-  <b>ARISE.</b>
+  <b>THE SHADOW RELAY</b><br/>
+  <em>PrivacyCash sees nothing. Radr Labs sees nothing. Only you know.</em><br/><br/>
+  <strong>ARISE.</strong>
 </p>

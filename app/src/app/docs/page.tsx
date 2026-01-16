@@ -6,7 +6,7 @@ import TerminalBlock from '@/components/ui/TerminalBlock';
 // ... (existing imports, but remove Copy, Check from lucide if unused locally, mostly unused now as CodeBlock handles it)
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight01Icon, Shield02Icon, ViewOffIcon, Activity01Icon, BookOpen01Icon, ConsoleIcon, CodeIcon, CpuIcon, LockIcon, FlashIcon, Search01Icon, Menu01Icon, Cancel01Icon } from 'hugeicons-react';
+import { ArrowRight01Icon, Shield02Icon, ViewOffIcon, Activity01Icon, BookOpen01Icon, ConsoleIcon, CodeIcon, CpuIcon, LockIcon, FlashIcon, Search01Icon, Menu01Icon, Cancel01Icon, AiChat02Icon, SparklesIcon } from 'hugeicons-react';
 import Link from 'next/link';
 
 // ... (sections data remains same)
@@ -130,12 +130,14 @@ const sections = [
         title: "Core Concepts", items: [
             { id: 'how-it-works', title: 'Architecture', icon: CpuIcon },
             { id: 'features', title: 'Privacy Features', icon: Shield02Icon },
+            { id: 'privacy-relay', title: 'Privacy Relay', icon: LockIcon },
             { id: 'security', title: 'Security', icon: LockIcon },
         ]
     },
     {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: CodeIcon },
+            { id: 'shadow-agent', title: 'Shadow Agent Protocol', icon: SparklesIcon },
             { id: 'stealth', title: 'Stealth Addresses', icon: ViewOffIcon },
             { id: 'nlp', title: 'Natural Language', icon: Activity01Icon },
             { id: 'eliza', title: 'Eliza Plugin', icon: ViewOffIcon },
@@ -255,7 +257,7 @@ export default function DocsPage() {
                             Ashborn Protocol
                         </h1>
                         <p className="text-lg text-gray-400 leading-relaxed max-w-2xl mb-8">
-                            The compliant privacy layer for Solana. Shield assets, execute private transfers, and prove compliance using Zero-Knowledge Proofs (Groth16).
+                            The <strong className="text-white">Privacy Relay Layer</strong> for Solana. Shield assets, execute private transfers, and prove compliance using Zero-Knowledge Proofs — while underlying protocols never see your identity.
                         </p>
 
                         <div className="grid md:grid-cols-2 gap-4 not-prose">
@@ -440,28 +442,74 @@ export default function DocsPage() {
                         </div>
                     </section>
 
-                    {/* Security */}
-                    <section id="security" className="mb-20 scroll-mt-24">
-                        <h2 className="text-2xl font-semibold mb-6">Security Model</h2>
-                        <div className="bg-red-900/10 border border-red-500/20 rounded-xl p-6">
-                            <h3 className="text-red-400 font-medium mb-2 flex items-center gap-2">
-                                <Shield02Icon className="w-4 h-4" />
-                                Audited Compliance
-                            </h3>
-                            <p className="text-gray-400 text-sm mb-4">
-                                The core circuits are based on standard Groth16 implementations.
-                                Trusted setup was performed in Phase 2 ceremony (simulated for devnet).
-                            </p>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div className="p-3 bg-black/40 rounded border border-white/5">
-                                    <div className="text-gray-500 text-xs mb-1">Prove Algorithm</div>
-                                    <div className="text-gray-300 font-mono">Groth16</div>
+                    {/* Privacy Relay */}
+                    <section id="privacy-relay" className="mb-20 scroll-mt-24">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-semibold flex items-center gap-2">
+                                Privacy Relay <span className="text-xs font-normal text-green-500 font-mono border border-green-500/20 px-1.5 py-0.5 rounded bg-green-500/5">v1.0</span>
+                            </h2>
+                        </div>
+                        <p className="text-gray-400 mb-6">
+                            Ashborn acts as a <strong className="text-white">Privacy Relay</strong> between users and underlying protocols.
+                            Protocols only see Ashborn&apos;s omnibus identity — never your identity.
+                        </p>
+
+                        {/* Architecture Diagram */}
+                        <div className="bg-gradient-to-br from-[#0a1a0a] to-black border border-green-500/20 rounded-xl p-6 mb-6">
+                            <div className="grid grid-cols-3 gap-4 text-center text-xs font-mono">
+                                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                                    <div className="text-blue-300 mb-1">👤 User/Agent</div>
+                                    <div className="text-gray-500">(Anonymous)</div>
                                 </div>
-                                <div className="p-3 bg-black/40 rounded border border-white/5">
-                                    <div className="text-gray-500 text-xs mb-1">Curve</div>
-                                    <div className="text-gray-300 font-mono">BN128</div>
+                                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                    <div className="text-green-300 mb-1">🔒 ASHBORN RELAY</div>
+                                    <div className="text-gray-500">(Omnibus ID)</div>
+                                </div>
+                                <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                                    <div className="text-purple-300 mb-1">🛡️ Protocols</div>
+                                    <div className="text-gray-500">(PrivacyCash/Radr)</div>
                                 </div>
                             </div>
+                            <div className="flex justify-center gap-4 mt-4 text-gray-500 text-xs">
+                                <span>→ Identity Hidden</span>
+                                <span>→ Protocols see &quot;Ashborn&quot;</span>
+                            </div>
+                        </div>
+
+                        {/* Benefits */}
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                                <h4 className="font-medium text-white mb-2 text-sm">🎭 K-Anonymity Amplified</h4>
+                                <p className="text-xs text-gray-400">
+                                    You hide in Ashborn&apos;s traffic + the protocol&apos;s pool. Double anonymity layer.
+                                </p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                                <h4 className="font-medium text-white mb-2 text-sm">📋 Compliant by Design</h4>
+                                <p className="text-xs text-gray-400">
+                                    ZK proofs let you prove compliance without revealing your identity.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Code Example */}
+                        <div className="mt-6">
+                            <CodeBlock
+                                language="typescript"
+                                code={`// Server-side: Privacy Relay
+import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
+
+const relay = new PrivacyRelay({
+  relayKeypair: serverKeypair,
+  rpcUrl: 'https://api.devnet.solana.com',
+});
+
+// All operations use relay identity
+await relay.shield({ amount: 0.1 });      // PrivacyCash sees "Relay"
+await relay.generateStealth({ hint: 'x' }); // Unlinkable address
+await relay.prove({ balance: 0.5 });       // ZK range proof`}
+                                filename="privacy-relay.ts"
+                            />
                         </div>
                     </section>
 
@@ -483,6 +531,117 @@ await ashborn.transfer({
 // Generate Proof
 const proof = await ashborn.proveRange({ max: 1000n });`}
                             filename="sdk-usage.ts"
+                        />
+                    </section>
+
+                    {/* Shadow Agent Protocol */}
+                    <section id="shadow-agent" className="mb-20 scroll-mt-24">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-semibold flex items-center gap-2">
+                                Shadow Agent Protocol <span className="text-xs font-normal text-purple-500 font-mono border border-purple-500/20 px-1.5 py-0.5 rounded bg-purple-500/5">NEW</span>
+                            </h2>
+                            <Link href="/demo/shadow-agent" className="text-xs text-purple-300 border border-purple-500/30 px-2 py-1 rounded-full hover:bg-purple-500/10 transition">
+                                Try Demo →
+                            </Link>
+                        </div>
+                        <p className="text-gray-400 mb-6">
+                            Private AI-to-AI commerce layer. Two AI agents transact without exposing strategies or transaction history.
+                        </p>
+
+                        {/* AI Personas */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <span className="text-2xl">🏛️</span>
+                                    <div>
+                                        <h4 className="font-bold text-blue-300">The Architect</h4>
+                                        <p className="text-xs text-gray-500">AI Buyer</p>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-400">Designs systems. Pays for data inference privately.</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <span className="text-2xl">🗼</span>
+                                    <div>
+                                        <h4 className="font-bold text-purple-300">Tower of Trials</h4>
+                                        <p className="text-xs text-gray-500">AI Seller</p>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-400">Tests the worthy. Sells insights via shielded payments.</p>
+                            </div>
+                        </div>
+
+                        {/* Integration Badges */}
+                        <div className="flex flex-wrap gap-2 mb-6">
+                            <span className="text-[10px] font-mono bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20">🔥 Ashborn (Core)</span>
+                            <span className="text-[10px] font-mono bg-blue-500/10 text-blue-400 px-2 py-1 rounded border border-blue-500/20">🛡️ PrivacyCash</span>
+                            <span className="text-[10px] font-mono bg-purple-500/10 text-purple-400 px-2 py-1 rounded border border-purple-500/20">👻 Radr Labs</span>
+                            <span className="text-[10px] font-mono bg-green-500/10 text-green-400 px-2 py-1 rounded border border-green-500/20">⚡ Light Protocol</span>
+                            <span className="text-[10px] font-mono bg-amber-500/10 text-amber-400 px-2 py-1 rounded border border-amber-500/20">💳 x402 Paywall</span>
+                        </div>
+
+                        {/* Flow Diagram (Mobile Friendly) */}
+                        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 mb-6">
+                            <h4 className="text-xs font-mono text-gray-500 mb-4 uppercase tracking-wider">Execution Flow</h4>
+                            <div className="flex flex-col gap-2">
+                                {[
+                                    { step: '1', label: '🤖 NOVA Shields', tech: 'PrivacyCash', color: 'blue' },
+                                    { step: '2', label: '🤖 x402 Request', tech: '402 Payment Required', color: 'amber' },
+                                    { step: '3', label: '🤖 → 🔮 Pay', tech: 'Radr Stealth Addr', color: 'purple' },
+                                    { step: '4', label: '⚡ Verify Proof', tech: 'Light Protocol', color: 'green' },
+                                    { step: '5', label: '🔮 ORACLE Unshields', tech: 'PrivacyCash', color: 'blue' },
+                                ].map((s, i) => (
+                                    <div key={i} className={`flex items-center gap-3 p-3 rounded-lg bg-${s.color}-500/5 border border-${s.color}-500/20`}>
+                                        <span className={`text-xs font-mono text-${s.color}-400 w-5 h-5 flex items-center justify-center rounded bg-${s.color}-500/20`}>{s.step}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <span className="text-white text-sm block truncate">{s.label}</span>
+                                            <span className="text-gray-500 text-[10px]">{s.tech}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Benefits */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/5">
+                                <h4 className="font-medium text-white mb-1 text-sm">Private Commerce</h4>
+                                <p className="text-xs text-gray-500">Agents transact privately without exposing strategies</p>
+                            </div>
+                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/5">
+                                <h4 className="font-medium text-white mb-1 text-sm">Unlinkable Payments</h4>
+                                <p className="text-xs text-gray-500">No on-chain trace between buyer and seller</p>
+                            </div>
+                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/5">
+                                <h4 className="font-medium text-white mb-1 text-sm">Compliant by Design</h4>
+                                <p className="text-xs text-gray-500">ZK proofs enable selective disclosure</p>
+                            </div>
+                        </div>
+
+                        {/* Code Example */}
+                        <CodeBlock
+                            language="typescript"
+                            code={`import { Ashborn } from '@alleyboss/ashborn-sdk';
+import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
+import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
+
+// Ashborn orchestrates the entire flow
+const ashborn = new Ashborn(connection, wallet);
+
+// The Architect (Buyer) shields funds
+const architectPC = new PrivacyCashOfficial({ rpcUrl, owner });
+await architectPC.shieldSOL(0.01);
+
+// Tower of Trials (Seller) receives via stealth address
+const shadowWire = new ShadowWire();
+const { stealthPubkey } = shadowWire.generateStealthAddress(
+  towerViewPubKey, towerSpendPubKey
+);
+
+// Tower unshields after providing data
+await towerPC.unshieldSOL(0.01);`}
+                            filename="shadow-agent.ts"
                         />
                     </section>
 
