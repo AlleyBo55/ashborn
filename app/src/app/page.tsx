@@ -44,8 +44,8 @@ export default function Home() {
                 {/* PRIVACY RELAY SHOWCASE - Hard Sell */}
                 <PrivacyRelayShowcase />
 
-                {/* ECDH SHOWCASE - HIDDEN as per request */}
-                {/* <ShadowECDHShowcase /> */}
+                {/* ECDH SHOWCASE - Keypair Logic (Restored below Relay) */}
+                <ShadowECDHShowcase />
 
                 {/* System Alert - Slant Right ("Opening the wound") - HIDDEN as per request */}
                 {/* <SlashSection slant="right" className="relative z-20">
