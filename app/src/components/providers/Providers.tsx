@@ -22,7 +22,7 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 export function Providers({ children }: { children: React.ReactNode }) {
     // Use devnet for hackathon
     const network = WalletAdapterNetwork.Devnet;
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+    const endpoint = useMemo(() => process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl(network), [network]);
 
     const wallets = useMemo(
         () => [
