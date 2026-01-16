@@ -1,7 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight01Icon, CubeIcon, Sword01Icon, SkullIcon, FlashIcon } from 'hugeicons-react';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
+import CubeIcon from 'hugeicons-react/dist/esm/icons/cube_icon';
+import Sword01Icon from 'hugeicons-react/dist/esm/icons/sword_01_icon';
+import SkullIcon from 'hugeicons-react/dist/esm/icons/skull_icon';
+import FlashIcon from 'hugeicons-react/dist/esm/icons/flash_icon';
 import { useState, useEffect } from 'react';
 
 const ComboStep = ({

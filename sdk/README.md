@@ -59,7 +59,7 @@ Zero-Knowledge Range Proofs (Groth16) to satisfy requirements without doxxing.
 
 
 
-## 💻 THE SHADOW PROTOCOL (Usage)
+## 💻 THE SHADOW Monarch (Usage)
 
 > **"One interface to rule them all."**
 

@@ -1,7 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { SparklesIcon, ArrowRight01Icon, Shield02Icon, AiChat02Icon } from 'hugeicons-react';
+import SparklesIcon from 'hugeicons-react/dist/esm/icons/sparkles_icon';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
+import AiChat02Icon from 'hugeicons-react/dist/esm/icons/ai_chat_02_icon';
 import Link from 'next/link';
 
 const integrations = [

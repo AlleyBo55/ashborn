@@ -1,7 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield02Icon, LockIcon, FlashIcon, ViewOffIcon, ArrowRight01Icon } from 'hugeicons-react';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import FlashIcon from 'hugeicons-react/dist/esm/icons/flash_icon';
+import ViewOffIcon from 'hugeicons-react/dist/esm/icons/view_off_icon';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
 
 export default function PrivacyRelayShowcase() {
     return (
@@ -118,13 +122,13 @@ export default function PrivacyRelayShowcase() {
                                     <div className="flex-1 p-4 bg-white/[0.02] border border-white/5 rounded-lg text-center">
                                         <div className="text-gray-500 mb-1">PrivacyCash</div>
                                         <div className="text-[10px] text-green-400 bg-green-500/10 px-2 py-1 rounded inline-block">
-                                            Sees: "Ashborn"
+                                            Sees: &quot;Ashborn&quot;
                                         </div>
                                     </div>
                                     <div className="flex-1 p-4 bg-white/[0.02] border border-white/5 rounded-lg text-center">
                                         <div className="text-gray-500 mb-1">Radr Labs</div>
                                         <div className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-1 rounded inline-block">
-                                            Sees: "Ashborn"
+                                            Sees: &quot;Ashborn&quot;
                                         </div>
                                     </div>
                                 </div>

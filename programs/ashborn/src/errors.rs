@@ -1,4 +1,4 @@
-//! Custom errors for the Ashborn protocol
+//! Custom errors for the Ashborn
 //! 
 //! Proper error handling, not panic-and-pray.
 

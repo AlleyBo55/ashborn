@@ -1,7 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { File02Icon, ViewOffIcon, LockIcon, SquareUnlock01Icon, Database01Icon } from 'hugeicons-react';
+import File02Icon from 'hugeicons-react/dist/esm/icons/file_02_icon';
+import ViewOffIcon from 'hugeicons-react/dist/esm/icons/view_off_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import SquareUnlock01Icon from 'hugeicons-react/dist/esm/icons/square_unlock_01_icon';
+import Database01Icon from 'hugeicons-react/dist/esm/icons/database_01_icon';
 import { useState } from 'react';
 
 const DataLogEntry = ({
@@ -125,7 +129,7 @@ export default function MarketingWhy() {
                         <strong className="text-white">Privacy is not a crime; it is a defense mechanism.</strong> Without it, every trade you make is a signal to your adversaries.
                     </p>
                     <p>
-                        The Ashborn Protocol introduces a <span className="text-purple-300">Shadow Layer</span> to Solana. It is not a mixer. It is a mathematical shield using Zero-Knowledge proofs to verify integrity without leaking intent.
+                        The Ashborn introduces a <span className="text-purple-300">Shadow Layer</span> to Solana. It is not a mixer. It is a mathematical shield using Zero-Knowledge proofs to verify integrity without leaking intent.
                     </p>
                 </div>
 

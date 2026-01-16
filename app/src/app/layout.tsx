@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: 'Ashborn | The Shadow Monarch',
     description: 'I shall protect my family. There is no need for words among shadows.',
     keywords: ['solana', 'privacy', 'zk-proofs', 'blockchain', 'crypto', 'defi'],
-    authors: [{ name: 'Ashborn Protocol' }],
+    authors: [{ name: 'Ashborn' }],
     openGraph: {
         title: 'Ashborn | The Shadow Monarch',
         description: 'There is no need for words among shadows. Unified privacy on Solana.',

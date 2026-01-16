@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield02Icon, SparklesIcon } from 'hugeicons-react';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
+import SparklesIcon from 'hugeicons-react/dist/esm/icons/sparkles_icon';
 import SystemWindow from '../../components/ui/SystemWindow';
 import { useEffect, useState } from 'react';
 import { useSystemToast } from '../ui/SystemToast';

@@ -1,7 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CubeIcon, LockIcon, UserGroupIcon, SentIcon, ViewIcon, ArrowRight01Icon, FlashIcon, Shield02Icon } from 'hugeicons-react';
+import CubeIcon from 'hugeicons-react/dist/esm/icons/cube_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import UserGroupIcon from 'hugeicons-react/dist/esm/icons/user_group_icon';
+import SentIcon from 'hugeicons-react/dist/esm/icons/sent_icon';
+import ViewIcon from 'hugeicons-react/dist/esm/icons/view_icon';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
+import FlashIcon from 'hugeicons-react/dist/esm/icons/flash_icon';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
 import Link from 'next/link';
 
 // ═══════════════════════════════════════════════════════════════════════════════

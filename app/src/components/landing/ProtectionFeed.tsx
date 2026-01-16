@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Shield02Icon } from 'hugeicons-react';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
 
 const generateTx = () => ({
     id: Math.random().toString(36).substr(2, 9),

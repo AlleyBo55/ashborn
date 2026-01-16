@@ -1,7 +1,8 @@
 'use client';
 
 import { Highlight, themes } from 'prism-react-renderer';
-import { Copy01Icon, CheckmarkCircle01Icon } from 'hugeicons-react';
+import Copy01Icon from 'hugeicons-react/dist/esm/icons/copy_01_icon';
+import CheckmarkCircle01Icon from 'hugeicons-react/dist/esm/icons/checkmark_circle_01_icon';
 import { useState } from 'react';
 
 export default function CodeBlock({ code, language = 'typescript', filename }: { code: string, language?: string, filename?: string }) {

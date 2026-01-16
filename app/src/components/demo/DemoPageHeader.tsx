@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion';
 import { ElementType } from 'react';
 import { BaseBadge, BaseText, BaseButton } from '@/components/ui/base';
-import { ArrowLeft01Icon, Shield02Icon } from 'hugeicons-react';
+import ArrowLeft01Icon from 'hugeicons-react/dist/esm/icons/arrow_left_01_icon';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
 import { useRouter } from 'next/navigation';
 
 const colorMap: Record<string, "blue" | "purple" | "green" | "amber" | "red"> = {

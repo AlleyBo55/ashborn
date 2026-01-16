@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ViewIcon, Shield02Icon } from 'hugeicons-react';
+import ViewIcon from 'hugeicons-react/dist/esm/icons/view_icon';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
 
 export default function SystemWarning() {
     return (
