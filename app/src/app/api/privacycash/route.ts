@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
                 const privacyCash = new PrivacyCash({
                     RPC_url: 'https://api.devnet.solana.com',
                     owner: new Uint8Array(keypairArray),
-                    enableDebug: false, // We'll handle logging manually
+                    enableDebug: true, // Enable debug logs
                     programId: PRIVACYCASH_PROGRAM_ID,
+                    addressLookupTable: process.env.NEXT_PUBLIC_ALT_ADDRESS,
                 } as any);
 
                 // Hook into logger for streaming updates
