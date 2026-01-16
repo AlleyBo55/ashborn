@@ -68,7 +68,8 @@ export default function AILendingDemoPage() {
             setStep('confirming');
             await new Promise(r => setTimeout(r, 1000));
 
-            const loanId = `loan_${Math.random().toString(36).substring(7)}`;
+            // Generate loan ID from stealth address hash (deterministic, no random)
+            const loanId = `loan_${stealthData.stealthAddress?.slice(0, 12) || Date.now().toString(36)}`;
             setLoanData(prev => ({ ...prev, id: loanId }));
 
             setStep('complete');

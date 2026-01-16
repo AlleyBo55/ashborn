@@ -51,9 +51,16 @@ const nextConfig = {
   // They are usually pre-compiled enough for Next.js to handle without forced transpilation.
   transpilePackages: [
     "@alleyboss/ashborn-sdk",
-    "@lightprotocol/hasher.rs",
-    "privacycash"
   ],
+  // Externalize Node.js-only packages that use import.meta.dirname
+  // Externalize Node.js-only packages that use import.meta.dirname
+  experimental: {
+    serverComponentsExternalPackages: [
+      "privacycash",
+      "node-localstorage",
+      "@lightprotocol/hasher.rs"
+    ],
+  },
   swcMinify: true, // Enable SWC minification for faster builds
 
   // Vercel Lead Engineer Optimization: Tree-shake icon libraries

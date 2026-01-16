@@ -21,7 +21,7 @@ export function TerminalDemoWrapper({ title, tag, description, children }: Termi
                     </div>
                     <span className="text-[10px] text-gray-600 ml-2">[{tag}]</span>
                 </div>
-                
+
                 <div className="mb-4">
                     <span className="text-green-500">root@ashborn:~$</span>
                     <span className="text-white ml-2">./execute_{tag.toLowerCase()}.sh</span>
@@ -30,7 +30,7 @@ export function TerminalDemoWrapper({ title, tag, description, children }: Termi
                 <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
                     &gt; {title}
                 </h1>
-                
+
                 <p className="text-sm text-gray-400 leading-relaxed">
                     {description}
                     <span className="animate-pulse">_</span>
@@ -40,6 +40,18 @@ export function TerminalDemoWrapper({ title, tag, description, children }: Termi
             {/* Content */}
             <div className="space-y-6">
                 {children}
+            </div>
+
+            {/* Footer */}
+            <div className="text-center mt-8 pb-4">
+                <div className="text-xs text-gray-600 mb-2 font-mono">$ POWERED_BY</div>
+                <div className="flex items-center justify-center gap-2 flex-wrap text-xs font-mono">
+                    <span className="bg-red-500/10 text-red-400 px-2 py-1 border border-red-500/20">🔥 ASHBORN</span>
+                    <span className="bg-blue-500/10 text-blue-400 px-2 py-1 border border-blue-500/20">PRIVACYCASH</span>
+                    <span className="bg-purple-500/10 text-purple-400 px-2 py-1 border border-purple-500/20">RADR_LABS</span>
+                    <span className="bg-amber-500/10 text-amber-400 px-2 py-1 border border-amber-500/20">X402</span>
+                    <span className="bg-yellow-500/10 text-yellow-400 px-2 py-1 border border-yellow-500/20">⚡ LIGHT_PROTOCOL (MERKLE)</span>
+                </div>
             </div>
         </div>
     );
@@ -110,8 +122,8 @@ interface TerminalButtonProps {
 
 export function TerminalButton({ onClick, children, loading, disabled, variant = 'primary' }: TerminalButtonProps) {
     const baseClasses = "px-6 py-3 font-bold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
-    const variantClasses = variant === 'primary' 
-        ? "bg-green-500 text-black hover:bg-green-400" 
+    const variantClasses = variant === 'primary'
+        ? "bg-green-500 text-black hover:bg-green-400"
         : "bg-black border-2 border-green-500/30 text-green-400 hover:bg-green-500/10";
 
     return (

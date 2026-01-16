@@ -427,60 +427,53 @@ interface SDKState {
 async function getAshbornSDK(runtime: Runtime): Promise<SDKState> {
   const rpcUrl = runtime.getSetting("SOLANA_RPC_URL");
   const network = runtime.getSetting("SOLANA_NETWORK") ?? "devnet";
+  const privateKey = runtime.getSetting("SOLANA_PRIVATE_KEY");
 
-  // In production, initialize real SDK:
-  // const connection = new Connection(rpcUrl);
-  // const wallet = getWalletFromRuntime(runtime);
-  // const ashborn = new Ashborn(connection, wallet);
-  // const compliance = new RangeCompliance(connection, wallet);
+  if (!rpcUrl || !privateKey) {
+    return {
+      initialized: false,
+      network,
+      vaultAddress: undefined,
+      hasBalance: false,
+      instance: null,
+      compliance: null,
+      SOL_MINT: "So11111111111111111111111111111111111111112",
+    };
+  }
 
-  return {
-    initialized: !!rpcUrl,
-    network,
-    vaultAddress: undefined,
-    hasBalance: false,
-    instance: createMockInstance(),
-    compliance: createMockCompliance(),
-    SOL_MINT: "So11111111111111111111111111111111111111112",
-  };
-}
+  try {
+    // Dynamic imports for SDK
+    const { Connection, Keypair } = await import("@solana/web3.js");
+    const { Ashborn, RangeCompliance } = await import("@alleyboss/ashborn-sdk");
 
-function createMockInstance() {
-  return {
-    shield: async (params: any) => ({
-      signature: "mock-sig-" + Date.now(),
-      noteIndex: Math.floor(Math.random() * 1000),
-    }),
-    shadowTransfer: async (params: any) => ({
-      signature: "mock-sig-" + Date.now(),
-    }),
-    unshield: async (params: any) => ({
-      signature: "mock-sig-" + Date.now(),
-    }),
-    getVaultBalance: async () => BigInt(2_500_000_000),
-    getNotes: async () => [
-      { index: 0, spent: false },
-      { index: 1, spent: true },
-      { index: 2, spent: false },
-    ],
-    getBalance: () => BigInt(5000),
-    getBlinding: () => new Uint8Array(32),
-    resolveRecipient: async (recipient: string) => "StealthAddr...",
-  };
-}
+    const connection = new Connection(rpcUrl, "confirmed");
+    const keypair = Keypair.fromSecretKey(
+      Uint8Array.from(JSON.parse(privateKey))
+    );
+    const wallet = {
+      publicKey: keypair.publicKey,
+      signTransaction: async <T>(tx: T): Promise<T> => tx,
+      signAllTransactions: async <T>(txs: T[]): Promise<T[]> => txs,
+    };
 
-function createMockCompliance() {
-  return {
-    generateRangeProof: async (
-      value: bigint,
-      blinding: Uint8Array,
-      min: bigint,
-      max: bigint,
-    ) => ({
-      proof: new Uint8Array(256),
-      commitment: new Uint8Array(32),
-    }),
-  };
+    const ashborn = new Ashborn(connection, wallet as any);
+    const compliance = new RangeCompliance(connection, wallet as any);
+
+    return {
+      initialized: true,
+      network,
+      vaultAddress: keypair.publicKey.toBase58(),
+      hasBalance: true,
+      instance: ashborn,
+      compliance,
+      SOL_MINT: "So11111111111111111111111111111111111111112",
+    };
+  } catch (error) {
+    throw new Error(
+      `Ashborn SDK initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+      'Ensure @alleyboss/ashborn-sdk is installed and SOLANA_PRIVATE_KEY is configured.'
+    );
+  }
 }
 
 // ============================================================

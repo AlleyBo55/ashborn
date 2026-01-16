@@ -33,7 +33,14 @@ export default function AIPaymentDemoPage() {
             if (!shieldData.success) throw new Error(shieldData.error || 'Shield failed');
 
             setStep('paying');
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Execute private transfer via Ashborn Relay
+            const payRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'transfer', params: { amount: 0.01, recipient: 'MerchantAgent_X' } })
+            });
+            const payData = await payRes.json();
+            await new Promise(resolve => setTimeout(resolve, 800)); // Pace the UI
 
             setStep('unshielding');
             const unshieldRes = await fetch('/api/privacycash', {
@@ -47,7 +54,7 @@ export default function AIPaymentDemoPage() {
             setMockData({
                 amount: 0.01,
                 recipient: 'MerchantAgent_X',
-                signature: shieldData.signature
+                signature: shieldData.signature // Using shield sig as reference for this flow
             });
             setStep('complete');
             setStatus('success');

@@ -70,6 +70,54 @@ When you use *any* privacy protocol → **That protocol sees YOU.**
 npm install @alleyboss/ashborn-sdk
 ```
 
+## ⚙️ Critical Configuration
+
+Ashborn requires a **Address Lookup Table (ALT)** to function on Devnet.
+Without this config, you will encounter `ALT not found` errors.
+
+### ❓ Why Is This Needed? (The 1232-Byte Limit)
+
+Solana transactions have a hard limit of **1232 bytes**. PrivacyCash transactions are "heavy" due to Zero-Knowledge proofs.
+
+```mermaid
+graph TD
+    subgraph WITHOUT_ALT [❌ Without ALT (Fails)]
+        A[ZK Proof\n400 bytes] --> B[Encrypted State\n200 bytes]
+        B --> C[20 Addresses\n640 bytes]
+        C --> D[Total: 1240 bytes]
+        D -->|OVER LIMIT| E[❌ Transaction Failed]
+        style D fill:#ffcccc,stroke:#ff0000
+        style E fill:#ff0000,color:#fff
+    end
+
+    subgraph WITH_ALT [✅ With ALT (Success)]
+        F[ZK Proof\n400 bytes] --> G[Encrypted State\n200 bytes]
+        G --> H[20 Addresses\n20 bytes]
+        H -- "Compressed via ALT" --> I[Total: 620 bytes]
+        I -->|FITS| J[✅ Transaction Success]
+        style I fill:#ccffcc,stroke:#00ff00
+        style J fill:#00ff00,color:#fff
+    end
+```
+
+### 🛠️ Setup Instructions
+
+1. **Configure Environment:**
+   Create `.env.local` in the `app` directory:
+   ```bash
+   PRIVACYCASH_DEMO_KEYPAIR=[...your_keypair_array...]
+   NEXT_PUBLIC_ALT_ADDRESS=<GENERATED_ADDRESS>
+   ```
+
+2. **Generate ALT Address:**
+   Run the included utility script to create and populate a Devnet ALT:
+   ```bash
+   npx tsx scripts/setup-alt.ts
+   ```
+   *Copy the output address into your `.env.local`.*
+
+---
+
 ### Server-Side (Maximum Privacy)
 
 ```typescript

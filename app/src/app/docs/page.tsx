@@ -28,6 +28,7 @@ const sections = [
             { id: 'overview', title: 'Overview', icon: BookOpen01Icon },
             { id: 'quick-start', title: 'Quick Start', icon: FlashIcon },
             { id: 'installation', title: 'Installation', icon: ConsoleIcon },
+            { id: 'configuration', title: 'Configuration', icon: CpuIcon },
         ]
     },
     {
@@ -318,136 +319,351 @@ export default function DocsPage() {
                         </div>
                     </section>
 
+                    {/* Configuration */}
+                    <section id="configuration" className="mb-24 scroll-mt-32">
+                        <SectionHeader title="Configuration" description="Mandatory setup for Devnet privacy operations." />
+
+                        <div className="bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-xl mb-8">
+                            <h3 className="text-xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+                                <FlashIcon className="w-6 h-6" />
+                                Critical: Address Lookup Table (ALT)
+                            </h3>
+                            <p className="text-gray-300 mb-6 leading-relaxed">
+                                Solana transactions fail if they exceed <b>1232 bytes</b>.
+                                Privacy proofs are heavy (~600 bytes). Without an ALT, adding just 20 account addresses (32 bytes each) breaks the limit.
+                            </p>
+
+                            {/* Visual Comparison */}
+                            <div className="space-y-6 font-mono text-xs mb-8">
+                                {/* Bad Case */}
+                                <div>
+                                    <div className="flex justify-between text-red-300 mb-2 font-semibold">
+                                        <span>WITHOUT ALT (Standard)</span>
+                                        <span>1240 / 1232 bytes (OVERFLOW) ❌</span>
+                                    </div>
+                                    <div className="h-8 flex w-full rounded-lg overflow-hidden opacity-50 ring-1 ring-red-500/30">
+                                        <div className="bg-blue-600/80 text-white flex items-center justify-center border-r border-black/20" style={{ width: '35%' }}>ZK Proof</div>
+                                        <div className="bg-purple-600/80 text-white flex items-center justify-center border-r border-black/20" style={{ width: '20%' }}>State</div>
+                                        <div className="bg-red-600/80 text-white flex items-center justify-center" style={{ width: '55%' }}>20 Full Addresses (640B)</div>
+                                    </div>
+                                </div>
+
+                                {/* Good Case */}
+                                <div>
+                                    <div className="flex justify-between text-green-300 mb-2 font-semibold">
+                                        <span>WITH ALT (Compressed)</span>
+                                        <span>620 / 1232 bytes (OPTIMIZED) ✅</span>
+                                    </div>
+                                    <div className="h-8 flex w-full rounded-lg overflow-hidden ring-1 ring-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+                                        <div className="bg-blue-500 text-white flex items-center justify-center border-r border-black/20" style={{ width: '35%' }}>ZK Proof</div>
+                                        <div className="bg-purple-500 text-white flex items-center justify-center border-r border-black/20" style={{ width: '20%' }}>State</div>
+                                        <div className="bg-green-500 text-white flex items-center justify-center border-r border-black/20" style={{ width: '5%' }}>ALT</div>
+                                        <div className="bg-gray-800/50 flex-1 flex items-center pl-3 text-gray-500 italic">Remaining Space (Safe)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <h4 className="text-white font-semibold">How to Fix:</h4>
+                                <div className="space-y-2">
+                                    <p className="text-sm text-gray-400">1. Run the setup script to generate your specific ALT:</p>
+                                    <TerminalBlock command="npx tsx scripts/setup-alt.ts" cwd="~/project" />
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-sm text-gray-400">2. Add the result to <code className="text-xs bg-white/10 px-1 py-0.5 rounded">.env.local</code>:</p>
+                                    <CodeBlock
+                                        language="bash"
+                                        code="NEXT_PUBLIC_ALT_ADDRESS=8X48JwWPcBGqsYsH2bgtbt7aPfMiUfx1yFDjjnPM4RrB"
+                                        filename=".env.local"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-16" />
 
                     {/* Architecture */}
                     <section id="how-it-works" className="mb-24 scroll-mt-32">
                         <SectionHeader title="Architecture" description="How Ashborn achieves privacy on a public ledger." />
 
-                        {/* Visual Flow Diagram */}
-                        <div className="mb-8 p-8 rounded-xl bg-[#0A0A0A] border border-white/10">
-                            <h3 className="text-lg font-semibold text-white mb-6 text-center">Transaction Flow Visualization</h3>
-                            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
-                                {/* User */}
-                                <div className="flex flex-col items-center">
-                                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-800 border border-white/20 flex items-center justify-center mb-2">
-                                        <span className="text-2xl">👤</span>
-                                    </div>
-                                    <span className="text-xs text-gray-400 font-mono">Your App</span>
-                                </div>
+                        {/* Detailed Architecture Diagram */}
+                        <div className="mb-12 p-8 rounded-xl bg-[#0A0A0A] border border-white/10 overflow-x-auto">
+                            <h3 className="text-lg font-semibold text-white mb-8 text-center">The Shadow Monarch Stack</h3>
+                            <div className="min-w-[700px] flex flex-col gap-4">
 
-                                {/* Arrow */}
-                                <div className="flex items-center">
-                                    <ArrowRight01Icon className="w-6 h-6 text-purple-400 rotate-90 md:rotate-0" />
-                                </div>
-
-                                {/* SDK */}
-                                <div className="flex flex-col items-center">
-                                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 border border-purple-400/50 flex items-center justify-center mb-2 shadow-lg shadow-purple-900/50">
-                                        <CodeIcon className="w-8 h-8 text-white" />
-                                    </div>
-                                    <span className="text-xs text-purple-300 font-mono font-bold">Ashborn SDK</span>
-                                </div>
-
-                                {/* Arrow */}
-                                <div className="flex items-center">
-                                    <ArrowRight01Icon className="w-6 h-6 text-blue-400 rotate-90 md:rotate-0" />
-                                </div>
-
-                                {/* PrivacyCash */}
-                                <div className="flex flex-col items-center">
-                                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 border border-blue-400/50 flex items-center justify-center mb-2 shadow-lg shadow-blue-900/50">
-                                        <LockIcon className="w-8 h-8 text-white" />
-                                    </div>
-                                    <span className="text-xs text-blue-300 font-mono font-bold">PrivacyCash</span>
-                                    <span className="text-[9px] text-gray-500 font-mono mt-1">ATZj4jZ4...</span>
-                                </div>
-
-                                {/* Arrow */}
-                                <div className="flex items-center">
-                                    <ArrowRight01Icon className="w-6 h-6 text-amber-400 rotate-90 md:rotate-0" />
-                                </div>
-
-                                {/* Ashborn Program */}
-                                <div className="flex flex-col items-center">
-                                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-700 border border-amber-400/50 flex items-center justify-center mb-2 shadow-lg shadow-amber-900/50">
-                                        <Shield02Icon className="w-8 h-8 text-white" />
-                                    </div>
-                                    <span className="text-xs text-amber-300 font-mono font-bold">Ashborn</span>
-                                    <span className="text-[9px] text-gray-500 font-mono mt-1">BzBUgtEFi...</span>
-                                </div>
-                            </div>
-
-                            {/* Legend */}
-                            <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                                <div className="flex items-start gap-2">
-                                    <div className="w-3 h-3 rounded bg-blue-500 mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <div className="text-white font-semibold mb-1">PrivacyCash Layer</div>
-                                        <div className="text-gray-500">Handles shielding, commitments, and Merkle trees</div>
+                                {/* User Intent Layer */}
+                                <div className="flex items-center gap-4">
+                                    <div className="w-32 text-right text-xs font-mono text-gray-500 uppercase tracking-widest">User Intent</div>
+                                    <div className="flex-1 p-4 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded bg-gray-800 flex items-center justify-center text-xl">👤</div>
+                                            <div>
+                                                <div className="text-sm text-white font-semibold">User / AI Agent</div>
+                                                <div className="text-[10px] text-gray-400">Initiates Transfer / Payment</div>
+                                            </div>
+                                        </div>
+                                        <ArrowRight01Icon className="w-5 h-5 text-gray-600" />
+                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs">
+                                            <CodeIcon className="w-3 h-3" />
+                                            Ashborn SDK
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <div className="w-3 h-3 rounded bg-amber-500 mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <div className="text-white font-semibold mb-1">Ashborn Layer</div>
-                                        <div className="text-gray-500">Adds stealth addresses and ZK proofs</div>
+
+                                {/* Connection Lines */}
+                                <div className="pl-36 flex gap-32">
+                                    <div className="w-px h-8 bg-gradient-to-b from-gray-800 to-purple-500/50" />
+                                    <div className="w-px h-8 bg-gradient-to-b from-gray-800 to-blue-500/50" />
+                                </div>
+
+                                {/* Identity & Privacy Layer */}
+                                <div className="flex items-center gap-4">
+                                    <div className="w-32 text-right text-xs font-mono text-gray-500 uppercase tracking-widest">Identity & Privacy</div>
+                                    <div className="flex-1 grid grid-cols-2 gap-4">
+                                        {/* Identity Side */}
+                                        <div className="p-4 rounded-lg bg-purple-900/10 border border-purple-500/20 relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 p-1 bg-purple-500/20 rounded-bl text-[8px] text-purple-300 font-mono">RADR_LABS</div>
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <ViewOffIcon className="w-8 h-8 text-purple-400" />
+                                                <div className="text-white font-semibold text-sm">Ashborn Program</div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2 text-xs text-gray-400 bg-black/20 p-1.5 rounded">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                                                    ECDH Key Exchange
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-gray-400 bg-black/20 p-1.5 rounded">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                                                    Stealth Addr Gen
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Privacy Side */}
+                                        <div className="p-4 rounded-lg bg-blue-900/10 border border-blue-500/20 relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 p-1 bg-blue-500/20 rounded-bl text-[8px] text-blue-300 font-mono">LIGHT_PROTOCOL</div>
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <LockIcon className="w-8 h-8 text-blue-400" />
+                                                <div className="text-white font-semibold text-sm">PrivacyCash Program</div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2 text-xs text-gray-400 bg-black/20 p-1.5 rounded">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                                    Poseidon Hash
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-gray-400 bg-black/20 p-1.5 rounded">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                                    Merkle Tree Insert
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <div className="w-3 h-3 rounded bg-purple-500 mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <div className="text-white font-semibold mb-1">SDK Orchestration</div>
-                                        <div className="text-gray-500">Unified API for both programs</div>
+
+                                {/* Connection Lines */}
+                                <div className="pl-36 flex justify-center">
+                                    <div className="w-px h-8 bg-gray-800" />
+                                </div>
+
+                                {/* Settlement Layer */}
+                                <div className="flex items-center gap-4">
+                                    <div className="w-32 text-right text-xs font-mono text-gray-500 uppercase tracking-widest">Settlement</div>
+                                    <div className="flex-1 p-4 rounded-lg bg-green-900/10 border border-green-500/20 flex items-center gap-6">
+                                        <div className="flex flex-col items-center gap-1">
+                                            <div className="w-10 h-10 rounded-full border-2 border-green-500/50 flex items-center justify-center text-green-400 text-xs font-bold">SOL</div>
+                                            <span className="text-[10px] text-green-500">L1 Chain</span>
+                                        </div>
+                                        <div className="h-10 w-px bg-white/10" />
+                                        <div className="flex-1 grid grid-cols-3 gap-2">
+                                            <div className="text-center p-2 rounded bg-black/40 border border-white/5">
+                                                <div className="text-[10px] text-gray-500 mb-1">State</div>
+                                                <div className="text-xs text-white family-mono">Compressed</div>
+                                            </div>
+                                            <div className="text-center p-2 rounded bg-black/40 border border-white/5">
+                                                <div className="text-xs text-gray-500 mb-1">ALT</div>
+                                                <div className="text-xs text-white family-mono">Active</div>
+                                            </div>
+                                            <div className="text-center p-2 rounded bg-black/40 border border-white/5">
+                                                <div className="text-[10px] text-gray-500 mb-1">Proof</div>
+                                                <div className="text-xs text-white family-mono">Verified</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Program Flow Diagram */}
-                        <div className="mb-8 p-6 rounded-xl bg-gradient-to-br from-purple-900/10 to-blue-900/10 border border-purple-500/20">
-                            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                <Activity01Icon className="w-5 h-5 text-purple-400" />
-                                Complete Transaction Flow
-                            </h3>
-                            <div className="space-y-4 text-sm">
-                                <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 rounded-full bg-purple-500/20 border border-purple-500/50 flex items-center justify-center text-purple-300 text-xs font-bold flex-shrink-0 mt-0.5">1</div>
-                                    <div>
-                                        <div className="font-semibold text-white mb-1">User calls Ashborn SDK</div>
-                                        <code className="text-xs bg-black/30 px-2 py-1 rounded text-purple-300">ashborn.shield()</code>
-                                        <p className="text-gray-400 mt-1">Your application uses the unified Ashborn SDK interface</p>
+                        <h3 className="text-lg font-semibold text-white mb-6 mt-12">Detailed Flow by Use Case</h3>
+
+                        {/* Demo Flow: Shielding - Horizontal Graph */}
+                        <div className="mb-10 p-6 rounded-xl bg-white/[0.02] border border-white/5">
+                            <h4 className="flex items-center gap-2 text-white font-semibold mb-6">
+                                <div className="p-1.5 rounded bg-blue-500/20 text-blue-400"><Shield02Icon className="w-4 h-4" /></div>
+                                A. Shielding Assets (PrivacyCash)
+                            </h4>
+                            <div className="flex items-center gap-4 overflow-x-auto pb-4 min-w-full custom-scrollbar">
+                                {/* Step 1 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-blue-900/10 border border-blue-500/20 relative group hover:border-blue-500/40 transition-colors">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-blue-900/50">1</div>
+                                    <div className="font-mono text-blue-300 text-xs mb-2 mt-2">DEPOSIT REQUEST</div>
+                                    <code className="text-[10px] bg-black/40 p-1.5 rounded text-gray-400 block mb-2">ashborn.shield()</code>
+                                    <div className="text-xs text-gray-400 leading-snug">User sign 1 SOL deposit tx via SDK.</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 2 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-blue-900/10 border border-blue-500/20 relative group hover:border-blue-500/40 transition-colors">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-blue-900/50">2</div>
+                                    <div className="font-mono text-blue-300 text-xs mb-2 mt-2">UTXO CREATION</div>
+                                    <div className="text-xs text-gray-400 mb-1">Blinding Factor</div>
+                                    <div className="h-1 w-full bg-blue-500/20 rounded overflow-hidden">
+                                        <div className="h-full bg-blue-500 w-2/3 animate-pulse"></div>
+                                    </div>
+                                    <div className="text-[10px] text-gray-500 mt-2">Gen random noise</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 3 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-blue-900/10 border border-blue-500/20 relative group hover:border-blue-500/40 transition-colors">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-blue-900/50">3</div>
+                                    <div className="font-mono text-blue-300 text-xs mb-2 mt-2">POSEIDON HASH</div>
+                                    <div className="flex justify-center my-2">
+                                        <div className="w-8 h-8 rounded border border-blue-400/30 flex items-center justify-center text-[10px] text-blue-400 font-bold">Zk</div>
+                                    </div>
+                                    <div className="text-xs text-gray-400 leading-snug text-center">Commitment Created</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 4 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-green-900/10 border border-green-500/20 relative group hover:border-green-500/40 transition-colors">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-green-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-green-900/50">4</div>
+                                    <div className="font-mono text-green-300 text-xs mb-2 mt-2">MERKLE INSERT</div>
+                                    <div className="flex flex-col gap-0.5 items-center my-2 opacity-60">
+                                        <div className="w-1 h-1 bg-green-500 rounded-full" />
+                                        <div className="flex gap-1 justify-center"><div className="w-1 h-1 bg-green-500 rounded-full" /><div className="w-1 h-1 bg-green-500 rounded-full" /></div>
+                                        <div className="flex gap-1 justify-center"><div className="w-1 h-1 bg-green-500 rounded-full" /><div className="w-1 h-1 bg-green-500 rounded-full" /><div className="w-1 h-1 bg-green-500 rounded-full" /><div className="w-1 h-1 bg-green-500 rounded-full" /></div>
+                                    </div>
+                                    <div className="text-xs text-gray-400 leading-snug text-center">On-Chain State</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Demo Flow: Shadow Agent - Horizontal Graph */}
+                        <div className="mb-10 p-6 rounded-xl bg-white/[0.02] border border-white/5">
+                            <h4 className="flex items-center gap-2 text-white font-semibold mb-6">
+                                <div className="p-1.5 rounded bg-purple-500/20 text-purple-400"><ViewOffIcon className="w-4 h-4" /></div>
+                                B. Stealth Transfer (Shadow Agent)
+                            </h4>
+                            <div className="flex items-center gap-4 overflow-x-auto pb-4 min-w-full custom-scrollbar">
+                                {/* Step 1 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-purple-900/10 border border-purple-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white">1</div>
+                                    <div className="font-mono text-purple-300 text-xs mb-2 mt-2">NEGOTIATION</div>
+                                    <div className="bg-black/40 p-2 rounded border border-white/5 mb-2">
+                                        <div className="flex justify-between text-[10px] text-gray-500">
+                                            <span>Spend Key</span>
+                                            <span>View Key</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-xs text-gray-400">Exchange Meta-Addr</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 2 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-purple-900/10 border border-purple-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white">2</div>
+                                    <div className="font-mono text-purple-300 text-xs mb-2 mt-2">ECDH SECRET</div>
+                                    <div className="flex items-center justify-center gap-2 my-2">
+                                        <span className="text-[10px] text-gray-500">Priv A</span>
+                                        <span className="text-purple-500 font-bold">×</span>
+                                        <span className="text-[10px] text-gray-500">Pub B</span>
+                                    </div>
+                                    <div className="text-xs text-gray-400 text-center">Shared Secret (S)</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 3 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-purple-900/10 border border-purple-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white">3</div>
+                                    <div className="font-mono text-purple-300 text-xs mb-2 mt-2">DERIVATION</div>
+                                    <code className="text-[9px] bg-black/40 p-1 block mb-2 text-gray-400 break-all">P = H(S)G + B</code>
+                                    <div className="text-xs text-gray-400">Gen Stealth Addr</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 4 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-green-900/10 border border-green-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-green-600 flex items-center justify-center text-xs font-bold text-white">4</div>
+                                    <div className="font-mono text-green-300 text-xs mb-2 mt-2">TRANSFER</div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">?</div>
+                                        <ArrowRight01Icon className="w-3 h-3 text-gray-500" />
+                                        <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">?</div>
+                                    </div>
+                                    <div className="text-xs text-gray-400">Unlinkable on-chain</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Demo Flow: AI Payment - Horizontal Graph */}
+                        <div className="mb-10 p-6 rounded-xl bg-white/[0.02] border border-white/5">
+                            <h4 className="flex items-center gap-2 text-white font-semibold mb-6">
+                                <div className="p-1.5 rounded bg-red-500/20 text-red-400"><AiChat02Icon className="w-4 h-4" /></div>
+                                C. AI Payment (x402 + ZK)
+                            </h4>
+                            <div className="flex items-center gap-4 overflow-x-auto pb-4 min-w-full custom-scrollbar">
+                                {/* Step 1 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-red-900/10 border border-red-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-red-600 flex items-center justify-center text-xs font-bold text-white">1</div>
+                                    <div className="font-mono text-red-300 text-xs mb-2 mt-2">402 REQUIRED</div>
+                                    <div className="bg-black/40 p-2 rounded border border-white/5 mb-2 text-center text-[10px] text-red-400 font-mono">
+                                        HTTP 402
+                                    </div>
+                                    <div className="text-xs text-gray-400">API blocks access</div>
+                                </div>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 2 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-red-900/10 border border-red-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-red-600 flex items-center justify-center text-xs font-bold text-white">2</div>
+                                    <div className="font-mono text-red-300 text-xs mb-2 mt-2">SHIELDED PAY</div>
+                                    <div className="flex flex-col gap-1 text-[10px] text-gray-500 bg-black/40 p-2 rounded">
+                                        <div className="flex justify-between"><span>In:</span> <span className="text-blue-400">UTXO</span></div>
+                                        <div className="flex justify-between"><span>Out:</span> <span className="text-green-400">API</span></div>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/50 flex items-center justify-center text-blue-300 text-xs font-bold flex-shrink-0 mt-0.5">2</div>
-                                    <div>
-                                        <div className="font-semibold text-white mb-1">Ashborn SDK routes to PrivacyCash</div>
-                                        <code className="text-xs bg-black/30 px-2 py-1 rounded text-blue-300">ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS</code>
-                                        <p className="text-gray-400 mt-1">SDK internally calls PrivacyCash program for shielding operations</p>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 3 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-red-900/10 border border-red-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-red-600 flex items-center justify-center text-xs font-bold text-white">3</div>
+                                    <div className="font-mono text-red-300 text-xs mb-2 mt-2">GROTH16 PROOF</div>
+                                    <div className="grid grid-cols-2 gap-1 mb-2">
+                                        <div className="bg-red-500/20 h-1 rounded"></div><div className="bg-red-500/20 h-1 rounded"></div>
+                                        <div className="bg-red-500/20 h-1 rounded"></div><div className="bg-red-500/20 h-1 rounded"></div>
                                     </div>
+                                    <div className="text-xs text-gray-400 text-center">Prove solvency</div>
                                 </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-300 text-xs font-bold flex-shrink-0 mt-0.5">3</div>
-                                    <div>
-                                        <div className="font-semibold text-white mb-1">PrivacyCash creates commitment</div>
-                                        <p className="text-gray-400 mt-1">Generates Poseidon hash commitment and stores encrypted note on-chain</p>
+
+                                <ArrowRight01Icon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+
+                                {/* Step 4 */}
+                                <div className="min-w-[200px] p-4 rounded-lg bg-green-900/10 border border-green-500/20 relative">
+                                    <div className="absolute -top-3 left-4 w-6 h-6 rounded-full bg-green-600 flex items-center justify-center text-xs font-bold text-white">4</div>
+                                    <div className="font-mono text-green-300 text-xs mb-2 mt-2">RESOURCE UNLOCKED</div>
+                                    <div className="flex justify-center my-2">
+                                        <div className="w-8 h-8 rounded bg-green-500/20 flex items-center justify-center text-green-400">✓</div>
                                     </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-300 text-xs font-bold flex-shrink-0 mt-0.5">4</div>
-                                    <div>
-                                        <div className="font-semibold text-white mb-1">Ashborn adds stealth layer</div>
-                                        <code className="text-xs bg-black/30 px-2 py-1 rounded text-amber-300">BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe</code>
-                                        <p className="text-gray-400 mt-1">Ashborn program generates stealth addresses using Radr/ShadowWire cryptography</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 rounded-full bg-purple-500/20 border border-purple-500/50 flex items-center justify-center text-purple-300 text-xs font-bold flex-shrink-0 mt-0.5">5</div>
-                                    <div>
-                                        <div className="font-semibold text-white mb-1">Return to user</div>
-                                        <p className="text-gray-400 mt-1">SDK returns transaction signature and encrypted note to your application</p>
-                                    </div>
+                                    <div className="text-xs text-gray-400 text-center">API Key / Data</div>
                                 </div>
                             </div>
                         </div>
@@ -763,7 +979,7 @@ const { stealthAddress } = await ashborn.generateStealthAddress({
                             </div>
                         </div>
                         <p className="text-gray-400 leading-relaxed mb-6">
-                            Ashborn leverages Light Protocol's infrastructure for <strong>ZK State Compression</strong>. This allows us to store massive Merkle trees on Solana at a fraction of the cost, enabling scalable privacy for millions of users.
+                            Ashborn leverages Light Protocol&apos;s infrastructure for <strong>ZK State Compression</strong>. This allows us to store massive Merkle trees on Solana at a fraction of the cost, enabling scalable privacy for millions of users.
                         </p>
                     </section>
 
@@ -783,7 +999,7 @@ const { stealthAddress } = await ashborn.generateStealthAddress({
                             </div>
                         </div>
                         <p className="text-gray-400 leading-relaxed mb-6">
-                            The <strong>Shadow Agent</strong> protocol integrates x402 Micropay to enable AI agents to pay for resources (compute, data) privately. The payment flow is wrapped in an Ashborn shield, hiding the agent's treasury wallet.
+                            The <strong>Shadow Agent</strong> protocol integrates x402 Micropay to enable AI agents to pay for resources (compute, data) privately. The payment flow is wrapped in an Ashborn shield, hiding the agent&apos;s treasury wallet.
                         </p>
                     </section>
 
@@ -798,7 +1014,7 @@ const { stealthAddress } = await ashborn.generateStealthAddress({
                             </div>
                         </div>
                         <p className="text-gray-400 leading-relaxed mb-6">
-                            We use real <strong>Groth16 Zero-Knowledge Proofs</strong> (via <code>snarkjs</code> and <code>circom</code>) to prove validity. For example, proving a user is not in a blacklist or has sufficient funds, without revealing the user's identity or balance.
+                            We use real <strong>Groth16 Zero-Knowledge Proofs</strong> (via <code>snarkjs</code> and <code>circom</code>) to prove validity. For example, proving a user is not in a blacklist or has sufficient funds, without revealing the user&apos;s identity or balance.
                         </p>
                         <div className="p-4 rounded-lg bg-green-900/10 border border-green-500/20 text-xs font-mono text-green-300">
                             $ Using curve: bn128<br />
