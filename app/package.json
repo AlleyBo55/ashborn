@@ -8,8 +8,7 @@
         "start": "next start",
         "lint": "next lint",
         "test": "jest",
-        "test:watch": "jest --watch",
-        "postinstall": "cd node_modules/privacycash && (mv src_backup src || true) && npm install && (npm run build || true)"
+        "test:watch": "jest --watch"
     },
     "dependencies": {
         "@alleyboss/ashborn-sdk": "^2.3.0",
@@ -34,7 +33,7 @@
         "nprogress": "^0.2.0",
         "openai": "^6.16.0",
         "prism-react-renderer": "^2.4.1",
-        "privacycash": "github:Privacy-Cash/privacy-cash-sdk",
+        "privacycash": "^1.1.10",
         "process": "^0.11.10",
         "react": "^18.3.0",
         "react-dom": "^18.3.0",

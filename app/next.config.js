@@ -49,7 +49,6 @@ const nextConfig = {
   // NOTE: Removed @solana/web3.js and @coral-xyz/anchor from transpilePackages to speed up build
   // They are usually pre-compiled enough for Next.js to handle without forced transpilation.
   transpilePackages: [
-    "privacycash",
     "@alleyboss/ashborn-sdk",
     "@lightprotocol/hasher.rs"
   ],
