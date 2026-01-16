@@ -43,7 +43,7 @@ export default function PrivacyRelayShowcase() {
                         <p className="text-xl text-gray-300 mb-8 leading-relaxed font-light">
                             Stop exposing your identity to every protocol you touch.
                             <br /><br />
-                            With <strong className="text-white">Ashborn Privacy Network</strong>, the underlying protocols never know you exist.
+                            With <strong className="text-white">Ashborn Privacy Layer</strong>, the underlying protocols never know you exist.
                             To PrivacyCash, Radr Labs, and the world—you are a ghost.
                             <br /><br />
                             <span className="text-red-400 font-medium">Only the Shadow Monarch knows the truth.</span>

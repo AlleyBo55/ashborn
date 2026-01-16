@@ -54,18 +54,10 @@ const nextConfig = {
   swcMinify: true, // Enable SWC minification for faster builds
 
   // Vercel Lead Engineer Optimization: Tree-shake icon libraries
-  // This prevents compiling 10,000+ icons when you only use 5.
+  // Note: hugeicons-react removed due to non-standard snake_case file naming making transforms difficult
   modularizeImports: {
-    'hugeicons-react': {
-      transform: 'hugeicons-react/{{member}}',
-      skipDefaultConversion: true,
-    },
     'lucide-react': {
       transform: 'lucide-react/dist/esm/icons/{{member}}',
-    },
-    '@hugeicons/react': {
-      transform: '@hugeicons/react/{{member}}',
-      skipDefaultConversion: true,
     }
   },
   // output: "standalone",
