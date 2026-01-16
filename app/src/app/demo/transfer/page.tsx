@@ -1,15 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { SentIcon, UserGroupIcon, AlertCircleIcon, CheckmarkCircle01Icon, Loading03Icon } from 'hugeicons-react';
-import CodeBlock from '@/components/ui/CodeBlock';
-import { DemoPageHeader, InfoCard, DemoButton, PrivacyVisualizer, TxLink } from '@/components/demo';
+import { TerminalDemoWrapper, TerminalSection, TerminalCodeBlock, TerminalButton, TerminalOutput } from '@/components/demo/TerminalComponents';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
 
 export default function TransferDemoPage() {
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState, isError, error } = useDemoStatus();
-
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('0.01');
     const [txSignature, setTxSignature] = useState<string | null>(null);
@@ -20,7 +16,6 @@ export default function TransferDemoPage() {
         setStatus('loading');
 
         try {
-            // Step 1: Generate stealth address via API
             const stealthRes = await fetch('/api/ashborn', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -30,7 +25,6 @@ export default function TransferDemoPage() {
             if (!stealthData.success) throw new Error(stealthData.error || 'Stealth generation failed');
             setStealthAddress(stealthData.stealthAddress);
 
-            // Step 2: Execute transfer via API
             const transferRes = await fetch('/api/ashborn', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -59,149 +53,113 @@ export default function TransferDemoPage() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8">
-            {/* Demo Notice */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
-            >
-                <div className="flex items-start gap-3">
-                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
-                    <div className="text-sm">
-                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo</p>
-                        <p className="text-amber-200/70 text-xs">All operations run via API. No wallet required.</p>
-                    </div>
+        <TerminalDemoWrapper
+            title="STEALTH_TRANSFER"
+            tag="PRIVACY_FEATURE"
+            description="Send to one-time stealth addresses. Ashborn Privacy Relay ensures protocols never see your identity."
+        >
+            <TerminalSection title="PROTOCOL_FLOW">
+                <div className="text-sm text-gray-300 space-y-2">
+                    <p>$ 1. Shared Secret (ECDH)</p>
+                    <p>$ 2. Derive Stealth Address</p>
+                    <p>$ 3. Send to Stealth</p>
+                    <p className="text-xs text-gray-500">$ Each transaction uses unique derived address</p>
                 </div>
-            </motion.div>
+            </TerminalSection>
 
-            <DemoPageHeader
-                icon={SentIcon}
-                badge="Privacy Feature"
-                title="Stealth Transfer"
-                description="Send to one-time stealth addresses. Ashborn Privacy Relay ensures protocols never see your identity."
-                color="blue"
-                privacyRelay
-            />
-
-            <InfoCard
-                icon={UserGroupIcon}
-                title="How Stealth Addresses Work"
-                color="blue"
-                steps={[
-                    { label: '1. Shared Secret (ECDH)', color: 'blue' },
-                    { label: '2. Derive Stealth Addr', color: 'purple' },
-                    { label: '3. Send to Stealth', color: 'green' }
-                ]}
-            >
-                <div>
-                    Stealth addresses allow private receipt of funds. Each transaction uses a unique derived address.
-                </div>
-            </InfoCard>
-
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/[0.03] border border-white/10 rounded-2xl p-8"
-            >
-                {isSuccess ? (
-                    <div className="text-center py-8">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center">
-                            <CheckmarkCircle01Icon className="w-8 h-8 text-green-400" />
-                        </div>
-                        <div className="text-xl font-semibold mb-2 text-green-400">Transfer Complete</div>
-                        <p className="text-gray-400 mb-4">Funds sent to stealth address.</p>
-
-                        <div className="bg-black/40 rounded-lg p-4 mb-6 text-left border border-white/5 space-y-3">
-                            {stealthAddress && (
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Stealth Address</div>
-                                    <code className="text-xs text-green-300 break-all font-mono">{stealthAddress}</code>
-                                </div>
-                            )}
-                            <div>
-                                <div className="text-xs text-gray-500 mb-1">Transaction</div>
-                                {txSignature && <TxLink signature={txSignature} />}
-                            </div>
-                        </div>
-
+            {isSuccess ? (
+                <>
+                    <TerminalSection title="TRANSFER_COMPLETE" variant="success">
+                        <TerminalOutput
+                            lines={[
+                                `Status: ✓ COMPLETE`,
+                                `Stealth_Address: ${stealthAddress?.slice(0, 24)}...`,
+                                `Transaction: ${txSignature?.slice(0, 24)}...`,
+                                `Decoy_Count: ${decoys.length}`,
+                                `Privacy: MAXIMUM`
+                            ]}
+                            type="success"
+                        />
                         {decoys.length > 0 && (
-                            <div className="mb-6 text-left">
-                                <div className="text-xs text-gray-500 mb-2">Decoys (Ring Members)</div>
+                            <div className="mt-4">
+                                <div className="text-xs text-gray-500 mb-2 font-mono">$ RING_MEMBERS (DECOYS)</div>
                                 <div className="flex gap-2 flex-wrap text-[10px] font-mono text-gray-600">
-                                    {decoys.map((d, i) => <span key={i} className="bg-white/5 px-2 py-1 rounded">{d.slice(0, 12)}...</span>)}
+                                    {decoys.map((d, i) => (
+                                        <span key={i} className="bg-white/5 px-2 py-1 border border-white/10">
+                                            {d.slice(0, 12)}...
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
                         )}
+                    </TerminalSection>
 
-                        <DemoButton onClick={handleReset} icon={SentIcon}>Send Another</DemoButton>
+                    <div className="flex justify-center">
+                        <TerminalButton onClick={handleReset}>$ SEND_ANOTHER</TerminalButton>
                     </div>
-                ) : isError ? (
-                    <div className="text-center py-8">
-                        <h3 className="text-xl font-semibold mb-2 text-red-400">Failed</h3>
-                        <p className="text-gray-400 mb-6">{error}</p>
-                        <DemoButton onClick={handleReset}>Try Again</DemoButton>
+                </>
+            ) : isError ? (
+                <>
+                    <TerminalSection title="ERROR" variant="error">
+                        <TerminalOutput lines={[`Error: ${error}`, `Status: FAILED`]} type="error" />
+                    </TerminalSection>
+                    <div className="flex justify-center">
+                        <TerminalButton onClick={handleReset}>$ TRY_AGAIN</TerminalButton>
                     </div>
-                ) : (
-                    <>
-                        <div className="space-y-4 mb-8">
-                            <div>
-                                <label className="block text-sm text-gray-400 mb-2">Recipient (Optional)</label>
-                                <input
-                                    type="text"
-                                    value={recipient}
-                                    onChange={(e) => setRecipient(e.target.value)}
-                                    placeholder="Leave empty for self-transfer"
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-400 mb-2">Amount (SOL)</label>
-                                <input
-                                    type="number"
-                                    value={amount}
-                                    onChange={(e) => setAmount(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white font-mono"
-                                />
-                            </div>
+                </>
+            ) : (
+                <TerminalSection title="TRANSFER_CONFIGURATION">
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs text-green-500 mb-2 font-mono">$ RECIPIENT (OPTIONAL)</label>
+                            <input
+                                type="text"
+                                value={recipient}
+                                onChange={(e) => setRecipient(e.target.value)}
+                                placeholder="leave_empty_for_self_transfer"
+                                className="w-full bg-black border border-green-500/30 px-4 py-3 text-sm text-green-400 font-mono placeholder:text-gray-700 focus:border-green-500 focus:outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs text-green-500 mb-2 font-mono">$ AMOUNT (SOL)</label>
+                            <input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                className="w-full bg-black border border-green-500/30 px-4 py-3 text-sm text-green-400 font-mono focus:border-green-500 focus:outline-none"
+                            />
                         </div>
 
-                        <DemoButton onClick={handleTransfer} loading={isLoading} icon={SentIcon} variant="gradient">
-                            {isLoading ? 'Processing...' : 'Send Stealth Transfer'}
-                        </DemoButton>
-                    </>
-                )}
-            </motion.div>
+                        <TerminalButton onClick={handleTransfer} loading={isLoading}>
+                            {isLoading ? '$ PROCESSING...' : '$ SEND_STEALTH_TRANSFER'}
+                        </TerminalButton>
 
-            <PrivacyVisualizer
-                publicView={
-                    <>
-                        <div className="text-gray-500 text-xs mb-1">On-Chain View</div>
-                        <div className="text-blue-300 font-mono text-xs">
-                            Sender → <span className="text-purple-400">StealthAddr</span>
-                        </div>
-                        <div className="mt-4 text-xs text-gray-600">
-                            Observer sees transfer to random address. Cannot link to recipient.
-                        </div>
-                    </>
-                }
-                privateView={
-                    <>
-                        <div className="text-gray-500 text-xs mb-1">Recipient View</div>
-                        <div className="text-green-300 font-mono text-xs">
-                            <span className="text-purple-400">StealthAddr</span> (Owned by Recipient)
-                        </div>
-                        <div className="mt-4 text-xs text-gray-500">
-                            Recipient detects address with private view key.
-                        </div>
-                    </>
-                }
-            />
+                        <p className="text-center text-xs text-gray-600 font-mono">
+                            $ server-side_api • no_wallet_required
+                        </p>
+                    </div>
+                </TerminalSection>
+            )}
 
-            <CodeBlock
-                language="typescript"
-                code={`// Transfer via API (no wallet required)
-const stealthRes = await fetch('/api/ashborn', {
+            <TerminalSection title="PRIVACY_COMPARISON">
+                <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="bg-blue-500/10 border border-blue-500/20 p-3">
+                        <div className="text-blue-400 font-mono mb-2">$ ON_CHAIN_VIEW</div>
+                        <p className="text-gray-400">Sender → StealthAddr</p>
+                        <p className="text-gray-600 mt-2">Observer cannot link to recipient</p>
+                    </div>
+                    <div className="bg-green-500/10 border border-green-500/20 p-3">
+                        <div className="text-green-400 font-mono mb-2">$ RECIPIENT_VIEW</div>
+                        <p className="text-gray-400">StealthAddr (Owned)</p>
+                        <p className="text-gray-600 mt-2">Detected with private view key</p>
+                    </div>
+                </div>
+            </TerminalSection>
+
+            <TerminalSection title="SDK_IMPLEMENTATION">
+                <TerminalCodeBlock
+                    language="typescript"
+                    code={`const stealthRes = await fetch('/api/ashborn', {
   method: 'POST',
   body: JSON.stringify({ action: 'stealth', params: { recipient } })
 });
@@ -210,8 +168,8 @@ const transferRes = await fetch('/api/ashborn', {
   method: 'POST',
   body: JSON.stringify({ action: 'transfer', params: { amount: 0.5 } })
 });`}
-                filename="transfer.ts"
-            />
-        </div>
+                />
+            </TerminalSection>
+        </TerminalDemoWrapper>
     );
 }
