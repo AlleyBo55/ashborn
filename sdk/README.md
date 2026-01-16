@@ -57,39 +57,61 @@ Zero-Knowledge Range Proofs (Groth16) to satisfy requirements without doxxing.
 
 ---
 
-## 🚀 Quick Start
+## 💻 THE SHADOW PROTOCOL (Usage)
 
-```bash
-npm install @alleyboss/ashborn-sdk
-```
-
-### Server-Side Privacy Relay
+> **"One interface to rule them all."**
 
 ```typescript
-import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
+import { Ashborn, PrivacyRelay } from '@alleyboss/ashborn-sdk';
+import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
+import { RangeCompliance } from '@alleyboss/ashborn-sdk/zk';
 
-const relay = new PrivacyRelay({
-  relayKeypair: serverKeypair,
-  rpcUrl: 'https://api.devnet.solana.com',
+// 1. Initialize the Shadow Monarch (Server or Client)
+const monarch = new PrivacyRelay({
+  relayKeypair: process.env.RELAY_KEYPAIR,
+  rpcUrl: 'https://api.mainnet-beta.solana.com' 
 });
 
-// PrivacyCash NEVER sees your user
-await relay.shield({ amount: 0.1 });
+// ==========================================
+// ⚡ PHASE 1: ENTER THE SHADOWS (Shield)
+// ==========================================
+// User acts, but the NETWORK sees "Ashborn Relay"
+const { note } = await monarch.shield({ 
+  amount: 10_000_000_000n, // 10 SOL
+  mint: SOL_MINT,
+  blindingFactor: generateRandom() 
+});
+console.log("Assets enveloped. You are now a ghost.");
 
-// Radr Labs NEVER sees your user
-await relay.generateStealth({ viewPubKey, spendPubKey });
+// ==========================================
+// 👻 PHASE 2: MOVE UNSEEN (Stealth Transfer)
+// ==========================================
+// Generate a stealth address for the recipient (ECDH)
+// Only the recipient can derive the private key.
+const recipientStealth = await ShadowWire.deriveStealthAddress({
+  rootKey: recipientPublicKey,
+  ephemeralSecret: oneTimeSecret
+});
 
-// ZK proof WITHOUT identity exposure  
-await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
-```
+// Transfer inside the shielded pool.
+// NO on-chain link between Sender and Recipient.
+await monarch.shadowTransfer({
+  from: note,
+  to: recipientStealth,
+  amount: 5_000_000_000n // 5 SOL
+});
 
-### Client-Side (Direct SDK)
-
-```typescript
-import { Ashborn } from '@alleyboss/ashborn-sdk';
-
-const ashborn = new Ashborn(connection, wallet);
-await ashborn.shield({ amount: 1_000_000_000n, mint: SOL_MINT });
+// ==========================================
+// 🎭 PHASE 3: THE SILENT PROOF (ZK Compliance)
+// ==========================================
+// You need to prove you have funds for a loan, 
+// WITHOUT revealing your wallet or exact balance.
+const proof = await monarch.prove({
+  statement: "Balance > 100 SOL",
+  min: 100_000_000_000n,
+  max: Infinity
+});
+// Verifier accepts proof. They still don't know who you are.
 ```
 
 ---
