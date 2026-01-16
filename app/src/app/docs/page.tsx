@@ -274,31 +274,9 @@ export default function DocsPage() {
 
 // Helper components (Section, etc) would remain the same as existing file
 
-        </Link >
-    <div className="hidden md:flex items-center gap-2 text-[10px] font-mono border border-green-500/20 bg-green-500/5 px-2 py-0.5 rounded-full text-green-400">
-        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-        DEVNET CONNECTED
-    </div>
-    </div >
 
-    <div className="flex items-center gap-4">
-        <Link href="/" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
-            Home
-        </Link>
-        <Link href="/demo" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
-            Demos
-        </Link>
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
-            {isMenuOpen ? <Cancel01Icon className="w-5 h-5" /> : <Menu01Icon className="w-5 h-5" />}
-        </button>
-        <a href="https://github.com/AlleyBo55/ashborn" target="_blank" rel="noopener noreferrer" className="hidden lg:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
-            <CodeIcon className="w-4 h-4" />
-            GitHub
-        </a>
-    </div>
-</header >
 
-    {/* Mobile Menu Overlay */ }
+{/* Mobile Menu Overlay */ }
     <AnimatePresence>
 {
     isMenuOpen && (
