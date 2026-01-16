@@ -695,7 +695,12 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                                 <Shield02Icon className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-white">PrivacyCash</h3>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">PrivacyCash</h3>
+                                    <a href="https://github.com/Privacy-Cash" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors border border-blue-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
                                 <p className="text-blue-400 font-mono text-sm">The Anonymity Pool</p>
                             </div>
                         </div>
@@ -720,7 +725,12 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                                 <ViewOffIcon className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-white">Radr Labs</h3>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">Radr Labs</h3>
+                                    <a href="https://radrlabs.org" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors border border-purple-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
                                 <p className="text-purple-400 font-mono text-sm">Stealth Addressing</p>
                             </div>
                         </div>
@@ -743,7 +753,12 @@ const { stealthAddress } = await ashborn.generateStealthAddress({
                                 <LockIcon className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-white">Light Protocol</h3>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">Light Protocol</h3>
+                                    <a href="https://lightprotocol.com" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors border border-amber-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
                                 <p className="text-amber-400 font-mono text-sm">State Compression & ZK</p>
                             </div>
                         </div>
@@ -758,7 +773,12 @@ const { stealthAddress } = await ashborn.generateStealthAddress({
                                 <AiChat02Icon className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-white">x402 Micropay</h3>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">x402 Micropay</h3>
+                                    <a href="https://github.com/AlleyBo55/micropay-solana-x402-paywall" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
                                 <p className="text-red-400 font-mono text-sm">Private AI Payments</p>
                             </div>
                         </div>
