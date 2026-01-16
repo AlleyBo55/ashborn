@@ -61,57 +61,59 @@ Zero-Knowledge Range Proofs (Groth16) to satisfy requirements without doxxing.
 
 > **"One interface to rule them all."**
 
-```typescript
-import { Ashborn, PrivacyRelay } from '@alleyboss/ashborn-sdk';
-import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
-import { RangeCompliance } from '@alleyboss/ashborn-sdk/zk';
+## 💻 THE SHADOW PROTOCOL (Usage)
 
-// 1. Initialize the Shadow Monarch (Server or Client)
+> **"One interface to rule them all."**
+
+### 1. Initialize The Monarch
+```typescript
+import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
+
 const monarch = new PrivacyRelay({
-  relayKeypair: process.env.RELAY_KEYPAIR,
+  relayKeypair: process.env.RELAY_KEYPAIR, // Server-side sovereign identity
   rpcUrl: 'https://api.mainnet-beta.solana.com' 
 });
+```
 
-// ==========================================
-// ⚡ PHASE 1: ENTER THE SHADOWS (Shield)
-// ==========================================
-// User acts, but the NETWORK sees "Ashborn Relay"
+### 2. 🤖 SHADOW AGENT (Private Commerce)
+*AI Buyer pays an AI Seller anonymously.*
+```typescript
+// 1. Buyer shields funds (Network sees "Ashborn Relay")
 const { note } = await monarch.shield({ 
   amount: 10_000_000_000n, // 10 SOL
-  mint: SOL_MINT,
-  blindingFactor: generateRandom() 
+  mint: SOL_MINT
 });
-console.log("Assets enveloped. You are now a ghost.");
 
-// ==========================================
-// 👻 PHASE 2: MOVE UNSEEN (Stealth Transfer)
-// ==========================================
-// Generate a stealth address for the recipient (ECDH)
-// Only the recipient can derive the private key.
-const recipientStealth = await ShadowWire.deriveStealthAddress({
+// 2. Buyer pays Seller (Unlinkable transfer)
+await monarch.shadowTransfer({
+  from: note,
+  to: sellerStealthAddress,
+  amount: 5_000_000_000n
+});
+```
+
+### 3. 👻 SHADOW WIRE (Stealth Addresses)
+*Generate infinite unlinkable deposit addresses.*
+```typescript
+import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
+
+// Sender generates a unique address for Recipient
+// Only Recipient can derive the private key
+const stealthAddress = await ShadowWire.deriveStealthAddress({
   rootKey: recipientPublicKey,
   ephemeralSecret: oneTimeSecret
 });
+```
 
-// Transfer inside the shielded pool.
-// NO on-chain link between Sender and Recipient.
-await monarch.shadowTransfer({
-  from: note,
-  to: recipientStealth,
-  amount: 5_000_000_000n // 5 SOL
-});
-
-// ==========================================
-// 🎭 PHASE 3: THE SILENT PROOF (ZK Compliance)
-// ==========================================
-// You need to prove you have funds for a loan, 
-// WITHOUT revealing your wallet or exact balance.
+### 4. 🎭 SHADOW SEAL (ZK Compliance)
+*Prove solvency without doxxing.*
+```typescript
+// Prove balance > 100 SOL (Zero-Knowledge)
 const proof = await monarch.prove({
   statement: "Balance > 100 SOL",
   min: 100_000_000_000n,
   max: Infinity
 });
-// Verifier accepts proof. They still don't know who you are.
 ```
 
 ---
