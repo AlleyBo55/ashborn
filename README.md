@@ -13,6 +13,8 @@
 When you use PrivacyCash directly → **PrivacyCash knows your wallet.**  
 When you use Radr Labs directly → **Radr Labs knows your identity.**  
 When you use *any* privacy protocol → **That protocol sees YOU.**
+> 🎮 **Live Demo:** [https://ashborn.vercel.app](https://ashborn-sol.vercel.app)
+> Now featuring the **Shadow Monarch Aesthetic** experience.
 
 ### With Ashborn? **They see nothing.**
 
@@ -140,7 +142,11 @@ await relay.prove({
 | [AI Lending](/demo/ai-lending) | ZK Collateral proofs via Relay |
 | [Stealth Transfer](/demo/ai-transfer) | Ring signatures via Relay |
 
-> 🎮 **Try it:** [ashborn.vercel.app](https://ashborn.vercel.app)
+> 🎮 **Try it:** [ashborn.vercel.app](https://ashborn-sol.vercel.app)
+Visit the **Documentation** page in the live demo (`https://ashborn-sol.vercel.app/docs`) to learn about:
+- **Core Concepts** — Commitments, nullifiers, stealth addresses
+- **API Reference** — Full SDK method documentation
+- **Circuit Logic** — How the ZK proofs enforce integrity
 
 ---
 
