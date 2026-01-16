@@ -265,9 +265,21 @@ export default function ShadowAgentDemoPage() {
                             ))}
                         </AnimatePresence>
                         {isLoading && step !== 'complete' && (
-                            <div className="text-center text-xs text-gray-600 font-mono animate-pulse">
-                                Processing...
-                            </div>
+                            <>
+                                <div className="text-center text-xs text-gray-600 font-mono animate-pulse">
+                                    Processing...
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <Link href="/docs#shadow-agent" className="hidden md:flex items-center gap-2 text-xs font-medium text-purple-400 hover:text-purple-300 transition-colors">
+                                        <BookOpen01Icon className="w-4 h-4" />
+                                        Protocol Docs
+                                    </Link>
+                                    <div className="flex items-center gap-2 text-[10px] font-mono border border-yellow-500/20 bg-yellow-500/5 px-2 py-0.5 rounded-full text-yellow-500" title="Using Embedded Relayer (/api/relayer) for Devnet">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+                                        DEVNET RELAYER MOCK
+                                    </div>
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>
