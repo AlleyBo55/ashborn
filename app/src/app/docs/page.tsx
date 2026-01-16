@@ -273,22 +273,13 @@ export default function DocsPage() {
 }
 
 // Helper components (Section, etc) would remain the same as existing file
-            />
 
-{/* Header */ }
-<header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/5 h-16 flex items-center justify-between px-6 lg:px-8">
-    <div className="flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:scale-105 transition-transform duration-200">
-                <span className="text-sm font-bold text-white">A</span>
-            </div>
-            <span className="font-semibold text-sm tracking-tight text-white/90 group-hover:text-white transition-colors">Ashborn Docs</span>
-        </Link>
-        <div className="hidden md:flex items-center gap-2 text-[10px] font-mono border border-green-500/20 bg-green-500/5 px-2 py-0.5 rounded-full text-green-400">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            DEVNET CONNECTED
-        </div>
+        </Link >
+    <div className="hidden md:flex items-center gap-2 text-[10px] font-mono border border-green-500/20 bg-green-500/5 px-2 py-0.5 rounded-full text-green-400">
+        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+        DEVNET CONNECTED
     </div>
+    </div >
 
     <div className="flex items-center gap-4">
         <Link href="/" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
@@ -305,39 +296,41 @@ export default function DocsPage() {
             GitHub
         </a>
     </div>
-</header>
+</header >
 
-{/* Mobile Menu Overlay */ }
-            <AnimatePresence>
-                {isMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 z-40 bg-[#0A0A0A] pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
-                    >
-                        <nav className="space-y-8">
-                            {sections.map((section, idx) => (
-                                <div key={idx}>
-                                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{section.title}</h3>
-                                    <div className="space-y-1">
-                                        {section.items.map((item) => (
-                                            <button
-                                                key={item.id}
-                                                onClick={() => scrollTo(item.id)}
-                                                className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all flex items-center gap-3 ${activeSection === item.id ? 'bg-purple-500/10 text-purple-300' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                                            >
-                                                <item.icon className={`w-4 h-4 ${activeSection === item.id ? 'text-purple-400' : 'text-gray-600'}`} />
-                                                {item.title}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
+    {/* Mobile Menu Overlay */ }
+    <AnimatePresence>
+{
+    isMenuOpen && (
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-40 bg-[#0A0A0A] pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
+        >
+            <nav className="space-y-8">
+                {sections.map((section, idx) => (
+                    <div key={idx}>
+                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{section.title}</h3>
+                        <div className="space-y-1">
+                            {section.items.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => scrollTo(item.id)}
+                                    className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all flex items-center gap-3 ${activeSection === item.id ? 'bg-purple-500/10 text-purple-300' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                                >
+                                    <item.icon className={`w-4 h-4 ${activeSection === item.id ? 'text-purple-400' : 'text-gray-600'}`} />
+                                    {item.title}
+                                </button>
                             ))}
-                        </nav>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </div>
+                    </div>
+                ))}
+            </nav>
+        </motion.div>
+    )
+}
+            </AnimatePresence >
 
             <div className="pt-24 max-w-[1440px] mx-auto flex">
                 {/* Desktop Sidebar */}
