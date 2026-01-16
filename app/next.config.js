@@ -7,9 +7,16 @@ const nextConfig = {
   reactStrictMode: true,
   webpack: (config, { isServer }) => {
     // Force alias for privacycash to avoid resolution errors
+    let privacyCashPath;
+    try {
+      privacyCashPath = path.dirname(require.resolve('privacycash/package.json'));
+    } catch (e) {
+      privacyCashPath = path.resolve(__dirname, 'node_modules/privacycash');
+    }
+
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      'privacycash': path.resolve(__dirname, 'node_modules/privacycash'),
+      'privacycash': privacyCashPath,
       // '@lightprotocol/hasher.rs': path.resolve(__dirname, 'node_modules/@lightprotocol/hasher.rs')
       // WASM fix: Use top-level hasher to avoid nested resolution issues
       '@lightprotocol/hasher.rs': path.resolve(__dirname, 'node_modules/@lightprotocol/hasher.rs')
