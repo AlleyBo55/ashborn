@@ -1,6 +1,6 @@
 'use client';
 
-import { LinkSquare02Icon } from 'hugeicons-react';
+import LinkSquare02Icon from 'hugeicons-react/dist/esm/icons/link_square_02_icon';
 import { BaseButton } from '@/components/ui/base';
 
 interface TxLinkProps {

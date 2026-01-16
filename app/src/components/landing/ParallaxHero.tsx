@@ -2,7 +2,17 @@
 'use client';
 
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { ArrowRight01Icon, SecurityValidationIcon, LockIcon, FlashIcon, Activity01Icon, CpuIcon, ViewIcon, Wifi01Icon, ConsoleIcon, CubeIcon, PlayIcon } from 'hugeicons-react';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
+import SecurityValidationIcon from 'hugeicons-react/dist/esm/icons/security_validation_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import FlashIcon from 'hugeicons-react/dist/esm/icons/flash_icon';
+import Activity01Icon from 'hugeicons-react/dist/esm/icons/activity_01_icon';
+import CpuIcon from 'hugeicons-react/dist/esm/icons/cpu_icon';
+import ViewIcon from 'hugeicons-react/dist/esm/icons/view_icon';
+import Wifi01Icon from 'hugeicons-react/dist/esm/icons/wifi_01_icon';
+import ConsoleIcon from 'hugeicons-react/dist/esm/icons/console_icon';
+import CubeIcon from 'hugeicons-react/dist/esm/icons/cube_icon';
+import PlayIcon from 'hugeicons-react/dist/esm/icons/play_icon';
 import { useSystemToast } from '../ui/SystemToast';
 import ScrambleText from '../ui/ScrambleText';
 import { useEffect, useState } from 'react';

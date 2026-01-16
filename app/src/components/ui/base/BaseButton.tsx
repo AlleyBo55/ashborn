@@ -1,7 +1,7 @@
 'use client';
 
 import { ButtonHTMLAttributes, ReactNode, ElementType } from 'react';
-import { Loading03Icon } from 'hugeicons-react';
+import Loading03Icon from 'hugeicons-react/dist/esm/icons/loading_03_icon';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils'; // Assuming standard util
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ashborn Protocol - Deploy Script
+# Ashborn - Deploy Script
 # Deploys the program to Solana devnet
 
 set -e

@@ -1,6 +1,14 @@
 'use client';
 
-import { Shield02Icon, FlashIcon, ViewOffIcon, Share01Icon, UserGroupIcon, ConsoleIcon, CodeIcon, CpuIcon, Alert01Icon } from 'hugeicons-react';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
+import FlashIcon from 'hugeicons-react/dist/esm/icons/flash_icon';
+import ViewOffIcon from 'hugeicons-react/dist/esm/icons/view_off_icon';
+import Share01Icon from 'hugeicons-react/dist/esm/icons/share_01_icon';
+import UserGroupIcon from 'hugeicons-react/dist/esm/icons/user_group_icon';
+import ConsoleIcon from 'hugeicons-react/dist/esm/icons/console_icon';
+import CodeIcon from 'hugeicons-react/dist/esm/icons/code_icon';
+import CpuIcon from 'hugeicons-react/dist/esm/icons/cpu_icon';
+import Alert01Icon from 'hugeicons-react/dist/esm/icons/alert_01_icon';
 import { useState } from 'react';
 import ScrambleText from '../ui/ScrambleText';
 

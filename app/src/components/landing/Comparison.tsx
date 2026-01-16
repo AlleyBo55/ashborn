@@ -1,7 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Target01Icon, LockIcon, SecurityValidationIcon, CancelCircleIcon, CheckmarkCircle01Icon } from 'hugeicons-react';
+import Target01Icon from 'hugeicons-react/dist/esm/icons/target_01_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import SecurityValidationIcon from 'hugeicons-react/dist/esm/icons/security_validation_icon';
+import CancelCircleIcon from 'hugeicons-react/dist/esm/icons/cancel_circle_icon';
+import CheckmarkCircle01Icon from 'hugeicons-react/dist/esm/icons/checkmark_circle_01_icon';
 
 const StatBar = ({ label, valueA, valueB, colorA = "bg-red-500", colorB = "bg-green-500" }: { label: string, valueA: number, valueB: number, colorA?: string, colorB?: string }) => {
     return (

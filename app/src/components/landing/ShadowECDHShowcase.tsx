@@ -1,7 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ViewOffIcon, LockIcon, Shield02Icon } from 'hugeicons-react';
+import ViewOffIcon from 'hugeicons-react/dist/esm/icons/view_off_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
 import { useState, useEffect } from 'react';
 
 export default function ShadowECDHShowcase() {
@@ -23,7 +25,7 @@ export default function ShadowECDHShowcase() {
 
     return (
         <section className="relative py-12 sm:py-24 bg-black border-y border-purple-900/20">
-            <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-20 pointer-events-none" />
+
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-900/10 blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-900/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -117,7 +119,7 @@ export default function ShadowECDHShowcase() {
                             </div>
 
                             <div className="mb-6 h-32 flex items-center justify-center relative bg-black/50 rounded-xl border border-white/5 overflow-hidden">
-                                <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-20" />
+
                                 <div className="text-center z-10 px-2 w-full">
                                     <span className="text-[10px] font-mono text-purple-400 mb-2 block uppercase">
                                         Step {step + 1}: {steps[step].label}

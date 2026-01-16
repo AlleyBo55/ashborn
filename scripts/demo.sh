@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ashborn Protocol - Demo Script
+# Ashborn - Demo Script
 # Runs the complete demo flow
 
 set -e

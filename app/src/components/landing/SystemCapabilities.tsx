@@ -1,7 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BotIcon, ViewOffIcon, SecurityValidationIcon, FlashIcon, Globe02Icon, LockIcon, CodeIcon, LinkSquare02Icon } from 'hugeicons-react';
+import BotIcon from 'hugeicons-react/dist/esm/icons/bot_icon';
+import ViewOffIcon from 'hugeicons-react/dist/esm/icons/view_off_icon';
+import SecurityValidationIcon from 'hugeicons-react/dist/esm/icons/security_validation_icon';
+import FlashIcon from 'hugeicons-react/dist/esm/icons/flash_icon';
+import Globe02Icon from 'hugeicons-react/dist/esm/icons/globe_02_icon';
+import LockIcon from 'hugeicons-react/dist/esm/icons/lock_icon';
+import CodeIcon from 'hugeicons-react/dist/esm/icons/code_icon';
+import LinkSquare02Icon from 'hugeicons-react/dist/esm/icons/link_square_02_icon';
 import Link from 'next/link';
 
 const DemoCard = ({ icon: Icon, title, desc, link, tech, color }: any) => (

@@ -1,7 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight01Icon, Shield02Icon, ViewOffIcon } from 'hugeicons-react';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
+import Shield02Icon from 'hugeicons-react/dist/esm/icons/shield_02_icon';
+import ViewOffIcon from 'hugeicons-react/dist/esm/icons/view_off_icon';
 import SystemWindow from '@/components/ui/SystemWindow';
 
 export default function Hero() {

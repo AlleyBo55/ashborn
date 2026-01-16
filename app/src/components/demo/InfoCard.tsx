@@ -2,7 +2,7 @@
 
 import { ReactNode, ElementType } from 'react';
 import { BaseCard, BaseBadge, BaseText } from '@/components/ui/base';
-import { ArrowRight01Icon } from 'hugeicons-react';
+import ArrowRight01Icon from 'hugeicons-react/dist/esm/icons/arrow_right_01_icon';
 
 // Legacy mapping: InfoCard uses gradient logic that matches BaseCard variants
 const variantMap: Record<string, "gradient-blue" | "gradient-purple" | "gradient-green" | "gradient-amber" | "gradient-red"> = {
