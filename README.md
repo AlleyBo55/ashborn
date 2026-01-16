@@ -15,7 +15,7 @@
 
 Built with **real ZK proofs (Groth16)**, **Circom circuits**, **Solana Alt_bn128 syscalls**, and a robust **compliance-friendly** design.
 
-> 🎮 **Live Demo:** [https://ashborn.vercel.app](https://ashborn.vercel.app)
+> 🎮 **Live Demo:** [https://ashborn.vercel.app](https://ashborn-sol.vercel.app)
 > Now featuring the **Shadow Monarch Aesthetic** experience.
 
 ---
@@ -177,7 +177,7 @@ await ashborn.shadowTransfer({
 
 ## 📚 Documentation
 
-Visit the **Documentation** page in the live demo (`/docs`) to learn about:
+Visit the **Documentation** page in the live demo (`https://ashborn-sol.vercel.app/docs`) to learn about:
 - **Core Concepts** — Commitments, nullifiers, stealth addresses
 - **API Reference** — Full SDK method documentation
 - **Circuit Logic** — How the ZK proofs enforce integrity
