@@ -9,7 +9,8 @@ const nextConfig = {
     // Force alias for privacycash to avoid resolution errors
     config.resolve.alias = {
       ...config.resolve.alias,
-      'privacycash': path.resolve(__dirname, 'node_modules/privacycash'),
+      // '@lightprotocol/hasher.rs': path.resolve(__dirname, 'node_modules/@lightprotocol/hasher.rs')
+      // WASM fix: Use top-level hasher to avoid nested resolution issues
       '@lightprotocol/hasher.rs': path.resolve(__dirname, 'node_modules/@lightprotocol/hasher.rs')
     };
 
@@ -50,7 +51,8 @@ const nextConfig = {
   // They are usually pre-compiled enough for Next.js to handle without forced transpilation.
   transpilePackages: [
     "@alleyboss/ashborn-sdk",
-    "@lightprotocol/hasher.rs"
+    "@lightprotocol/hasher.rs",
+    "privacycash"
   ],
   swcMinify: true, // Enable SWC minification for faster builds
 

@@ -5,20 +5,36 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TerminalSection, TerminalCodeBlock, TerminalButton } from '@/components/demo/TerminalComponents';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
 
-const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
+const DEMO_WALLET = 'G7a8zhLtF4oSHbSTfFBPHzLCzXHShVFpTQ9f2iL1VqiS';
 
 type Step = 'idle' | 'shielding' | 'requesting' | 'paying' | 'verifying' | 'unshielding' | 'complete';
 
 export default function ShadowAgentDemoPage() {
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
     const [step, setStep] = useState<Step>('idle');
-    const [txData, setTxData] = useState<{ shieldSig?: string; stealthAddr?: string; unshieldSig?: string; inference?: string; proofHash?: string }>({});
+    const [txData, setTxData] = useState<{
+        shieldSig?: string;
+        stealthAddr?: string;
+        unshieldSig?: string;
+        inference?: string;
+        proofHash?: string;
+        proveSig?: string;
+        thoughts?: { agent: 'architect' | 'tower'; text: string; timestamp: string }[]
+    }>({});
     const [chatMessages, setChatMessages] = useState<{ agent: 'architect' | 'tower' | 'system'; text: string }[]>([
         { agent: 'system', text: 'Secure channel established. Ready to initiate Shadow Army.' }
     ]);
 
     const addChat = (agent: 'architect' | 'tower' | 'system', text: string) => {
         setChatMessages(prev => [...prev, { agent, text }]);
+    };
+
+    const addThought = (agent: 'architect' | 'tower', text: string) => {
+        const timestamp = new Date().toISOString().split('T')[1].slice(0, 8); // HH:mm:ss
+        setTxData(prev => ({
+            ...prev,
+            thoughts: [...(prev.thoughts || []), { agent, text, timestamp }]
+        }));
     };
 
     const resetDemo = () => {
@@ -32,7 +48,10 @@ export default function ShadowAgentDemoPage() {
         try {
             setStatus('loading');
 
+            // Step 1: Architect Initialization
             addChat('system', '🔐 Initializing secure channel...');
+            addThought('architect', 'Objective: Acquire high-value data on consciousness. Constraint: Maintain absolute anonymity.');
+
             setStep('shielding');
             const shieldRes = await fetch('/api/privacycash', {
                 method: 'POST',
@@ -41,11 +60,14 @@ export default function ShadowAgentDemoPage() {
             });
             const shieldData = await shieldRes.json();
             if (!shieldData.success) throw new Error(shieldData.error || 'Shield failed');
+
             setTxData(prev => ({ ...prev, shieldSig: shieldData.signature }));
+            addThought('architect', 'Funds shielded. Identity decoupled from treasury wallet. Ready to engage.');
             addChat('system', '✅ 0.01 SOL shielded into private pool');
 
             setStep('requesting');
             addChat('system', '🧠 The Architect is formulating a thought...');
+            await new Promise(r => setTimeout(r, 600));
 
             const architectRes = await fetch('/api/agent', {
                 method: 'POST',
@@ -62,8 +84,16 @@ export default function ShadowAgentDemoPage() {
             addChat('architect', question);
             await new Promise(r => setTimeout(r, 800));
 
+            // Step 2: Negotiation
             addChat('tower', '💳 HTTP 402 — Payment Required: 0.01 SOL');
+            addThought('tower', 'Gatekeeper triggered. Incoming request analysis: High complexity. Tariff: 0.01 SOL.');
+            await new Promise(r => setTimeout(r, 800));
+
+            addThought('architect', 'Payment demanded. Evaluating resource cost vs information value... Accepted.');
+            addChat('architect', 'Negotiation: Terms accepted. Initiating shielded transfer.');
             await new Promise(r => setTimeout(r, 600));
+
+            addChat('tower', 'Negotiation: Acknowledged. Waiting for ZK proof of funds.');
 
             setStep('paying');
             addChat('system', '👻 Routing payment via Radr stealth address...');
@@ -73,6 +103,7 @@ export default function ShadowAgentDemoPage() {
             addChat('system', `✅ Payment sent to ${stealthAddr.slice(0, 20)}...`);
 
             setStep('verifying');
+            addThought('architect', 'Generating Zero-Knowledge Proof (Groth16) to prove compliance without revealing balance.');
             addChat('system', '⚡ Generating real Groth16 ZK proof...');
 
             const proveRes = await fetch('/api/ashborn', {
@@ -90,10 +121,16 @@ export default function ShadowAgentDemoPage() {
             } else {
                 addChat('system', `✅ Proof verified (demo mode) — transaction unlinkable`);
             }
-            setTxData(prev => ({ ...prev, proofHash: proveData.commitment?.slice(0, 16) }));
+            setTxData(prev => ({
+                ...prev,
+                proofHash: proveData.commitment?.slice(0, 16),
+                proveSig: proveData.signature
+            }));
 
             setStep('unshielding');
+            addThought('tower', 'Proof verified. Payment confirmed via StealthWire. Releasing insight.');
             addChat('system', '🗼 Tower of Trials receiving payment...');
+
             const unshieldRes = await fetch('/api/privacycash', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -121,6 +158,7 @@ export default function ShadowAgentDemoPage() {
             setTxData(prev => ({ ...prev, unshieldSig: unshieldData.signature, inference: wisdom }));
 
             await new Promise(r => setTimeout(r, 500));
+            addThought('architect', 'Insight acquired. Transaction trace: Null. Mission complete.');
             addChat('architect', '🙏 Wisdom received. Transaction complete — no trace on-chain.');
 
             setStep('complete');
@@ -268,7 +306,24 @@ export default function ShadowAgentDemoPage() {
                 <>
                     <TerminalSection title="TRANSACTION_COMPLETE" variant="success">
                         <div className="space-y-3 text-xs font-mono">
-                            <div className="grid grid-cols-2 gap-3">
+                            {/* Detailed Chain of Thought */}
+                            {txData.thoughts && txData.thoughts.length > 0 && (
+                                <div className="mt-4 border-t border-white/10 pt-4">
+                                    <div className="text-[10px] text-gray-500 font-mono mb-2">$ AGENT_CHAIN_OF_THOUGHT</div>
+                                    <div className="bg-black/40 p-3 rounded text-[10px] font-mono text-gray-400 space-y-2 h-32 overflow-y-auto custom-scrollbar">
+                                        {txData.thoughts.map((thought, i) => (
+                                            <div key={i} className="flex gap-2">
+                                                <span className="text-gray-600">[{thought.timestamp}]</span>
+                                                <span className={thought.agent === 'architect' ? 'text-blue-900' : 'text-purple-900'}>
+                                                    {thought.agent === 'architect' ? 'ARCH' : 'TWR'}: {thought.text}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-3 mt-4">
                                 <div className="bg-white/5 border border-white/10 p-3">
                                     <div className="text-gray-500 mb-2">PUBLIC_LEDGER</div>
                                     <div className="text-gray-600 space-y-1">
@@ -287,18 +342,47 @@ export default function ShadowAgentDemoPage() {
                                 </div>
                             </div>
                             {txData.shieldSig && (
-                                <div className="text-gray-500">
-                                    Shield_Tx: <span className="text-blue-400">{txData.shieldSig.slice(0, 16)}...</span>
+                                <div className="text-gray-500 mt-2 flex items-center justify-between">
+                                    <span>Shield_Tx: <span className="text-blue-400">{txData.shieldSig.slice(0, 16)}...</span></span>
+                                    <a
+                                        href={`https://solscan.io/tx/${txData.shieldSig}?cluster=devnet`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[10px] text-blue-500 hover:text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded ml-2"
+                                    >
+                                        SOLSCAN ↗
+                                    </a>
                                 </div>
                             )}
                             {txData.unshieldSig && (
-                                <div className="text-gray-500">
-                                    Unshield_Tx: <span className="text-purple-400">{txData.unshieldSig.slice(0, 16)}...</span>
+                                <div className="text-gray-500 flex items-center justify-between">
+                                    <span>Unshield_Tx: <span className="text-purple-400">{txData.unshieldSig.slice(0, 16)}...</span></span>
+                                    <a
+                                        href={`https://solscan.io/tx/${txData.unshieldSig}?cluster=devnet`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[10px] text-purple-500 hover:text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded ml-2"
+                                    >
+                                        SOLSCAN ↗
+                                    </a>
                                 </div>
                             )}
                             {txData.proofHash && (
-                                <div className="text-gray-500">
-                                    ZK_Proof: <span className="text-green-400">{txData.proofHash}...</span>
+                                <div className="text-gray-500 flex items-center justify-between">
+                                    <span>ZK_Proof: <span className="text-green-400">{txData.proofHash}...</span></span>
+                                    {/* If we have a signature for the proof tx, we could link it. For now, just show hash. */}
+                                    {txData.proveSig ? (
+                                        <a
+                                            href={`https://solscan.io/tx/${txData.proveSig}?cluster=devnet`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-[10px] text-green-500 hover:text-green-400 border border-green-500/30 px-2 py-0.5 rounded ml-2"
+                                        >
+                                            SOLSCAN ↗
+                                        </a>
+                                    ) : (
+                                        <span className="text-[10px] text-gray-600 border border-white/5 px-2 py-0.5 rounded ml-2">VERIFIED</span>
+                                    )}
                                 </div>
                             )}
                         </div>

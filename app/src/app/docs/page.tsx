@@ -660,6 +660,153 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                         </div>
                     </section>
 
+                    {/* Protocol Integrations */}
+                    <section id="integrations" className="mb-24 scroll-mt-32">
+                        <SectionHeader title="Protocol Integrations" description="Ashborn unifies the Solana privacy ecosystem into a single Shadow Monarch identity." />
+
+                        <div className="mb-12 p-8 rounded-xl bg-[#0A0A0A] border border-white/10 font-mono text-xs leading-relaxed overflow-x-auto custom-scrollbar shadow-2xl shadow-black">
+                            <div className="flex items-center gap-2 mb-4 text-gray-500 border-b border-white/5 pb-2">
+                                <Activity01Icon className="w-4 h-4" />
+                                <span>RELAY_ARCHITECTURE_V1.ASCII</span>
+                            </div>
+                            <pre className="text-purple-300 font-bold">
+                                {`          ┌─────────────────┐
+          │      USER       │
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  ASHBORN RELAY  │◀─── [Light Protocol]
+          │ (Identity Layer)│     (Compression/ZK)
+          └────────┬────────┘
+     ┌─────────────┼─────────────┐
+     │             │             │
+┌────▼────┐   ┌────▼────┐   ┌────▼────┐
+│ Privacy │   │ Radr    │   │ x402    │
+│ Cash    │   │ Labs    │   │ Micropay│
+└─────────┘   └─────────┘   └─────────┘
+   (Pool)      (Stealth)      (Pay)`}
+                            </pre>
+                        </div>
+                    </section>
+
+                    <section id="privacycash" className="mb-24 scroll-mt-32">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                                <Shield02Icon className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">PrivacyCash</h3>
+                                    <a href="https://www.privacycash.org/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors border border-blue-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
+                                <p className="text-blue-400 font-mono text-sm">The Anonymity Pool</p>
+                            </div>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed mb-6">
+                            PrivacyCash provides the fundamental <strong>Shielded Pool</strong> technology. Ashborn integrates directly with the PrivacyCash program to handle the actual deposit and withdrawal of assets, ensuring your funds are mixed with others.
+                        </p>
+                        <ul className="grid md:grid-cols-2 gap-4 mb-6">
+                            <li className="p-4 rounded-lg bg-white/[0.02] border border-white/5">
+                                <strong className="text-white block mb-1">Role</strong>
+                                <span className="text-gray-400 text-sm">Asset custody and mixing.</span>
+                            </li>
+                            <li className="p-4 rounded-lg bg-white/[0.02] border border-white/5">
+                                <strong className="text-white block mb-1">Integration</strong>
+                                <span className="text-gray-400 text-sm">SDK calls <code>privacyCash.shieldSOL()</code> inside the Relay.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section id="radr-labs" className="mb-24 scroll-mt-32">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                                <ViewOffIcon className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">Radr Labs</h3>
+                                    <a href="https://www.radrlabs.io/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors border border-purple-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
+                                <p className="text-purple-400 font-mono text-sm">Stealth Addressing</p>
+                            </div>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed mb-6">
+                            Radr Labs provides the <strong>ShadowWire</strong> cryptographic primitives known as ECDH (Elliptic Curve Diffie-Hellman). Ashborn uses this to generate one-time stealth addresses that only the recipient can unlock.
+                        </p>
+                        <CodeBlock
+                            language="typescript"
+                            code={`// Ashborn uses Radr's ShadowWire under the hood
+const { stealthAddress } = await ashborn.generateStealthAddress({
+    recipientMeta: metaAddress
+});`}
+                            filename="radr-integration.ts"
+                        />
+                    </section>
+
+                    <section id="light-protocol" className="mb-24 scroll-mt-32">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                <LockIcon className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">Light Protocol</h3>
+                                    <a href="https://lightprotocol.com" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors border border-amber-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
+                                <p className="text-amber-400 font-mono text-sm">State Compression & ZK</p>
+                            </div>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed mb-6">
+                            Ashborn leverages Light Protocol's infrastructure for <strong>ZK State Compression</strong>. This allows us to store massive Merkle trees on Solana at a fraction of the cost, enabling scalable privacy for millions of users.
+                        </p>
+                    </section>
+
+                    <section id="x402-micropay" className="mb-24 scroll-mt-32">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30">
+                                <AiChat02Icon className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h3 className="text-2xl font-bold text-white">x402 Micropay</h3>
+                                    <a href="https://solana-x402-paywall.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                                        Website ↗
+                                    </a>
+                                </div>
+                                <p className="text-red-400 font-mono text-sm">Private AI Payments</p>
+                            </div>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed mb-6">
+                            The <strong>Shadow Agent</strong> protocol integrates x402 Micropay to enable AI agents to pay for resources (compute, data) privately. The payment flow is wrapped in an Ashborn shield, hiding the agent's treasury wallet.
+                        </p>
+                    </section>
+
+                    <section id="zk-groth16" className="mb-24 scroll-mt-32">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 rounded-xl bg-green-500/20 text-green-400 border border-green-500/30">
+                                <FlashIcon className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-bold text-white">ZK Groth16</h3>
+                                <p className="text-green-400 font-mono text-sm">Compliance Proofs</p>
+                            </div>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed mb-6">
+                            We use real <strong>Groth16 Zero-Knowledge Proofs</strong> (via <code>snarkjs</code> and <code>circom</code>) to prove validity. For example, proving a user is not in a blacklist or has sufficient funds, without revealing the user's identity or balance.
+                        </p>
+                        <div className="p-4 rounded-lg bg-green-900/10 border border-green-500/20 text-xs font-mono text-green-300">
+                            $ Using curve: bn128<br />
+                            $ Proving system: groth16<br />
+                            $ Circuits: range_proof.circom
+                        </div>
+                    </section>
+
                     {/* Core SDK */}
                     <section id="sdk-core" className="mb-24 scroll-mt-32">
                         <SectionHeader title="Core SDK" description="Primary methods for interacting with the Ashborn program." />
