@@ -51,8 +51,14 @@ export default function RadrDemoPage() {
         <TerminalDemoWrapper
             title="RADR_LABS_INTEGRATION"
             tag="SHADOWWIRE"
-            description="Generate stealth addresses. Ashborn Privacy Relay keeps your identity hidden from underlying protocols."
+            description="Generate stealth addresses using Vitalik's ECDH formula. Integrates with Radr Labs ShadowWire."
         >
+            {/* Tech Stack Badge */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Radr Labs</span>
+                <span className="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-1 border border-cyan-500/30">⚡ ShadowWire</span>
+                <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ Ashborn</span>
+            </div>
             <TerminalSection title="STEALTH_ADDRESS_PROTOCOL">
                 <div className="text-sm text-gray-300 space-y-2">
                     <p>$ Sender generates random keypair (r, R)</p>

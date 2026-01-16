@@ -173,9 +173,17 @@ export default function ShadowAgentDemoPage() {
                 </h1>
 
                 <p className="text-sm text-gray-400 leading-relaxed">
-                    Two AI agents transact privately via Ashborn Privacy Relay. Protocols never see their identities.
+                    Two AI agents transact privately via Ashborn Privacy Relay. Integrates with PrivacyCash, Radr Labs, and ZK Groth16.
                     <span className="animate-pulse">_</span>
                 </p>
+
+                {/* Tech Stack Badge */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                    <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 border border-blue-500/30">⚡ PrivacyCash</span>
+                    <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Radr Labs</span>
+                    <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-1 border border-amber-500/30">⚡ ZK Groth16</span>
+                    <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ Ashborn</span>
+                </div>
             </div>
 
             {/* Agents */}

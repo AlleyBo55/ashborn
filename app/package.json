@@ -12,7 +12,7 @@
         "postinstall": "cd node_modules/privacycash && (mv src_backup src || true) && npm install && (npm run build || true)"
     },
     "dependencies": {
-        "@alleyboss/ashborn-sdk": "^2.0.1",
+        "@alleyboss/ashborn-sdk": "^2.3.0",
         "@alleyboss/micropay-solana-x402-paywall": "^3.5.2",
         "@anthropic-ai/sdk": "^0.71.2",
         "@coral-xyz/anchor": "^0.30.1",

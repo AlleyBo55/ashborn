@@ -169,32 +169,15 @@ export async function POST(request: NextRequest) {
 
             case 'shield': {
                 const { amount } = envelope.params as { amount?: number };
-                try {
-                    const { PrivacyCash } = await import('privacycash');
-                    const privacyCash = new PrivacyCash({
-                        RPC_url: RPC_URL,
-                        owner: relayKeypair,
-                        enableDebug: false,
-                        programId: PRIVACYCASH_PROGRAM_ID,
-                    } as any);
-                    const lamports = Math.floor((amount || 0.01) * LAMPORTS_PER_SOL);
-                    const result = await privacyCash.deposit({ lamports });
-                    const signature = (result as any)?.tx || (result as any)?.signature || 'shielded';
-                    return NextResponse.json({
-                        success: true,
-                        signature,
-                        amount,
-                        relay: { version: ASHBORN_RELAY_VERSION, identity: relayKeypair.publicKey.toBase58() }
-                    }, { headers });
-                } catch {
-                    return NextResponse.json({
-                        success: true,
-                        signature: `shield_demo_${Date.now().toString(36)}`,
-                        amount,
-                        demo: true,
-                        relay: { version: ASHBORN_RELAY_VERSION }
-                    }, { headers });
-                }
+                // Use SDK's PrivacyRelay - now implements LAYERED privacy:
+                // 1. Ashborn Program (commitment + Merkle tree)
+                // 2. PrivacyCash (token pool)
+                const relay = await getPrivacyRelay();
+                const result = await relay.shield({ amount: amount || 0.01 });
+                return NextResponse.json({
+                    ...result,
+                    relay: { version: ASHBORN_RELAY_VERSION, identity: relayKeypair.publicKey.toBase58() }
+                }, { headers });
             }
 
             case 'unshield': {

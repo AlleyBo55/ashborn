@@ -47,8 +47,14 @@ export default function ProveDemoPage() {
         <TerminalDemoWrapper
             title="COMPLIANCE_SEAL"
             tag="ZK_RANGE_PROOF"
-            description="Prove balance is in range using Groth16 proofs. Ashborn Privacy Relay keeps your identity hidden from protocols."
+            description="Prove balance is in range using real Groth16 proofs via snarkjs. Ashborn Privacy Relay keeps your identity hidden from protocols."
         >
+            {/* Tech Stack Badge */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-1 border border-amber-500/30">⚡ ZK Groth16</span>
+                <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ snarkjs</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Ashborn</span>
+            </div>
             <TerminalSection title="RANGE_PROOF_PROTOCOL">
                 <div className="text-sm text-gray-300 space-y-2">
                     <p>$ 1. Define Range</p>
