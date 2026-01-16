@@ -59,6 +59,122 @@ const sections = [
     },
 ];
 
+
+const ArchitectureDiagram = () => (
+    <div className="my-8 p-6 bg-[#111] rounded-xl border border-white/10 overflow-hidden">
+        <h3 className="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Ashborn Stack Architecture</h3>
+        <div className="relative flex flex-col items-center gap-6">
+
+            {/* Layer 1: User Intent */}
+            <div className="w-full max-w-2xl flex gap-4">
+                <div className="flex-1 p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg text-center">
+                    <div className="text-purple-400 font-bold mb-1">User / Agent</div>
+                    <div className="text-xs text-gray-400">Browser / Node.js SDK</div>
+                </div>
+            </div>
+
+            <ArrowDown />
+
+            {/* Layer 2: Identity & Privacy */}
+            <div className="w-full max-w-2xl grid grid-cols-2 gap-4">
+                <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                    <div className="text-blue-400 font-bold mb-1 flex items-center gap-2 justify-center">
+                        <ViewOffIcon className="w-4 h-4" /> Identity Layer
+                    </div>
+                    <div className="text-xs text-center text-gray-400">
+                        <span className="text-white">Rad Labs</span> · Stealth Addresses · ECDH
+                    </div>
+                </div>
+                <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-lg">
+                    <div className="text-emerald-400 font-bold mb-1 flex items-center gap-2 justify-center">
+                        <Shield02Icon className="w-4 h-4" /> Privacy Layer
+                    </div>
+                    <div className="text-xs text-center text-gray-400">
+                        <span className="text-white">PrivacyCash</span> · Merkle Tree · ZK Proofs
+                    </div>
+                </div>
+            </div>
+
+            <ArrowDown />
+
+            {/* Layer 3: Indexing & Compression */}
+            <div className="w-full max-w-2xl p-4 bg-orange-900/10 border border-orange-500/20 rounded-lg border-dashed">
+                <div className="text-orange-400 font-bold mb-2 text-center text-sm">Compression & Indexing</div>
+                <div className="flex justify-center gap-8 text-xs text-gray-400">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                        Light Protocol (ZK Compression)
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                        Address Lookup Tables (ALT)
+                    </div>
+                </div>
+            </div>
+
+            <ArrowDown />
+
+            {/* Layer 4: Settlement */}
+            <div className="w-full max-w-2xl p-4 bg-gray-900 border border-gray-700 rounded-lg text-center">
+                <div className="text-gray-300 font-bold mb-1">Solana Blockchain</div>
+                <div className="text-xs text-gray-500">Settlement · State Roots · PDAs</div>
+            </div>
+        </div>
+    </div>
+);
+
+const DemoFlow = ({ type }: { type: 'shield' | 'stealth' | 'ai-payment' }) => {
+    const steps = {
+        shield: [
+            { title: 'Sign', desc: 'User signs intent' },
+            { title: 'Encrypt', desc: 'SDK generates UTXO' },
+            { title: 'Insert', desc: 'Add to Merkle Tree' },
+            { title: 'Finalize', desc: 'On-Chain Encrypted Note' }
+        ],
+        stealth: [
+            { title: 'Request', desc: 'Sender gets Stealth ID' },
+            { title: 'Derive', desc: 'Ashborn generates key' },
+            { title: 'Transfer', desc: 'Shielded Send' },
+            { title: 'Receive', desc: 'Recipient builds View Key' }
+        ],
+        'ai-payment': [
+            { title: 'Execute', desc: 'AI Agent runs task' },
+            { title: 'Paywall', desc: 'x402 detects price' },
+            { title: 'Prove', desc: 'Generate ZK Solvency' },
+            { title: 'Unlock', desc: 'Gateway verifies Proof' }
+        ]
+    }[type];
+
+    return (
+        <div className="my-6">
+            <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-widest mb-4">
+                <span>{type} Processing Flow</span>
+                <span>ZK-Groth16 Encrypted</span>
+            </div>
+            <div className="flex flex-col md:flex-row gap-2">
+                {steps.map((step, i) => (
+                    <div key={i} className="flex-1 flex md:flex-col items-center gap-2 p-3 bg-white/5 rounded border border-white/5">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-xs font-mono border border-purple-500/30">
+                            {i + 1}
+                        </div>
+                        <div className="md:text-center">
+                            <div className="text-sm font-bold text-gray-200">{step.title}</div>
+                            <div className="text-[10px] text-gray-500">{step.desc}</div>
+                        </div>
+                        {i < steps.length - 1 && (
+                            <ArrowRight01Icon className="hidden md:block w-4 h-4 text-gray-600 rotate-90 md:rotate-0" />
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const ArrowDown = () => (
+    <div className="h-4 w-px bg-gradient-to-b from-gray-700 to-transparent"></div>
+);
+
 export default function DocsPage() {
     const [activeSection, setActiveSection] = useState('overview');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -95,225 +211,103 @@ export default function DocsPage() {
 
     return (
         <div className="min-h-screen bg-[#0A0A0A] text-[#EDEDED] font-sans selection:bg-purple-500/30 selection:text-purple-100">
+            {/* ... Background ... */}
+            <div className="fixed inset-0 z-0 opacity-20 pointer-events-none"
+                style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #1a1a1a 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+            />
 
-// ... (Previous imports)
+            {/* Header, Nav, Sidebar (Existing) ... */}
 
-const ArchitectureDiagram = () => (
-            <div className="my-8 p-6 bg-[#111] rounded-xl border border-white/10 overflow-hidden">
-                <h3 className="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Ashborn Stack Architecture</h3>
-                <div className="relative flex flex-col items-center gap-6">
+            <Section id="how-it-works" title="Architecture">
+                <p className="text-gray-400 mb-6 font-light">
+                    Ashborn orchestrates a complex stack of privacy and identity protocols to deliver a seamless Agent-to-Agent economy.
+                </p>
+                <ArchitectureDiagram />
+            </Section>
 
-                    {/* Layer 1: User Intent */}
-                    <div className="w-full max-w-2xl flex gap-4">
-                        <div className="flex-1 p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg text-center">
-                            <div className="text-purple-400 font-bold mb-1">User / Agent</div>
-                            <div className="text-xs text-gray-400">Browser / Node.js SDK</div>
-                        </div>
+            <Section id="features" title="Privacy Features">
+                {/* ... existing features ... */}
+            </Section>
+
+            <Section id="privacycash" title="PrivacyCash Integration">
+
+                <div className="mb-6 p-4 rounded-lg bg-yellow-900/20 border border-yellow-500/30">
+                    <div className="flex items-center gap-2 text-yellow-500 font-bold mb-2">
+                        <Activity01Icon className="w-5 h-5" />
+                        Devnet Environment Notice
                     </div>
-
-                    <ArrowDown />
-
-                    {/* Layer 2: Identity & Privacy */}
-                    <div className="w-full max-w-2xl grid grid-cols-2 gap-4">
-                        <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                            <div className="text-blue-400 font-bold mb-1 flex items-center gap-2 justify-center">
-                                <ViewOffIcon className="w-4 h-4" /> Identity Layer
-                            </div>
-                            <div className="text-xs text-center text-gray-400">
-                                <span className="text-white">Rad Labs</span> · Stealth Addresses · ECDH
-                            </div>
-                        </div>
-                        <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-lg">
-                            <div className="text-emerald-400 font-bold mb-1 flex items-center gap-2 justify-center">
-                                <Shield02Icon className="w-4 h-4" /> Privacy Layer
-                            </div>
-                            <div className="text-xs text-center text-gray-400">
-                                <span className="text-white">PrivacyCash</span> · Merkle Tree · ZK Proofs
-                            </div>
-                        </div>
-                    </div>
-
-                    <ArrowDown />
-
-                    {/* Layer 3: Indexing & Compression */}
-                    <div className="w-full max-w-2xl p-4 bg-orange-900/10 border border-orange-500/20 rounded-lg border-dashed">
-                        <div className="text-orange-400 font-bold mb-2 text-center text-sm">Compression & Indexing</div>
-                        <div className="flex justify-center gap-8 text-xs text-gray-400">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                                Light Protocol (ZK Compression)
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                                Address Lookup Tables (ALT)
-                            </div>
-                        </div>
-                    </div>
-
-                    <ArrowDown />
-
-                    {/* Layer 4: Settlement */}
-                    <div className="w-full max-w-2xl p-4 bg-gray-900 border border-gray-700 rounded-lg text-center">
-                        <div className="text-gray-300 font-bold mb-1">Solana Blockchain</div>
-                        <div className="text-xs text-gray-500">Settlement · State Roots · PDAs</div>
-                    </div>
+                    <p className="text-sm text-yellow-200/80">
+                        <strong>Relayer Mocking:</strong> The official PrivacyCash Relayer is currently Mainnet-only.
+                        For this Devnet demo, Ashborn uses an
+                        <span className="text-white font-mono mx-1">Embedded Relayer (/api/relayer)</span>
+                        request proxy that simulates the indexer by communicating directly with the Solana RPC.
+                        This ensures fully functional simulation without external infrastructure dependencies.
+                    </p>
                 </div>
-            </div>
-            );
 
-            const DemoFlow = ({type}: {type: 'shield' | 'stealth' | 'ai-payment' }) => {
-    const steps = {
-                shield: [
-            {title: 'Sign', desc: 'User signs intent' },
-            {title: 'Encrypt', desc: 'SDK generates UTXO' },
-            {title: 'Insert', desc: 'Add to Merkle Tree' },
-            {title: 'Finalize', desc: 'On-Chain Encrypted Note' }
-            ],
-            stealth: [
-            {title: 'Request', desc: 'Sender gets Stealth ID' },
-            {title: 'Derive', desc: 'Ashborn generates key' },
-            {title: 'Transfer', desc: 'Shielded Send' },
-            {title: 'Receive', desc: 'Recipient builds View Key' }
-            ],
-            'ai-payment': [
-            {title: 'Execute', desc: 'AI Agent runs task' },
-            {title: 'Paywall', desc: 'x402 detects price' },
-            {title: 'Prove', desc: 'Generate ZK Solvency' },
-            {title: 'Unlock', desc: 'Gateway verifies Proof' }
-            ]
-    }[type];
+                <p className="text-gray-400 mb-4">
+                    Ashborn uses PrivacyCash for the underlying ZK-Note management (UTXO model).
+                </p>
+                <DemoFlow type="shield" />
+            </Section>
 
-            return (
-            <div className="my-6">
-                <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-widest mb-4">
-                    <span>{type} Processing Flow</span>
-                    <span>ZK-Groth16 Encrypted</span>
-                </div>
-                <div className="flex flex-col md:flex-row gap-2">
-                    {steps.map((step, i) => (
-                        <div key={i} className="flex-1 flex md:flex-col items-center gap-2 p-3 bg-white/5 rounded border border-white/5">
-                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-xs font-mono border border-purple-500/30">
-                                {i + 1}
-                            </div>
-                            <div className="md:text-center">
-                                <div className="text-sm font-bold text-gray-200">{step.title}</div>
-                                <div className="text-[10px] text-gray-500">{step.desc}</div>
-                            </div>
-                            {i < steps.length - 1 && (
-                                <ArrowRight01Icon className="hidden md:block w-4 h-4 text-gray-600 rotate-90 md:rotate-0" />
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
-            );
-};
+            {/* Add flows to other sections similarly */}
 
-const ArrowDown = () => (
-            <div className="h-4 w-px bg-gradient-to-b from-gray-700 to-transparent"></div>
-            );
+            <Section id="stealth" title="Stealth Addresses">
+                <p className="text-gray-400 mb-4">
+                    Shadow Agent protocol uses Radr Labs ECDH to derive unique addresses for every transaction.
+                </p>
+                <DemoFlow type="stealth" />
+            </Section>
 
-            // ... (Rest of component update)
+            <Section id="x402-micropay" title="x402 Micropayments">
+                <p className="text-gray-400 mb-4">
+                    AI Agents use X402 payment walls to monetize resources.
+                </p>
+                <DemoFlow type="ai-payment" />
+            </Section>
 
-            return (
-            <div className="min-h-screen bg-[#0A0A0A] text-[#EDEDED] font-sans selection:bg-purple-500/30 selection:text-purple-100">
-                {/* ... Background ... */}
-                <div className="fixed inset-0 z-0 opacity-20 pointer-events-none"
-                    style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #1a1a1a 1px, transparent 1px)', backgroundSize: '24px 24px' }}
-                />
-
-                {/* Header, Nav, Sidebar (Existing) ... */}
-
-                <Section id="how-it-works" title="Architecture">
-                    <p className="text-gray-400 mb-6 font-light">
-                        Ashborn orchestrates a complex stack of privacy and identity protocols to deliver a seamless Agent-to-Agent economy.
-                    </p>
-                    <ArchitectureDiagram />
-                </Section>
-
-                <Section id="features" title="Privacy Features">
-                    {/* ... existing features ... */}
-                </Section>
-
-                <Section id="privacycash" title="PrivacyCash Integration">
-
-                    <div className="mb-6 p-4 rounded-lg bg-yellow-900/20 border border-yellow-500/30">
-                        <div className="flex items-center gap-2 text-yellow-500 font-bold mb-2">
-                            <Activity01Icon className="w-5 h-5" />
-                            Devnet Environment Notice
-                        </div>
-                        <p className="text-sm text-yellow-200/80">
-                            <strong>Relayer Mocking:</strong> The official PrivacyCash Relayer is currently Mainnet-only.
-                            For this Devnet demo, Ashborn uses an
-                            <span className="text-white font-mono mx-1">Embedded Relayer (/api/relayer)</span>
-                            request proxy that simulates the indexer by communicating directly with the Solana RPC.
-                            This ensures fully functional simulation without external infrastructure dependencies.
-                        </p>
-                    </div>
-
-                    <p className="text-gray-400 mb-4">
-                        Ashborn uses PrivacyCash for the underlying ZK-Note management (UTXO model).
-                    </p>
-                    <DemoFlow type="shield" />
-                </Section>
-
-                {/* Add flows to other sections similarly */}
-
-                <Section id="stealth" title="Stealth Addresses">
-                    <p className="text-gray-400 mb-4">
-                        Shadow Agent protocol uses Radr Labs ECDH to derive unique addresses for every transaction.
-                    </p>
-                    <DemoFlow type="stealth" />
-                </Section>
-
-                <Section id="x402-micropay" title="x402 Micropayments">
-                    <p className="text-gray-400 mb-4">
-                        AI Agents use X402 payment walls to monetize resources.
-                    </p>
-                    <DemoFlow type="ai-payment" />
-                </Section>
-
-                {/* ... rest of content */}
-            </div>
-            );
+            {/* ... rest of content */}
+        </div>
+    );
 }
 
 // Helper components (Section, etc) would remain the same as existing file
             />
 
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/5 h-16 flex items-center justify-between px-6 lg:px-8">
-                <div className="flex items-center gap-6">
-                    <Link href="/" className="flex items-center gap-2.5 group">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:scale-105 transition-transform duration-200">
-                            <span className="text-sm font-bold text-white">A</span>
-                        </div>
-                        <span className="font-semibold text-sm tracking-tight text-white/90 group-hover:text-white transition-colors">Ashborn Docs</span>
-                    </Link>
-                    <div className="hidden md:flex items-center gap-2 text-[10px] font-mono border border-green-500/20 bg-green-500/5 px-2 py-0.5 rounded-full text-green-400">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                        DEVNET CONNECTED
-                    </div>
-                </div>
+{/* Header */ }
+<header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/5 h-16 flex items-center justify-between px-6 lg:px-8">
+    <div className="flex items-center gap-6">
+        <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:scale-105 transition-transform duration-200">
+                <span className="text-sm font-bold text-white">A</span>
+            </div>
+            <span className="font-semibold text-sm tracking-tight text-white/90 group-hover:text-white transition-colors">Ashborn Docs</span>
+        </Link>
+        <div className="hidden md:flex items-center gap-2 text-[10px] font-mono border border-green-500/20 bg-green-500/5 px-2 py-0.5 rounded-full text-green-400">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            DEVNET CONNECTED
+        </div>
+    </div>
 
-                <div className="flex items-center gap-4">
-                    <Link href="/" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
-                        Home
-                    </Link>
-                    <Link href="/demo" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
-                        Demos
-                    </Link>
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
-                        {isMenuOpen ? <Cancel01Icon className="w-5 h-5" /> : <Menu01Icon className="w-5 h-5" />}
-                    </button>
-                    <a href="https://github.com/AlleyBo55/ashborn" target="_blank" rel="noopener noreferrer" className="hidden lg:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
-                        <CodeIcon className="w-4 h-4" />
-                        GitHub
-                    </a>
-                </div>
-            </header>
+    <div className="flex items-center gap-4">
+        <Link href="/" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
+            Home
+        </Link>
+        <Link href="/demo" className="hidden md:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
+            Demos
+        </Link>
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
+            {isMenuOpen ? <Cancel01Icon className="w-5 h-5" /> : <Menu01Icon className="w-5 h-5" />}
+        </button>
+        <a href="https://github.com/AlleyBo55/ashborn" target="_blank" rel="noopener noreferrer" className="hidden lg:flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors">
+            <CodeIcon className="w-4 h-4" />
+            GitHub
+        </a>
+    </div>
+</header>
 
-            {/* Mobile Menu Overlay */}
+{/* Mobile Menu Overlay */ }
             <AnimatePresence>
                 {isMenuOpen && (
                     <motion.div
@@ -1333,7 +1327,7 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                    scroll-behavior: smooth;
                 }
             `}</style>
-        </div>
+        </div >
     );
 }
 
