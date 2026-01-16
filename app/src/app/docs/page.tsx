@@ -697,7 +697,7 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
                                     <h3 className="text-2xl font-bold text-white">PrivacyCash</h3>
-                                    <a href="https://github.com/Privacy-Cash" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors border border-blue-500/20">
+                                    <a href="https://www.privacycash.org/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors border border-blue-500/20">
                                         Website ↗
                                     </a>
                                 </div>
@@ -727,7 +727,7 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
                                     <h3 className="text-2xl font-bold text-white">Radr Labs</h3>
-                                    <a href="https://radrlabs.org" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors border border-purple-500/20">
+                                    <a href="https://www.radrlabs.io/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors border border-purple-500/20">
                                         Website ↗
                                     </a>
                                 </div>
@@ -775,7 +775,7 @@ const { stealthAddress } = await ashborn.generateStealthAddress({
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
                                     <h3 className="text-2xl font-bold text-white">x402 Micropay</h3>
-                                    <a href="https://github.com/AlleyBo55/micropay-solana-x402-paywall" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                                    <a href="https://solana-x402-paywall.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
                                         Website ↗
                                     </a>
                                 </div>

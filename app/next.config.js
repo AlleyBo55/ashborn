@@ -51,7 +51,8 @@ const nextConfig = {
   // They are usually pre-compiled enough for Next.js to handle without forced transpilation.
   transpilePackages: [
     "@alleyboss/ashborn-sdk",
-    "@lightprotocol/hasher.rs"
+    "@lightprotocol/hasher.rs",
+    "privacycash"
   ],
   swcMinify: true, // Enable SWC minification for faster builds
 
