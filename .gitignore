@@ -35,6 +35,3 @@ Thumbs.db
 *.swp
 *.swo
 
-# Amazon Q Skills
-.amazonq/
-*.amazonq.md

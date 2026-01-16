@@ -12,7 +12,7 @@ type Step = 'idle' | 'shielding' | 'requesting' | 'paying' | 'verifying' | 'unsh
 export default function ShadowAgentDemoPage() {
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
     const [step, setStep] = useState<Step>('idle');
-    const [txData, setTxData] = useState<{ shieldSig?: string; stealthAddr?: string; unshieldSig?: string; inference?: string }>({});
+    const [txData, setTxData] = useState<{ shieldSig?: string; stealthAddr?: string; unshieldSig?: string; inference?: string; proofHash?: string }>({});
     const [chatMessages, setChatMessages] = useState<{ agent: 'architect' | 'tower' | 'system'; text: string }[]>([
         { agent: 'system', text: 'Secure channel established. Ready to initiate Shadow Army.' }
     ]);
@@ -73,9 +73,24 @@ export default function ShadowAgentDemoPage() {
             addChat('system', `✅ Payment sent to ${stealthAddr.slice(0, 20)}...`);
 
             setStep('verifying');
-            addChat('system', '⚡ Verifying ZK proof via Light Protocol...');
-            await new Promise(r => setTimeout(r, 1000));
-            addChat('system', '✅ Proof verified — transaction unlinkable');
+            addChat('system', '⚡ Generating real Groth16 ZK proof...');
+
+            const proveRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'prove',
+                    params: { balance: 0.05, min: 0.01, max: 0.1 }
+                })
+            });
+            const proveData = await proveRes.json();
+
+            if (proveData.isReal) {
+                addChat('system', `✅ Groth16 proof generated in ${proveData.proofTime}ms — transaction unlinkable`);
+            } else {
+                addChat('system', `✅ Proof verified (demo mode) — transaction unlinkable`);
+            }
+            setTxData(prev => ({ ...prev, proofHash: proveData.commitment?.slice(0, 16) }));
 
             setStep('unshielding');
             addChat('system', '🗼 Tower of Trials receiving payment...');
@@ -147,7 +162,7 @@ export default function ShadowAgentDemoPage() {
                     </div>
                     <span className="text-[10px] text-gray-600 ml-2">[SHADOW_AGENT_PROTOCOL]</span>
                 </div>
-                
+
                 <div className="mb-4">
                     <span className="text-green-500">root@ashborn:~$</span>
                     <span className="text-white ml-2">./shadow_agent.sh</span>
@@ -156,7 +171,7 @@ export default function ShadowAgentDemoPage() {
                 <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
                     &gt; PRIVATE_AI_COMMERCE
                 </h1>
-                
+
                 <p className="text-sm text-gray-400 leading-relaxed">
                     Two AI agents transact privately via Ashborn Privacy Relay. Protocols never see their identities.
                     <span className="animate-pulse">_</span>
@@ -218,10 +233,9 @@ export default function ShadowAgentDemoPage() {
                                     key={i}
                                     initial={{ opacity: 0, x: msg.agent === 'architect' ? -20 : msg.agent === 'tower' ? 20 : 0 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className={`text-xs font-mono ${
-                                        msg.agent === 'system' ? 'text-gray-500 italic text-center py-1 border-y border-white/5' :
+                                    className={`text-xs font-mono ${msg.agent === 'system' ? 'text-gray-500 italic text-center py-1 border-y border-white/5' :
                                         msg.agent === 'architect' ? 'text-blue-300' : 'text-purple-300'
-                                    }`}
+                                        }`}
                                 >
                                     {msg.agent !== 'system' && (
                                         <span className="opacity-60 mr-2">
@@ -272,6 +286,11 @@ export default function ShadowAgentDemoPage() {
                             {txData.unshieldSig && (
                                 <div className="text-gray-500">
                                     Unshield_Tx: <span className="text-purple-400">{txData.unshieldSig.slice(0, 16)}...</span>
+                                </div>
+                            )}
+                            {txData.proofHash && (
+                                <div className="text-gray-500">
+                                    ZK_Proof: <span className="text-green-400">{txData.proofHash}...</span>
                                 </div>
                             )}
                         </div>
