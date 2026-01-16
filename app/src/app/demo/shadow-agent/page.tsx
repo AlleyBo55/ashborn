@@ -18,6 +18,7 @@ export default function ShadowAgentDemoPage() {
         unshieldSig?: string;
         inference?: string;
         proofHash?: string;
+        proveSig?: string;
         thoughts?: { agent: 'architect' | 'tower'; text: string; timestamp: string }[]
     }>({});
     const [chatMessages, setChatMessages] = useState<{ agent: 'architect' | 'tower' | 'system'; text: string }[]>([
@@ -120,7 +121,11 @@ export default function ShadowAgentDemoPage() {
             } else {
                 addChat('system', `✅ Proof verified (demo mode) — transaction unlinkable`);
             }
-            setTxData(prev => ({ ...prev, proofHash: proveData.commitment?.slice(0, 16) }));
+            setTxData(prev => ({
+                ...prev,
+                proofHash: proveData.commitment?.slice(0, 16),
+                proveSig: proveData.signature
+            }));
 
             setStep('unshielding');
             addThought('tower', 'Proof verified. Payment confirmed via StealthWire. Releasing insight.');
@@ -337,18 +342,47 @@ export default function ShadowAgentDemoPage() {
                                 </div>
                             </div>
                             {txData.shieldSig && (
-                                <div className="text-gray-500 mt-2">
-                                    Shield_Tx: <span className="text-blue-400">{txData.shieldSig.slice(0, 16)}...</span>
+                                <div className="text-gray-500 mt-2 flex items-center justify-between">
+                                    <span>Shield_Tx: <span className="text-blue-400">{txData.shieldSig.slice(0, 16)}...</span></span>
+                                    <a
+                                        href={`https://solscan.io/tx/${txData.shieldSig}?cluster=devnet`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[10px] text-blue-500 hover:text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded ml-2"
+                                    >
+                                        SOLSCAN ↗
+                                    </a>
                                 </div>
                             )}
                             {txData.unshieldSig && (
-                                <div className="text-gray-500">
-                                    Unshield_Tx: <span className="text-purple-400">{txData.unshieldSig.slice(0, 16)}...</span>
+                                <div className="text-gray-500 flex items-center justify-between">
+                                    <span>Unshield_Tx: <span className="text-purple-400">{txData.unshieldSig.slice(0, 16)}...</span></span>
+                                    <a
+                                        href={`https://solscan.io/tx/${txData.unshieldSig}?cluster=devnet`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[10px] text-purple-500 hover:text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded ml-2"
+                                    >
+                                        SOLSCAN ↗
+                                    </a>
                                 </div>
                             )}
                             {txData.proofHash && (
-                                <div className="text-gray-500">
-                                    ZK_Proof: <span className="text-green-400">{txData.proofHash}...</span>
+                                <div className="text-gray-500 flex items-center justify-between">
+                                    <span>ZK_Proof: <span className="text-green-400">{txData.proofHash}...</span></span>
+                                    {/* If we have a signature for the proof tx, we could link it. For now, just show hash. */}
+                                    {txData.proveSig ? (
+                                        <a
+                                            href={`https://solscan.io/tx/${txData.proveSig}?cluster=devnet`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-[10px] text-green-500 hover:text-green-400 border border-green-500/30 px-2 py-0.5 rounded ml-2"
+                                        >
+                                            SOLSCAN ↗
+                                        </a>
+                                    ) : (
+                                        <span className="text-[10px] text-gray-600 border border-white/5 px-2 py-0.5 rounded ml-2">VERIFIED</span>
+                                    )}
                                 </div>
                             )}
                         </div>
