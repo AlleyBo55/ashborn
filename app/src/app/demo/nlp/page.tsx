@@ -1,18 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AiChat02Icon, SentIcon, UserIcon, Loading03Icon, AlertCircleIcon } from 'hugeicons-react';
-import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
     role: 'user' | 'assistant';
     content: string;
-    parsed?: {
-        action: string;
-        params: Record<string, string>;
-        confidence: number;
-    };
 }
 
 const EXAMPLE_COMMANDS = [
@@ -25,7 +18,7 @@ const EXAMPLE_COMMANDS = [
 
 export default function NLPDemoPage() {
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'assistant', content: "👋 **Welcome to Ashborn AI**\n\nI can execute privacy commands using the SDK.\n\nTry saying: *\"Shield 5 SOL and send to 9TW3...\"* or *\"Send to alleyboss.sol\"*" },
+        { role: 'assistant', content: "ASHBORN_AI_INITIALIZED\n\nExecute privacy commands using natural language.\n\nTry: 'Shield 5 SOL' or 'Send to alleyboss.sol'" },
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -42,99 +35,88 @@ export default function NLPDemoPage() {
         setIsTyping(true);
 
         try {
-            // Call agent API directly (no micropayment for demo)
             const response = await fetch('/api/agent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: input,
                     persona: 'architect',
-                    systemPrompt: `You are Ashborn AI, a privacy-focused AI agent. Parse natural language commands and respond with structured privacy operations. When a user says "shield X SOL", acknowledge and explain the shielding process. When they say "send to address", explain stealth address generation. Always be helpful and privacy-focused.`
+                    systemPrompt: `You are Ashborn AI, a privacy-focused AI agent. Parse natural language commands and respond with structured privacy operations. When a user says "shield X SOL", acknowledge and explain the shielding process. When they say "send to address", explain stealth address generation. Always be helpful and privacy-focused. Use terminal-style formatting with $ prefixes.`
                 })
             });
 
             if (!response.ok) throw new Error("AI Request failed");
 
             const data = await response.json();
-
-            setMessages(prev => [...prev, {
-                role: 'assistant',
-                content: data.reply,
-                parsed: data.parsed
-            }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
 
         } catch (error) {
             console.error(error);
-            setMessages(prev => [...prev, { role: 'assistant', content: "❌ **Error**\n\nFailed to reach the agent. Please try again." }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: "ERROR: Failed to reach agent. Retry." }]);
         } finally {
             setIsTyping(false);
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
-            {/* Demo Notice */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
-            >
-                <div className="flex items-start gap-3">
-                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
-                    <div className="text-sm">
-                        <p className="text-amber-300 font-medium mb-1">Lightweight Demo</p>
-                        <p className="text-amber-200/70 text-xs">No wallet required. AI agent runs via /api/agent.</p>
+        <div className="space-y-6">
+            {/* Terminal Header */}
+            <div className="border-2 border-green-500/30 bg-black/80 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                    <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                        <div className="w-3 h-3 rounded-full bg-green-500/50" />
                     </div>
+                    <span className="text-[10px] text-gray-600 ml-2">[AI_AGENT_PROTOCOL]</span>
                 </div>
-            </motion.div>
+                
+                <div className="mb-4">
+                    <span className="text-green-500">root@ashborn:~$</span>
+                    <span className="text-white ml-2">./shadow_whisper.sh</span>
+                </div>
 
-            <DemoPageHeader
-                badge="AI_AGENT_PROTOCOL"
-                title="Shadow Whisper"
-                description="Command privacy operations with natural language. Powered by Claude AI via Ashborn Privacy Relay."
-                icon={AiChat02Icon}
-                privacyRelay
-            />
+                <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                    &gt; SHADOW_WHISPER
+                </h1>
+                
+                <p className="text-sm text-gray-400 leading-relaxed">
+                    Command privacy operations with natural language. Powered by Claude AI via Ashborn Privacy Relay.
+                    <span className="animate-pulse">_</span>
+                </p>
+            </div>
 
-            <div className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
-                {/* Chat Header */}
-                <div className="p-4 border-b border-white/10 bg-white/[0.02]">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
-                            <AiChat02Icon className="w-4 h-4" />
-                        </div>
-                        <div>
-                            <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
-                            <p className="text-[10px] text-gray-400">Powered by Claude AI</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 text-[10px]">
-                        <span className="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20">1. Type Command</span>
-                        <span className="text-gray-600">→</span>
-                        <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded border border-green-500/20">2. AI Responds</span>
+            {/* Chat Terminal */}
+            <div className="border-2 border-green-500/30 bg-black/50 h-[500px] flex flex-col">
+                {/* Header */}
+                <div className="border-b border-green-500/30 p-3 bg-black/50">
+                    <div className="flex items-center gap-2 text-xs text-green-400 font-mono">
+                        <span className="text-green-500">$</span>
+                        <span>ASHBORN_AI_INTERFACE</span>
+                        <span className="text-gray-600">|</span>
+                        <span className="text-gray-500">CLAUDE_POWERED</span>
                     </div>
                 </div>
 
-                {/* Chat Area */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-sm">
                     {messages.map((msg, i) => (
                         <motion.div
                             key={i}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                            initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`${msg.role === 'user' ? 'text-right' : ''}`}
                         >
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-blue-500/10' : 'bg-purple-500/10'}`}>
-                                {msg.role === 'user' ? <UserIcon className="w-4 h-4 text-blue-400" /> : <AiChat02Icon className="w-4 h-4 text-purple-400" />}
-                            </div>
-                            <div className={`max-w-[80%]`}>
-                                <div className={`rounded-2xl px-4 py-3 text-sm ${msg.role === 'user'
-                                    ? 'bg-blue-600 text-white rounded-br-sm shadow-lg'
-                                    : 'bg-[#1A1A1A] border border-white/10 text-gray-200 rounded-bl-sm shadow-sm'
-                                    }`}>
-                                    <div className="whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{
-                                        __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-black/30 px-1 rounded font-mono text-xs">$1</code>').replace(/\n/g, '<br/>')
-                                    }} />
+                            <div className={`inline-block max-w-[85%] ${
+                                msg.role === 'user' 
+                                    ? 'bg-blue-500/20 border border-blue-500/30 text-blue-200' 
+                                    : 'bg-green-500/10 border border-green-500/30 text-green-300'
+                            } px-4 py-2`}>
+                                <div className="text-[10px] mb-1 opacity-60">
+                                    {msg.role === 'user' ? '> USER' : '> ASHBORN_AI'}
+                                </div>
+                                <div className="whitespace-pre-wrap text-xs leading-relaxed">
+                                    {msg.content}
                                 </div>
                             </div>
                         </motion.div>
@@ -142,11 +124,14 @@ export default function NLPDemoPage() {
 
                     <AnimatePresence>
                         {isTyping && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-3">
-                                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center"><AiChat02Icon className="w-4 h-4 text-purple-400" /></div>
-                                <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-2 text-xs text-gray-400">
-                                    <Loading03Icon className="w-3 h-3 animate-spin text-purple-400" />
-                                    <span>Ashborn is thinking...</span>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                <div className="inline-block bg-green-500/10 border border-green-500/30 px-4 py-2">
+                                    <div className="text-[10px] mb-1 text-green-500 opacity-60">
+                                        > ASHBORN_AI
+                                    </div>
+                                    <div className="text-xs text-green-400">
+                                        <span className="animate-pulse">Processing...</span>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
@@ -154,29 +139,53 @@ export default function NLPDemoPage() {
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input Area */}
-                <div className="p-4 border-t border-white/10 bg-white/[0.02]">
-                    <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
+                {/* Input */}
+                <div className="border-t border-green-500/30 p-3 bg-black/50">
+                    <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                         {EXAMPLE_COMMANDS.map((cmd, i) => (
-                            <button key={i} onClick={() => setInput(cmd)} className="shrink-0 text-[10px] bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full transition text-gray-400 hover:text-white">
+                            <button 
+                                key={i} 
+                                onClick={() => setInput(cmd)} 
+                                className="shrink-0 text-[10px] bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 px-2 py-1 font-mono text-green-400 transition"
+                            >
                                 {cmd}
                             </button>
                         ))}
                     </div>
-                    <div className="flex gap-3">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                            disabled={isTyping}
-                            placeholder="Type a command..."
-                            className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 focus:outline-none transition placeholder:text-gray-600 disabled:opacity-50"
-                        />
-                        <button onClick={handleSend} disabled={!input.trim() || isTyping} className="px-4 bg-white text-black hover:bg-gray-200 rounded-xl transition disabled:opacity-50 font-medium flex items-center justify-center">
-                            <SentIcon className="w-4 h-4" />
+                    <div className="flex gap-2">
+                        <div className="flex-1 flex items-center bg-black border border-green-500/30 px-3">
+                            <span className="text-green-500 mr-2">$</span>
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                                disabled={isTyping}
+                                placeholder="type_command..."
+                                className="flex-1 bg-transparent py-3 text-sm text-green-400 font-mono placeholder:text-gray-700 focus:outline-none disabled:opacity-50"
+                            />
+                        </div>
+                        <button 
+                            onClick={handleSend} 
+                            disabled={!input.trim() || isTyping} 
+                            className="px-6 bg-green-500 text-black hover:bg-green-400 font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            SEND
                         </button>
                     </div>
+                </div>
+            </div>
+
+            {/* Info */}
+            <div className="border-2 border-white/20 bg-black/50 p-4">
+                <h2 className="text-sm font-bold text-white mb-3 flex items-center gap-2 font-mono">
+                    <span className="text-green-500">&gt;</span>
+                    USAGE
+                </h2>
+                <div className="text-xs text-gray-400 space-y-1 font-mono">
+                    <p>$ Type natural language commands</p>
+                    <p>$ AI parses intent and executes privacy operations</p>
+                    <p>$ No wallet required • Server-side execution</p>
                 </div>
             </div>
         </div>
