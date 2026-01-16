@@ -57,9 +57,7 @@ Zero-Knowledge Range Proofs (Groth16) to satisfy requirements without doxxing.
 
 ---
 
-## 💻 THE SHADOW PROTOCOL (Usage)
 
-> **"One interface to rule them all."**
 
 ## 💻 THE SHADOW PROTOCOL (Usage)
 
@@ -85,10 +83,9 @@ const { note } = await monarch.shield({
 });
 
 // 2. Buyer pays Seller (Unlinkable transfer)
-await monarch.shadowTransfer({
-  from: note,
-  to: sellerStealthAddress,
-  amount: 5_000_000_000n
+await monarch.transfer({
+  recipient: sellerStealthAddress,
+  amount: 5 // 5 SOL
 });
 ```
 
@@ -113,6 +110,17 @@ const proof = await monarch.prove({
   statement: "Balance > 100 SOL",
   min: 100_000_000_000n,
   max: Infinity
+});
+```
+
+### 5. ☀️ UNSHIELD (Exit Shadows)
+*Withdraw to a clean public wallet.*
+```typescript
+// Relay handles the withdrawal. PrivacyCash sees "Ashborn Relay".
+// Your destination wallet remains unconnected to the source.
+await monarch.unshield({
+  amount: 2.5, // 2.5 SOL
+  recipient: "PublicWalletAddress123..."
 });
 ```
 

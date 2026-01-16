@@ -305,7 +305,7 @@ const SystemBroadcast = () => {
             <div className="hidden md:flex items-center gap-4 text-purple-200/70">
                 <span>VERSION v0.2.2</span>
                 <span>::</span>
-                <span>ASHBORN_PROTOCOL</span>
+                <span>ASHBORN</span>
             </div>
             <div className="flex items-center gap-2">
                 <span className="text-purple-300">MAINNET_INFILTRATION:</span>
