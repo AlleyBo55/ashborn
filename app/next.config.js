@@ -44,13 +44,30 @@ const nextConfig = {
     return config;
   },
   // Optimize for Solana web3.js
+  // NOTE: Removed @solana/web3.js and @coral-xyz/anchor from transpilePackages to speed up build
+  // They are usually pre-compiled enough for Next.js to handle without forced transpilation.
   transpilePackages: [
-    "@solana/web3.js",
-    "@coral-xyz/anchor",
     "privacycash",
     "@alleyboss/ashborn-sdk",
     "@lightprotocol/hasher.rs"
   ],
+  swcMinify: true, // Enable SWC minification for faster builds
+
+  // Vercel Lead Engineer Optimization: Tree-shake icon libraries
+  // This prevents compiling 10,000+ icons when you only use 5.
+  modularizeImports: {
+    'hugeicons-react': {
+      transform: 'hugeicons-react/{{member}}',
+      skipDefaultConversion: true,
+    },
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{member}}',
+    },
+    '@hugeicons/react': {
+      transform: '@hugeicons/react/{{member}}',
+      skipDefaultConversion: true,
+    }
+  },
   // output: "standalone",
 };
 

@@ -30,7 +30,7 @@ export default function Home() {
             <PortalTransition />
             <ShadowCursor />
             <SystemToast />
-            <MonarchAmbience />
+            {/* <MonarchAmbience /> - Disabled for performance testing */}
 
             <div className="z-10 w-full relative space-y-0 pb-20">
                 {/* Hero remains top, no slant */}

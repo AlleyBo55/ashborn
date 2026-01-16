@@ -28,18 +28,25 @@ export default function PrivacyRelayShowcase() {
                         </div>
 
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-6 leading-[0.9]">
-                            PRIVACYCASH KNOWS <br />
+                            THE WORLD KNOWS <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
                                 NOTHING.
                             </span>
                         </h2>
 
+                        <blockquote className="border-l-2 border-red-500 pl-4 py-2 my-6 italic text-gray-400 text-sm font-mono leading-relaxed">
+                            &quot;I shall protect my family, even if it means turning the entire world against me.<br />
+                            There is no need for words among shadows.&quot;<br />
+                            <span className="text-red-500 font-bold not-italic mt-1 block">— The Shadow Monarch</span>
+                        </blockquote>
+
                         <p className="text-xl text-gray-300 mb-8 leading-relaxed font-light">
                             Stop exposing your identity to every protocol you touch.
                             <br /><br />
-                            With <strong className="text-white">Ashborn Shadow Relay</strong>, underlying protocols like <span className="text-white border-b border-white/20">PrivacyCash</span> and <span className="text-white border-b border-white/20">Radr Labs</span> only see Ashborn's omnibus wallet.
+                            With <strong className="text-white">Ashborn Shadow Relay</strong>, the underlying protocols never know you exist.
+                            To PrivacyCash, Radr Labs, and the world—you are a ghost.
                             <br /><br />
-                            <span className="text-red-400 font-medium">Your wallet address never touches their logs.</span>
+                            <span className="text-red-400 font-medium">Only the Shadow Monarch knows the truth.</span>
                         </p>
 
                         <div className="flex flex-col gap-4">
