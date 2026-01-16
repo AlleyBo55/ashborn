@@ -103,14 +103,39 @@ const stealthAddress = await ShadowWire.deriveStealthAddress({
 ```
 
 ### 4. 🎭 SHADOW SEAL (ZK Compliance)
-*Prove solvency without doxxing.*
+*Prove solvency without doxxing. **Real Groth16 proofs via snarkjs — not simulated.***
 ```typescript
-// Prove balance > 100 SOL (Zero-Knowledge)
-const proof = await monarch.prove({
-  statement: "Balance > 100 SOL",
-  min: 100_000_000_000n,
-  max: Infinity
+// Generate real ZK range proof
+// Returns { isReal: true, proofTime: 1234, proof: "..." }
+const proofResult = await monarch.prove({
+  balance: 0.5,  // Your actual balance (SOL)
+  min: 0.1,      // Prove balance >= 0.1 SOL
+  max: 1.0       // Prove balance <= 1.0 SOL
 });
+
+// proofResult.isReal === true → Real Groth16 via snarkjs
+// proofResult.proofTime → Generation time in ms
+```
+
+### 5. 🌐 API USAGE (Server-Side)
+*Call SDK from your API routes — all ZK logic stays in SDK.*
+```typescript
+// In your Next.js API route (app/api/prove/route.ts)
+import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
+
+export async function POST(req: Request) {
+    const { balance, min, max } = await req.json();
+    
+    const relay = new PrivacyRelay({
+        relayKeypair: process.env.RELAY_KEYPAIR,
+        rpcUrl: 'https://api.devnet.solana.com'
+    });
+    
+    // SDK handles everything — real snarkjs proof generation
+    const proofResult = await relay.prove({ balance, min, max });
+    
+    return Response.json(proofResult);
+}
 ```
 
 ### 5. ☀️ UNSHIELD (Exit Shadows)

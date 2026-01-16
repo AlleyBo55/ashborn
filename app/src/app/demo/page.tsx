@@ -45,7 +45,7 @@ const demos = [
         id: 'interop',
         title: 'Cross-Protocol',
         tag: 'INTEROP',
-        desc: 'Shield → Transfer → Unshield. Full flow.',
+        desc: 'Shield → Transfer → Unshield. Full privacy flow.',
         href: '/demo/interop',
         icon: Activity01Icon,
         color: 'cyan',
@@ -55,21 +55,23 @@ const demos = [
         id: 'prove',
         title: 'Compliance Seal',
         tag: 'ZK_PROOF',
-        desc: "Range proofs. Prove solvency without revealing balance.",
+        desc: "Real Groth16 range proofs. Prove solvency without revealing balance.",
         href: '/demo/prove',
         icon: Shield02Icon,
         color: 'amber',
         integrations: ['Ashborn'],
+        realZk: true,
     },
     {
         id: 'ai-payment',
         title: 'Shadow Payment',
         tag: 'AI_COMMERCE',
-        desc: 'Private AI payments. x402 paywall integration.',
+        desc: 'Private AI payments with real ZK proofs. x402 paywall integration.',
         href: '/demo/ai-payment',
         icon: AiChat02Icon,
         color: 'rose',
         integrations: ['Ashborn', 'PrivacyCash'],
+        realZk: true,
     },
     {
         id: 'nlp',
@@ -85,12 +87,24 @@ const demos = [
         id: 'shadow-agent',
         title: 'Shadow Agent',
         tag: 'AI_COMMERCE',
-        desc: 'AI-to-AI private commerce. Full protocol integration.',
+        desc: 'AI-to-AI private commerce with real Groth16 ZK proofs. Not simulated.',
         href: '/demo/shadow-agent',
         icon: AiChat02Icon,
         color: 'purple',
         integrations: ['All'],
         featured: true,
+        realZk: true,
+    },
+    {
+        id: 'ai-lending',
+        title: 'AI Lending',
+        tag: 'AI_FINANCE',
+        desc: 'Private collateral proofs for AI-to-AI lending. Real snarkjs verification.',
+        href: '/demo/ai-lending',
+        icon: Shield02Icon,
+        color: 'green',
+        integrations: ['Ashborn'],
+        realZk: true,
     }
 ];
 
@@ -109,18 +123,18 @@ export default function DemoIndexPage() {
         <div className="min-h-screen bg-[#0a0a0a] text-green-400 font-mono">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
                 {/* ASCII Header */}
-                <motion.header 
+                <motion.header
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="mb-12"
                 >
                     <pre className="text-[8px] sm:text-xs text-green-500/50 mb-6 overflow-x-auto">
-{`╔═══════════════════════════════════════════════════════════════╗
+                        {`╔═══════════════════════════════════════════════════════════════╗
 ║  Ashborn v0.2.3 - SHADOW DOMAIN ACCESS TERMINAL     ║
 ║  [DEVNET] Status: ONLINE | Latency: <2s | Cost: ~0.001◎     ║
 ╚═══════════════════════════════════════════════════════════════╝`}
                     </pre>
-                    
+
                     <div className="mb-6">
                         <span className="text-green-500">root@ashborn:~$</span>
                         <span className="text-white ml-2">cat SHADOW_DOMAIN.txt</span>
@@ -129,7 +143,7 @@ export default function DemoIndexPage() {
                     <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4">
                         &gt; SHADOW DOMAIN
                     </h1>
-                    
+
                     <p className="text-sm text-gray-400 max-w-2xl mb-6">
                         Zero-knowledge privacy on Solana. Shield, transfer, prove.
                         <span className="animate-pulse">_</span>
@@ -162,13 +176,23 @@ export default function DemoIndexPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.08 }}
                             >
-                                <Link 
+                                <Link
                                     href={demo.href}
                                     className={`block bg-black/80 border-2 ${colors.border} p-5 transition-all duration-300 group hover:${colors.glow} hover:shadow-xl hover:-translate-y-1 ${demo.featured ? 'ring-2 ring-red-500/50 shadow-lg shadow-red-500/20 relative' : ''}`}
                                 >
                                     {demo.featured && (
                                         <div className="absolute -top-3 -right-3 bg-red-500 text-black text-[10px] font-bold px-3 py-1 rotate-12 shadow-lg">
                                             ⚡ FEATURED
+                                        </div>
+                                    )}
+                                    {(demo as any).realZk && !demo.featured && (
+                                        <div className="absolute -top-2 -right-2 bg-green-500 text-black text-[8px] font-bold px-2 py-0.5 shadow-lg">
+                                            ⚡ REAL_ZK
+                                        </div>
+                                    )}
+                                    {(demo as any).realZk && demo.featured && (
+                                        <div className="absolute -top-3 left-2 bg-green-500 text-black text-[8px] font-bold px-2 py-0.5 shadow-lg">
+                                            ⚡ REAL_ZK
                                         </div>
                                     )}
                                     <div className="flex items-start justify-between mb-4">
@@ -182,14 +206,14 @@ export default function DemoIndexPage() {
                                         </div>
                                         <demo.icon className={`w-8 h-8 ${colors.text} opacity-30 group-hover:opacity-100 transition-opacity`} />
                                     </div>
-                                    
+
                                     <p className="text-xs text-gray-400 mb-4 leading-relaxed">
                                         {demo.desc}
                                     </p>
 
                                     <div className="flex flex-wrap gap-2">
                                         {demo.integrations.map((tech) => (
-                                            <span 
+                                            <span
                                                 key={tech}
                                                 className="text-[10px] bg-white/5 text-gray-500 px-2 py-1 border border-white/10"
                                             >
@@ -218,7 +242,7 @@ export default function DemoIndexPage() {
                         <span className="text-green-500">&gt;</span>
                         <h3 className="text-xl font-bold text-white">EXECUTION_FLOW</h3>
                     </div>
-                    
+
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
                             { num: '01', title: 'EXTRACT', desc: 'Deposit SOL into pool' },

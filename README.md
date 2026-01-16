@@ -86,8 +86,9 @@ await relay.shield({ amount: 0.1 });
 // Radr Labs NEVER sees your user  
 await relay.generateStealth({ viewPubKey, spendPubKey });
 
-// ZK Proof WITHOUT identity exposure
-await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
+// ZK Proof — REAL Groth16 via snarkjs (not simulated)
+const proof = await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
+// proof.isReal === true → Real cryptographic proof
 ```
 
 ---

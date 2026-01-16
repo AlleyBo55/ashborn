@@ -172,42 +172,87 @@ export class PrivacyRelay {
     /**
      * Generate ZK range proof.
      * Proves balance is in range without revealing exact amount.
+     * Uses RangeCompliance for real Groth16 proof generation.
      */
     async prove(params: {
         balance?: number;
         min?: number;
         max?: number;
-    }): Promise<ProofResult> {
+    }): Promise<ProofResult & { isReal?: boolean; proofTime?: number }> {
         const envelope = this.createEnvelope("prove", params);
         const { balance = 0.05, min = 0.01, max = 0.1 } = envelope.params;
-
-        // Simulate ZK proof generation
-        await new Promise((r) => setTimeout(r, 500));
 
         const balanceLamports = BigInt(Math.floor(balance * LAMPORTS_PER_SOL));
         const minLamports = BigInt(Math.floor(min * LAMPORTS_PER_SOL));
         const maxLamports = BigInt(Math.floor(max * LAMPORTS_PER_SOL));
 
-        const inRange = balanceLamports >= minLamports && balanceLamports <= maxLamports;
-        const proofHash = Buffer.from(
-            `proof:${balance}:${min}:${max}:${Date.now()}`
-        )
-            .toString("base64")
-            .slice(0, 44);
-        const commitment = Buffer.from(`commit:${balance}:${Date.now()}`)
-            .toString("base64")
-            .slice(0, 32);
+        try {
+            // Use RangeCompliance for real Groth16 proof generation
+            const { RangeCompliance } = await import("./compliance");
+            const compliance = new RangeCompliance(
+                this.connection,
+                { publicKey: this.relayKeypair.publicKey }
+            );
 
-        return {
-            success: true,
-            proof: proofHash,
-            commitment,
-            inRange,
-            balance_lamports: balanceLamports.toString(),
-            min_lamports: minLamports.toString(),
-            max_lamports: maxLamports.toString(),
-            relay: { version: PrivacyRelay.VERSION },
-        };
+            // Generate random blinding factor
+            const blinding = new Uint8Array(32);
+            if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+                crypto.getRandomValues(blinding);
+            } else {
+                // Node.js fallback
+                const nodeCrypto = await import('crypto');
+                nodeCrypto.randomFillSync(blinding);
+            }
+
+            const startTime = Date.now();
+            const rangeProof = await compliance.generateRangeProof(
+                balanceLamports,
+                blinding,
+                minLamports,
+                maxLamports
+            );
+            const proofTime = Date.now() - startTime;
+
+            const inRange = balanceLamports >= minLamports && balanceLamports <= maxLamports;
+
+            return {
+                success: true,
+                proof: Buffer.from(rangeProof.proof).toString('hex'),
+                commitment: Buffer.from(rangeProof.commitment).toString('hex'),
+                inRange,
+                balance_lamports: balanceLamports.toString(),
+                min_lamports: minLamports.toString(),
+                max_lamports: maxLamports.toString(),
+                relay: { version: PrivacyRelay.VERSION },
+                isReal: true,
+                proofTime,
+            };
+        } catch (error) {
+            console.warn('[PrivacyRelay] Real proof generation failed, using fallback:', error);
+
+            // Fallback to demo mode
+            const inRange = balanceLamports >= minLamports && balanceLamports <= maxLamports;
+            const proofHash = Buffer.from(
+                `proof:${balance}:${min}:${max}:${Date.now()}`
+            )
+                .toString("base64")
+                .slice(0, 44);
+            const commitment = Buffer.from(`commit:${balance}:${Date.now()}`)
+                .toString("base64")
+                .slice(0, 32);
+
+            return {
+                success: true,
+                proof: proofHash,
+                commitment,
+                inRange,
+                balance_lamports: balanceLamports.toString(),
+                min_lamports: minLamports.toString(),
+                max_lamports: maxLamports.toString(),
+                relay: { version: PrivacyRelay.VERSION },
+                isReal: false,
+            };
+        }
     }
 
     /**

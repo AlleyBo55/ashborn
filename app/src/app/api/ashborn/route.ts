@@ -77,15 +77,20 @@ function generateStealthAddress(recipientHint: string, nonce: number): string {
 }
 
 // ============================================================================
-// ZK RANGE PROOF (Groth16)
+// ZK RANGE PROOF - Delegated to SDK
 // ============================================================================
 
-async function generateRangeProof(balance: bigint, min: bigint, max: bigint) {
-    await new Promise(r => setTimeout(r, 500));
-    const inRange = balance >= min && balance <= max;
-    const proofHash = Buffer.from(`proof:${balance}:${min}:${max}:${Date.now()}`).toString('base64').slice(0, 44);
-    const commitment = Buffer.from(`commit:${balance}:${Date.now()}`).toString('base64').slice(0, 32);
-    return { proof: proofHash, commitment, inRange };
+// All ZK proof logic lives in the SDK's PrivacyRelay.prove() method.
+// The API route simply calls the SDK to avoid code duplication.
+
+async function getPrivacyRelay() {
+    const { PrivacyRelay } = await import('@alleyboss/ashborn-sdk');
+    const relayKeypair = getRelayKeypair();
+    return new PrivacyRelay({
+        relayKeypair,
+        rpcUrl: RPC_URL,
+        privacyCashProgramId: PRIVACYCASH_PROGRAM_ID,
+    });
 }
 
 // ============================================================================
@@ -121,16 +126,11 @@ export async function POST(request: NextRequest) {
 
             case 'prove': {
                 const { balance, min, max } = envelope.params as { balance?: number; min?: number; max?: number };
-                const balanceBigInt = BigInt(Math.floor((balance || 0.05) * LAMPORTS_PER_SOL));
-                const minBigInt = BigInt(Math.floor((min || 0.01) * LAMPORTS_PER_SOL));
-                const maxBigInt = BigInt(Math.floor((max || 0.1) * LAMPORTS_PER_SOL));
-                const proofResult = await generateRangeProof(balanceBigInt, minBigInt, maxBigInt);
+                // Use SDK's PrivacyRelay for ZK proof generation
+                const relay = await getPrivacyRelay();
+                const proofResult = await relay.prove({ balance, min, max });
                 return NextResponse.json({
-                    success: true,
                     ...proofResult,
-                    balance_lamports: balanceBigInt.toString(),
-                    min_lamports: minBigInt.toString(),
-                    max_lamports: maxBigInt.toString(),
                     relay: { version: ASHBORN_RELAY_VERSION }
                 }, { headers });
             }

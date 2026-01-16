@@ -70,7 +70,7 @@ export default function NLPDemoPage() {
                     </div>
                     <span className="text-[10px] text-gray-600 ml-2">[AI_AGENT_PROTOCOL]</span>
                 </div>
-                
+
                 <div className="mb-4">
                     <span className="text-green-500">root@ashborn:~$</span>
                     <span className="text-white ml-2">./shadow_whisper.sh</span>
@@ -79,7 +79,7 @@ export default function NLPDemoPage() {
                 <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
                     &gt; SHADOW_WHISPER
                 </h1>
-                
+
                 <p className="text-sm text-gray-400 leading-relaxed">
                     Command privacy operations with natural language. Powered by Claude AI via Ashborn Privacy Relay.
                     <span className="animate-pulse">_</span>
@@ -107,11 +107,10 @@ export default function NLPDemoPage() {
                             animate={{ opacity: 1, x: 0 }}
                             className={`${msg.role === 'user' ? 'text-right' : ''}`}
                         >
-                            <div className={`inline-block max-w-[85%] ${
-                                msg.role === 'user' 
-                                    ? 'bg-blue-500/20 border border-blue-500/30 text-blue-200' 
+                            <div className={`inline-block max-w-[85%] ${msg.role === 'user'
+                                    ? 'bg-blue-500/20 border border-blue-500/30 text-blue-200'
                                     : 'bg-green-500/10 border border-green-500/30 text-green-300'
-                            } px-4 py-2`}>
+                                } px-4 py-2`}>
                                 <div className="text-[10px] mb-1 opacity-60">
                                     {msg.role === 'user' ? '> USER' : '> ASHBORN_AI'}
                                 </div>
@@ -127,7 +126,7 @@ export default function NLPDemoPage() {
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 <div className="inline-block bg-green-500/10 border border-green-500/30 px-4 py-2">
                                     <div className="text-[10px] mb-1 text-green-500 opacity-60">
-                                        > ASHBORN_AI
+                                        &gt; ASHBORN_AI
                                     </div>
                                     <div className="text-xs text-green-400">
                                         <span className="animate-pulse">Processing...</span>
@@ -143,9 +142,9 @@ export default function NLPDemoPage() {
                 <div className="border-t border-green-500/30 p-3 bg-black/50">
                     <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                         {EXAMPLE_COMMANDS.map((cmd, i) => (
-                            <button 
-                                key={i} 
-                                onClick={() => setInput(cmd)} 
+                            <button
+                                key={i}
+                                onClick={() => setInput(cmd)}
                                 className="shrink-0 text-[10px] bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 px-2 py-1 font-mono text-green-400 transition"
                             >
                                 {cmd}
@@ -165,9 +164,9 @@ export default function NLPDemoPage() {
                                 className="flex-1 bg-transparent py-3 text-sm text-green-400 font-mono placeholder:text-gray-700 focus:outline-none disabled:opacity-50"
                             />
                         </div>
-                        <button 
-                            onClick={handleSend} 
-                            disabled={!input.trim() || isTyping} 
+                        <button
+                            onClick={handleSend}
+                            disabled={!input.trim() || isTyping}
                             className="px-6 bg-green-500 text-black hover:bg-green-400 font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             SEND
