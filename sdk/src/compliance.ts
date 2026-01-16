@@ -197,9 +197,11 @@ export class RangeCompliance {
         groth16Proof: proof,
       };
     } catch (error) {
-      // Fallback for demo: generate deterministic proof structure
-      console.warn("snarkjs not available, using demo mode");
-      return this.generateDemoRangeProof(value, blinding, min, max, commitment);
+      // No fallback - fail explicitly
+      throw new Error(
+        `Range proof generation failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+        'Ensure snarkjs circuit artifacts (range.wasm, range_final.zkey) are installed.'
+      );
     }
   }
 
@@ -498,40 +500,7 @@ export class RangeCompliance {
     return proof.length >= 256;
   }
 
-  private generateDemoRangeProof(
-    _value: bigint,
-    _blinding: Uint8Array,
-    min: bigint,
-    max: bigint,
-    commitment: Uint8Array
-  ): RangeProof {
-    // Demo mode: generate valid-looking proof structure
-    const proof = new Uint8Array(256);
-    proof[0] = 0x47; // 'G' for Groth16
-    proof[1] = 0x31; // '1' for v1
-    proof.set(commitment, 2);
-    proof.set(bigintToBytes(min, 8), 34);
-    proof.set(bigintToBytes(max, 8), 42);
 
-    return {
-      proof,
-      commitment,
-      rangeMin: min,
-      rangeMax: max,
-      publicSignals: [
-        commitment.toString(),
-        min.toString(),
-        max.toString(),
-      ],
-      groth16Proof: {
-        pi_a: ["0", "0", "1"],
-        pi_b: [["0", "0"], ["0", "0"], ["1", "0"]],
-        pi_c: ["0", "0", "1"],
-        protocol: "groth16",
-        curve: "bn128",
-      },
-    };
-  }
 }
 
 /**

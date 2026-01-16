@@ -70,11 +70,8 @@ function createShadowEnvelope(action: string, params: Record<string, unknown>): 
 // STEALTH ADDRESS GENERATION
 // ============================================================================
 
-function generateStealthAddress(recipientHint: string, nonce: number): string {
-    const entropy = `${recipientHint}:${nonce}:${Date.now()}:${Math.random()}`;
-    const hash = Buffer.from(entropy).toString('base64').slice(0, 32);
-    return `stealth_${hash}`;
-}
+// function generateStealthAddress removed - using SDK
+
 
 // ============================================================================
 // ZK RANGE PROOF - Delegated to SDK
@@ -114,14 +111,9 @@ export async function POST(request: NextRequest) {
         switch (envelope.action) {
             case 'stealth': {
                 const { recipient, nonce = 0 } = envelope.params as { recipient?: string; nonce?: number };
-                const stealthAddr = generateStealthAddress(recipient || 'anonymous', nonce);
-                return NextResponse.json({
-                    success: true,
-                    stealthAddress: stealthAddr,
-                    viewKey: `view_${stealthAddr.slice(8)}`,
-                    spendKey: `spend_${stealthAddr.slice(8)}`,
-                    relay: { version: ASHBORN_RELAY_VERSION }
-                }, { headers });
+                const relay = await getPrivacyRelay();
+                const stealthResult = await relay.generateStealth({ recipientHint: recipient, nonce });
+                return NextResponse.json(stealthResult, { headers });
             }
 
             case 'prove': {
@@ -137,21 +129,10 @@ export async function POST(request: NextRequest) {
 
             case 'transfer': {
                 const { amount, recipient } = envelope.params as { amount?: number; recipient?: string };
-                const stealthAddr = generateStealthAddress(recipient || relayKeypair.publicKey.toBase58(), Date.now());
-                await new Promise(r => setTimeout(r, 800));
-                const decoys = [
-                    generateStealthAddress('decoy1', 1),
-                    generateStealthAddress('decoy2', 2),
-                    generateStealthAddress('decoy3', 3),
-                ];
-                const txHash = `transfer_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+                const relay = await getPrivacyRelay();
+                const transferResult = await relay.transfer({ amount, recipient });
                 return NextResponse.json({
-                    success: true,
-                    signature: txHash,
-                    stealthAddress: stealthAddr,
-                    amount: amount || 0.01,
-                    decoyOutputs: decoys,
-                    ringSize: 4,
+                    ...transferResult,
                     relay: { version: ASHBORN_RELAY_VERSION }
                 }, { headers });
             }
@@ -202,14 +183,11 @@ export async function POST(request: NextRequest) {
                         amount,
                         relay: { version: ASHBORN_RELAY_VERSION }
                     }, { headers });
-                } catch {
+                } catch (error) {
                     return NextResponse.json({
-                        success: true,
-                        signature: `unshield_demo_${Date.now().toString(36)}`,
-                        amount,
-                        demo: true,
-                        relay: { version: ASHBORN_RELAY_VERSION }
-                    }, { headers });
+                        success: false,
+                        error: error instanceof Error ? error.message : 'Unshield operation failed'
+                    }, { status: 500, headers });
                 }
             }
 

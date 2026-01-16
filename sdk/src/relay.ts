@@ -153,19 +153,12 @@ export class PrivacyRelay {
                 spendKey: stealthPubkey.toBase58(),
                 relay: { version: PrivacyRelay.VERSION },
             };
-        } catch {
-            // Fallback for demo (when ShadowWire not available)
-            const entropy = `${params.recipientHint || 'anon'}:${params.nonce || 0}:${Date.now()}:${Math.random()}`;
-            const hash = Buffer.from(entropy).toString("base64").slice(0, 32);
-            const stealthAddr = `stealth_${hash}`;
-
-            return {
-                success: true,
-                stealthAddress: stealthAddr,
-                viewKey: `view_${stealthAddr.slice(8)}`,
-                spendKey: `spend_${stealthAddr.slice(8)}`,
-                relay: { version: PrivacyRelay.VERSION },
-            };
+        } catch (error) {
+            // No fallback - fail explicitly
+            throw new Error(
+                `Stealth address generation failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+                'Ensure ShadowWire module is available.'
+            );
         }
     }
 
@@ -228,30 +221,11 @@ export class PrivacyRelay {
                 proofTime,
             };
         } catch (error) {
-            console.warn('[PrivacyRelay] Real proof generation failed, using fallback:', error);
-
-            // Fallback to demo mode
-            const inRange = balanceLamports >= minLamports && balanceLamports <= maxLamports;
-            const proofHash = Buffer.from(
-                `proof:${balance}:${min}:${max}:${Date.now()}`
-            )
-                .toString("base64")
-                .slice(0, 44);
-            const commitment = Buffer.from(`commit:${balance}:${Date.now()}`)
-                .toString("base64")
-                .slice(0, 32);
-
-            return {
-                success: true,
-                proof: proofHash,
-                commitment,
-                inRange,
-                balance_lamports: balanceLamports.toString(),
-                min_lamports: minLamports.toString(),
-                max_lamports: maxLamports.toString(),
-                relay: { version: PrivacyRelay.VERSION },
-                isReal: false,
-            };
+            // No fallback - fail explicitly
+            throw new Error(
+                `ZK proof generation failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+                'Ensure RangeCompliance circuit artifacts are installed.'
+            );
         }
     }
 
@@ -271,20 +245,37 @@ export class PrivacyRelay {
             recipientHint: recipient || this.getRelayIdentity(),
         });
 
-        // Simulate ring signature transfer
-        await new Promise((r) => setTimeout(r, 800));
-
+        // Generate decoys for ring signature privacy
         const decoys = await Promise.all([
             this.generateStealth({ recipientHint: "decoy1", nonce: 1 }),
             this.generateStealth({ recipientHint: "decoy2", nonce: 2 }),
             this.generateStealth({ recipientHint: "decoy3", nonce: 3 }),
         ]);
 
-        const txHash = `transfer_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+        // Execute real PrivacyCash transfer
+        // @ts-ignore
+        const { PrivacyCash } = await import("privacycash");
+        const privacyCash = new (PrivacyCash as any)({
+            RPC_url: this.connection.rpcEndpoint,
+            owner: this.relayKeypair,
+            enableDebug: false,
+            programId: this.privacyCashProgramId,
+        });
+
+        const lamports = Math.floor(amount * LAMPORTS_PER_SOL);
+        const result = await privacyCash.withdraw({
+            lamports,
+            recipientAddress: stealthResult.stealthAddress,
+        });
+        const signature = result?.tx || result?.signature;
+
+        if (!signature) {
+            throw new Error('Transfer failed: No transaction signature returned from PrivacyCash.');
+        }
 
         return {
             success: true,
-            signature: txHash,
+            signature,
             stealthAddress: stealthResult.stealthAddress,
             amount,
             decoyOutputs: decoys.map((d) => d.stealthAddress),
@@ -402,15 +393,11 @@ export class PrivacyRelay {
                 },
             };
         } catch (error) {
-            // Fallback demo mode
-            return {
-                success: true,
-                signature: `shield_demo_${Date.now().toString(36)}`,
-                ashbornNote: ashbornResult?.noteAddress,
-                layered: !!ashbornResult,
-                demo: true,
-                relay: { version: PrivacyRelay.VERSION },
-            };
+            // No fallback - fail explicitly
+            throw new Error(
+                `Shield operation failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+                'Ensure PrivacyCash SDK is properly configured.'
+            );
         }
     }
 
@@ -448,13 +435,11 @@ export class PrivacyRelay {
                 relay: { version: PrivacyRelay.VERSION },
             };
         } catch (error) {
-            // Fallback demo mode
-            return {
-                success: true,
-                signature: `unshield_demo_${Date.now().toString(36)}`,
-                demo: true,
-                relay: { version: PrivacyRelay.VERSION },
-            };
+            // No fallback - fail explicitly
+            throw new Error(
+                `Unshield operation failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+                'Ensure PrivacyCash SDK is properly configured.'
+            );
         }
     }
 }

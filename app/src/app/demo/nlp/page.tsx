@@ -108,8 +108,8 @@ export default function NLPDemoPage() {
                             className={`${msg.role === 'user' ? 'text-right' : ''}`}
                         >
                             <div className={`inline-block max-w-[85%] ${msg.role === 'user'
-                                    ? 'bg-blue-500/20 border border-blue-500/30 text-blue-200'
-                                    : 'bg-green-500/10 border border-green-500/30 text-green-300'
+                                ? 'bg-blue-500/20 border border-blue-500/30 text-blue-200'
+                                : 'bg-green-500/10 border border-green-500/30 text-green-300'
                                 } px-4 py-2`}>
                                 <div className="text-[10px] mb-1 opacity-60">
                                     {msg.role === 'user' ? '> USER' : '> ASHBORN_AI'}
@@ -185,6 +185,18 @@ export default function NLPDemoPage() {
                     <p>$ Type natural language commands</p>
                     <p>$ AI parses intent and executes privacy operations</p>
                     <p>$ No wallet required • Server-side execution</p>
+                </div>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center mt-8 pb-4">
+                <div className="text-xs text-gray-600 mb-2 font-mono">$ POWERED_BY</div>
+                <div className="flex items-center justify-center gap-2 flex-wrap text-xs font-mono">
+                    <span className="bg-red-500/10 text-red-400 px-2 py-1 border border-red-500/20">🔥 ASHBORN</span>
+                    <span className="bg-blue-500/10 text-blue-400 px-2 py-1 border border-blue-500/20">PRIVACYCASH</span>
+                    <span className="bg-purple-500/10 text-purple-400 px-2 py-1 border border-purple-500/20">RADR_LABS</span>
+                    <span className="bg-amber-500/10 text-amber-400 px-2 py-1 border border-amber-500/20">X402</span>
+                    <span className="bg-yellow-500/10 text-yellow-400 px-2 py-1 border border-yellow-500/20">⚡ LIGHT_PROTOCOL (MERKLE)</span>
                 </div>
             </div>
         </div>

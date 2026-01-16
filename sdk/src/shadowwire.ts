@@ -259,9 +259,10 @@ export class ShadowWire {
     nullifier: Uint8Array,
     senderCommitment: Uint8Array,
     recipientCommitment: Uint8Array,
-    options: { strict?: boolean } = {},
+    _options: { _strict?: boolean } = {},
   ): Promise<Uint8Array> {
-    const strict = options.strict ?? (process.env.ASHBORN_STRICT_MODE === 'true');
+    // strict mode deprecated - always strict now
+    // const strict = options.strict ?? (process.env.ASHBORN_STRICT_MODE === 'true');
 
     try {
       const input = {
@@ -279,28 +280,12 @@ export class ShadowWire {
       console.log("✅ Real ZK proof generated");
       return new Uint8Array(128);
     } catch (error) {
-      if (strict) {
-        throw new Error(
-          "ZK CIRCUIT ERROR: Transfer circuit artifacts not found.\n" +
-          "Run `npx @ashborn/circuits download` to install required files.\n" +
-          `Original error: ${error}`
-        );
-      }
-
-      console.warn(
-        "⚠️ ZK SIMULATION MODE: Circuit artifacts not found.\n" +
-        "This is NOT secure for production."
+      // No simulation fallback - always throw
+      throw new Error(
+        "ZK CIRCUIT ERROR: Transfer circuit artifacts not found.\n" +
+        "Run `npx @ashborn/circuits download` to install required files.\n" +
+        `Original error: ${error}`
       );
-
-      const proof = new Uint8Array(128);
-      for (let i = 0; i < 32; i++) {
-        proof[i] = nullifier[i];
-        proof[i + 32] = senderCommitment[i];
-        proof[i + 64] = recipientCommitment[i];
-        proof[i + 96] = nullifier[i] ^ senderCommitment[i] ^ recipientCommitment[i];
-      }
-
-      return proof;
     }
   }
 
