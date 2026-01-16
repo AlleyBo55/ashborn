@@ -373,7 +373,7 @@ export default function DocsPage() {
                                     <p className="text-sm text-gray-400">2. Add the result to <code className="text-xs bg-white/10 px-1 py-0.5 rounded">.env.local</code>:</p>
                                     <CodeBlock
                                         language="bash"
-                                        code="NEXT_PUBLIC_ALT_ADDRESS=8X48JwWPcBGqsYsH2bgtbt7aPfMiUfx1yFDjjnPM4RrB"
+                                        code="NEXT_PUBLIC_ALT_ADDRESS=FA8AfRJYQPuEtVmVpi3vBb1A7ziRCaBYkkEiRnqP7cDd"
                                         filename=".env.local"
                                     />
                                 </div>

@@ -129,7 +129,9 @@ export default function ShadowAgentDemoPage() {
             console.error('Shadow Agent error:', err);
             addChat('system', `❌ Error: ${err instanceof Error ? err.message : 'Demo failed'}`);
             setErrorState(err instanceof Error ? err.message : 'Demo failed');
-            setStep('complete');
+            // setStep('complete'); // Do NOT complete on error
+            setStep('idle'); // Revert to idle or stay on current step? Idle allows retry.
+
         }
     };
 
