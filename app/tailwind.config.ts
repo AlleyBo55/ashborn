@@ -46,6 +46,8 @@ module.exports = {
         'burn': 'burn 4s ease-in-out infinite alternate',
         'slam': 'slam 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
         'glitch': 'glitch 2s infinite',
+        'shimmer': 'shimmer 2s linear infinite',
+        'gradient-x': 'gradient-x 5s ease infinite',
       },
       keyframes: {
         float: {
@@ -71,6 +73,20 @@ module.exports = {
           '60%': { transform: 'translate(2px, 2px)' },
           '80%': { transform: 'translate(2px, -2px)' },
           '100%': { transform: 'translate(0)' },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        'gradient-x': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center',
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center',
+          },
         },
       },
     },

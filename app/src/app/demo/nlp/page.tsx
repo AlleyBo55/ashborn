@@ -2,18 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    AiChat02Icon,
-    SentIcon,
-    UserIcon,
-    Loading03Icon,
-    Coins01Icon
-} from 'hugeicons-react';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import ClientWalletButton from '@/components/ui/ClientWalletButton';
-import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
+import { AiChat02Icon, SentIcon, UserIcon, Loading03Icon, AlertCircleIcon } from 'hugeicons-react';
 import { DemoPageHeader } from '@/components/demo/DemoPageHeader';
-import { BaseText } from '@/components/ui/base/BaseText';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -34,14 +24,11 @@ const EXAMPLE_COMMANDS = [
 ];
 
 export default function NLPDemoPage() {
-    const { connection } = useConnection();
-    const { publicKey, sendTransaction } = useWallet();
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'assistant', content: "👋 **Welcome to Ashborn AI**\n\nI can execute privacy commands using the SDK.\nCost per request: **0.001 SOL** (Micropayment)\n\nTry saying: *\"Shield 5 SOL and send to 9TW3...\"* or *\"Send to alleyboss.sol\"*" },
+        { role: 'assistant', content: "👋 **Welcome to Ashborn AI**\n\nI can execute privacy commands using the SDK.\n\nTry saying: *\"Shield 5 SOL and send to 9TW3...\"* or *\"Send to alleyboss.sol\"*" },
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [paymentStatus, setPaymentStatus] = useState<'idle' | 'paying' | 'paid'>('idle');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
@@ -55,47 +42,16 @@ export default function NLPDemoPage() {
         setIsTyping(true);
 
         try {
-            // 1. Attempt Request
-            let response = await fetch('/api/agent', {
+            // Call agent API directly (no micropayment for demo)
+            const response = await fetch('/api/agent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: input })
+                body: JSON.stringify({
+                    message: input,
+                    persona: 'architect',
+                    systemPrompt: `You are Ashborn AI, a privacy-focused AI agent. Parse natural language commands and respond with structured privacy operations. When a user says "shield X SOL", acknowledge and explain the shielding process. When they say "send to address", explain stealth address generation. Always be helpful and privacy-focused.`
+                })
             });
-
-            // 2. Handle 402 Payment Required
-            if (response.status === 402) {
-                if (!publicKey) {
-                    setMessages(prev => [...prev, { role: 'assistant', content: "⚠️ **Wallet Required**\n\nPlease connect your wallet to pay the 0.001 SOL query fee." }]);
-                    setIsTyping(false);
-                    return;
-                }
-
-                setPaymentStatus('paying');
-                const paymentInfo = await response.json(); // { address, amount, token }
-
-                // Create Payment Transaction
-                const transaction = new Transaction().add(
-                    SystemProgram.transfer({
-                        fromPubkey: publicKey,
-                        toPubkey: new PublicKey(paymentInfo.address),
-                        lamports: paymentInfo.amount,
-                    })
-                );
-
-                const signature = await sendTransaction(transaction, connection);
-                await connection.confirmTransaction(signature, 'confirmed');
-                setPaymentStatus('paid');
-
-                // 3. Retry Request with Proof of Payment
-                response = await fetch('/api/agent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Solana ${signature}`
-                    },
-                    body: JSON.stringify({ message: input })
-                });
-            }
 
             if (!response.ok) throw new Error("AI Request failed");
 
@@ -104,11 +60,7 @@ export default function NLPDemoPage() {
             setMessages(prev => [...prev, {
                 role: 'assistant',
                 content: data.reply,
-                parsed: {
-                    action: data.action,
-                    params: data.params,
-                    confidence: data.confidence
-                }
+                parsed: data.parsed
             }]);
 
         } catch (error) {
@@ -116,41 +68,50 @@ export default function NLPDemoPage() {
             setMessages(prev => [...prev, { role: 'assistant', content: "❌ **Error**\n\nFailed to reach the agent. Please try again." }]);
         } finally {
             setIsTyping(false);
-            setPaymentStatus('idle');
         }
     };
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
+            {/* Demo Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Lightweight Demo</p>
+                        <p className="text-amber-200/70 text-xs">No wallet required. AI agent runs via /api/agent.</p>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoPageHeader
                 badge="AI_AGENT_PROTOCOL"
                 title="Shadow Whisper"
-                description="Command privacy operations with natural language. Powered by LLMs and paid via x402 micropayments."
+                description="Command privacy operations with natural language. Powered by Claude AI via Ashborn Privacy Relay."
                 icon={AiChat02Icon}
+                privacyRelay
             />
 
             <div className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
                 {/* Chat Header */}
                 <div className="p-4 border-b border-white/10 bg-white/[0.02]">
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
-                                <AiChat02Icon className="w-4 h-4" />
-                            </div>
-                            <div>
-                                <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
-                                <p className="text-[10px] text-gray-400">Powered by OpenAI &amp; x402 Paywall</p>
-                            </div>
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                            <AiChat02Icon className="w-4 h-4" />
                         </div>
-                        {!publicKey && <ClientWalletButton className="!bg-purple-600 !h-8 !text-xs !px-3" />}
+                        <div>
+                            <h2 className="text-sm font-semibold text-white">Ashborn AI Interface</h2>
+                            <p className="text-[10px] text-gray-400">Powered by Claude AI</p>
+                        </div>
                     </div>
-                    {/* How it works mini-guide */}
                     <div className="flex flex-wrap gap-1.5 text-[10px]">
                         <span className="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20">1. Type Command</span>
                         <span className="text-gray-600">→</span>
-                        <span className="bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded border border-amber-500/20">2. Pay 0.001 SOL</span>
-                        <span className="text-gray-600">→</span>
-                        <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded border border-green-500/20">3. AI Executes</span>
+                        <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded border border-green-500/20">2. AI Responds</span>
                     </div>
                 </div>
 
@@ -175,32 +136,17 @@ export default function NLPDemoPage() {
                                         __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-black/30 px-1 rounded font-mono text-xs">$1</code>').replace(/\n/g, '<br/>')
                                     }} />
                                 </div>
-                                {msg.parsed && msg.role === 'user' && (
-                                    <div className="mt-1 text-[10px] text-gray-600 font-mono text-right">
-                                        Parsed: {msg.parsed.action} • {Math.round(msg.parsed.confidence * 100)}%
-                                    </div>
-                                )}
                             </div>
                         </motion.div>
                     ))}
 
-                    {/* Status Indicator */}
                     <AnimatePresence>
-                        {(isTyping || paymentStatus === 'paying') && (
+                        {isTyping && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-3">
                                 <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center"><AiChat02Icon className="w-4 h-4 text-purple-400" /></div>
                                 <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-2 text-xs text-gray-400">
-                                    {paymentStatus === 'paying' ? (
-                                        <>
-                                            <Coins01Icon className="w-3 h-3 text-yellow-500 animate-pulse" />
-                                            <span>Processing micropayment (0.001 SOL)...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Loading03Icon className="w-3 h-3 animate-spin text-purple-400" />
-                                            <span>Ashborn is thinking...</span>
-                                        </>
-                                    )}
+                                    <Loading03Icon className="w-3 h-3 animate-spin text-purple-400" />
+                                    <span>Ashborn is thinking...</span>
                                 </div>
                             </motion.div>
                         )}
@@ -223,11 +169,11 @@ export default function NLPDemoPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                            disabled={isTyping || paymentStatus !== 'idle'}
+                            disabled={isTyping}
                             placeholder="Type a command..."
                             className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 focus:outline-none transition placeholder:text-gray-600 disabled:opacity-50"
                         />
-                        <button onClick={handleSend} disabled={!input.trim() || isTyping || paymentStatus !== 'idle'} className="px-4 bg-white text-black hover:bg-gray-200 rounded-xl transition disabled:opacity-50 font-medium flex items-center justify-center">
+                        <button onClick={handleSend} disabled={!input.trim() || isTyping} className="px-4 bg-white text-black hover:bg-gray-200 rounded-xl transition disabled:opacity-50 font-medium flex items-center justify-center">
                             <SentIcon className="w-4 h-4" />
                         </button>
                     </div>

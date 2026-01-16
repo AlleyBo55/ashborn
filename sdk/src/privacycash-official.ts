@@ -16,6 +16,7 @@ export interface PrivacyCashConfig {
     rpcUrl: string;
     owner: Keypair | Uint8Array | string;
     enableDebug?: boolean;
+    programId?: string; // Custom program ID for devnet deployment
 }
 
 export interface DepositResult {
@@ -46,6 +47,7 @@ export class PrivacyCashOfficial {
             RPC_url: config.rpcUrl,
             owner: config.owner,
             enableDebug: config.enableDebug ?? false,
+            ...(config.programId && { programId: config.programId }),
         });
         this._publicKey = this.client.publicKey;
     }

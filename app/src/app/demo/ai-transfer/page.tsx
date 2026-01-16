@@ -1,29 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { SentIcon, CheckmarkCircle01Icon, Loading03Icon, UserGroupIcon, ViewIcon, ViewOffIcon, ArrowRight01Icon } from 'hugeicons-react'; // Assumed names
+import { SentIcon, CheckmarkCircle01Icon, Loading03Icon, UserGroupIcon, ViewIcon, ViewOffIcon, ArrowRight01Icon, AlertCircleIcon } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useAshborn } from '@/hooks/useAshborn';
 import { DemoPageHeader, InfoCard, DemoButton, PrivacyVisualizer, TxLink } from '@/components/demo';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
-import { useConnection } from '@solana/wallet-adapter-react';
+
+const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
 type Step = 'idle' | 'generating' | 'transferring' | 'scanning' | 'complete';
 
 export default function AITransferDemoPage() {
-    const { connected, publicKey, sendTransaction } = useWallet();
-    const { connection } = useConnection();
-    const { shadowWire, isReady } = useAshborn();
-
-    // Status management
     const [step, setStep] = useState<Step>('idle');
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
 
-    const [amount, setAmount] = useState('0.5');
-    const [recipientPubkey, setRecipientPubkey] = useState('');
+    const [amount, setAmount] = useState('0.01');
     const [txData, setTxData] = useState<{ stealthAddr?: string; decoys?: string[]; signature?: string }>({});
 
     const resetDemo = () => {
@@ -33,47 +25,38 @@ export default function AITransferDemoPage() {
     };
 
     const runTransferDemo = async () => {
-        if (!connected || !publicKey || !sendTransaction) return;
-
         try {
             setStatus('loading');
 
-            // Step 1: Generate stealth address
+            // Step 1: Generate stealth address via API
             setStep('generating');
-            let stealthAddr: PublicKey;
+            const stealthRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stealth', params: { recipient: DEMO_WALLET } })
+            });
+            const stealthData = await stealthRes.json();
+            if (!stealthData.success) throw new Error(stealthData.error || 'Stealth generation failed');
+            setTxData({ stealthAddr: stealthData.stealthAddress });
 
-            if (shadowWire && isReady) {
-                const stealth = await shadowWire.generateStealthAddress();
-                stealthAddr = new PublicKey(stealth.stealthPubkey);
-                setTxData({ stealthAddr: stealthAddr.toBase58() });
-            } else {
-                stealthAddr = publicKey; // Fallback only if SDK fails (shouldn't happen with Context)
-                setTxData({ stealthAddr: `stealth_${publicKey.toBase58().slice(0, 12)}` });
-            }
-
-            // Step 2: Transfer with decoys (real tx)
+            // Step 2: Transfer with decoys via API
             setStep('transferring');
-            const amountLamports = Math.floor(parseFloat(amount) * LAMPORTS_PER_SOL);
-
-            const transaction = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: stealthAddr,
-                    lamports: amountLamports,
+            const transferRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'transfer',
+                    params: { amount: parseFloat(amount), recipient: DEMO_WALLET }
                 })
-            );
+            });
+            const transferData = await transferRes.json();
+            if (!transferData.success) throw new Error(transferData.error || 'Transfer failed');
 
-            const signature = await sendTransaction(transaction, connection);
-            await connection.confirmTransaction(signature, 'confirmed');
-
-            // Generate decoy display addresses (simulated for UI view of what happened on-chain)
-            const decoys = [
-                PublicKey.unique().toBase58().slice(0, 16) + '...',
-                PublicKey.unique().toBase58().slice(0, 16) + '...',
-                PublicKey.unique().toBase58().slice(0, 16) + '...',
-            ];
-
-            setTxData(prev => ({ ...prev, decoys, signature }));
+            setTxData(prev => ({
+                ...prev,
+                signature: transferData.signature,
+                decoys: transferData.decoyOutputs
+            }));
 
             // Step 3: Recipient scans
             setStep('scanning');
@@ -83,16 +66,15 @@ export default function AITransferDemoPage() {
             setStatus('success');
         } catch (err) {
             console.error('Transfer error:', err);
-            setTxData(prev => ({ ...prev, signature: `error: ${err instanceof Error ? err.message : 'failed'}` }));
             setErrorState(err instanceof Error ? err.message : 'Transfer failed');
             setStep('complete');
         }
     };
 
     const steps = [
-        { id: 'generating', label: 'Generate Stealth Address', icon: ViewIcon, desc: 'One-time address for recipient' },
-        { id: 'transferring', label: 'Transfer + Decoys', icon: UserGroupIcon, desc: '1 real + 3 fake outputs' },
-        { id: 'scanning', label: 'Recipient Scans', icon: ViewOffIcon, desc: 'Only recipient can identify real output' },
+        { id: 'generating', label: 'Stealth Address', icon: ViewOffIcon, desc: 'Generate one-time recipient' },
+        { id: 'transferring', label: 'Ring Transfer', icon: SentIcon, desc: 'Send with decoy outputs' },
+        { id: 'scanning', label: 'Recipient Scan', icon: ViewIcon, desc: 'Detect incoming payment' },
     ];
 
     const getStepStatus = (stepId: string) => {
@@ -106,33 +88,47 @@ export default function AITransferDemoPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">
+            {/* Demo Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo</p>
+                        <p className="text-amber-200/70 text-xs">All operations run via API. No wallet required.</p>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoPageHeader
                 icon={SentIcon}
                 badge="AI-to-AI Transfer"
-                title="Stealth Transfer + Decoys"
-                description="Direct agent-to-agent transfer using Stealth Addresses + Decoy Outputs. Fully untraceable."
-                color="purple"
+                title="Private Stealth Transfer"
+                description="Transfer via stealth addresses with ring decoys. Ashborn acts as your Privacy Relay — protocols never see your identity."
+                color="blue"
+                privacyRelay
             />
 
             <InfoCard
                 icon={UserGroupIcon}
-                title="How Decoys Work"
-                color="purple"
+                title="Ring Signatures & Stealth Addresses"
+                color="blue"
                 steps={[
-                    { label: "Stealth Addr", color: "purple" },
-                    { label: "Decoy Outputs", color: "amber" },
-                    { label: "Mix On-Chain", color: "blue" },
-                    { label: "Scan & Claim", color: "green" }
+                    { label: "Generate Stealth", color: "purple" },
+                    { label: "Create Decoys", color: "blue" },
+                    { label: "Sign & Send", color: "green" }
                 ]}
             >
                 <div>
-                    The transaction creates <strong>4 identical outputs</strong> on-chain: 1 real + 3 decoys.
-                    Observer cannot determine which output is real, breaking graph analysis.
-                    Only the recipient (using their private View Key) can identify and claim the real funds.
+                    The sender creates a one-time address and mixes the real output with decoys.
+                    Observers cannot determine which output is the real payment.
                 </div>
             </InfoCard>
 
-            {/* Custom Progress (keep inline logic) */}
+            {/* Progress */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -146,14 +142,14 @@ export default function AITransferDemoPage() {
                             <div key={s.id} className="flex items-center gap-4">
                                 <div className={`
                                     w-10 h-10 rounded-full flex items-center justify-center transition-all
-                                    ${status === 'complete' ? 'bg-purple-500/20 border border-purple-500/50' : ''}
-                                    ${status === 'active' ? 'bg-purple-500/20 border border-purple-500/50 animate-pulse' : ''}
+                                    ${status === 'complete' ? 'bg-blue-500/20 border border-blue-500/50' : ''}
+                                    ${status === 'active' ? 'bg-blue-500/20 border border-blue-500/50 animate-pulse' : ''}
                                     ${status === 'pending' ? 'bg-white/5 border border-white/10' : ''}
                                 `}>
                                     {status === 'complete' ? (
-                                        <CheckmarkCircle01Icon className="w-5 h-5 text-purple-400" />
+                                        <CheckmarkCircle01Icon className="w-5 h-5 text-blue-400" />
                                     ) : status === 'active' ? (
-                                        <Loading03Icon className="w-5 h-5 text-purple-400 animate-spin" />
+                                        <Loading03Icon className="w-5 h-5 text-blue-400 animate-spin" />
                                     ) : (
                                         <Icon className="w-5 h-5 text-gray-500" />
                                     )}
@@ -169,55 +165,42 @@ export default function AITransferDemoPage() {
                 </div>
             </motion.div>
 
-            {/* Action or Result */}
+            {/* Result */}
             {isSuccess ? (
                 <div className="space-y-6">
                     <PrivacyVisualizer
                         publicView={
                             <div>
-                                <div className="text-gray-500 text-xs mb-1">On-Chain View (The Observer)</div>
+                                <div className="text-gray-500 text-xs mb-1">On-Chain View</div>
                                 <div className="text-xs space-y-2">
-                                    <div className="p-2 bg-white/5 rounded border border-white/10 flex justify-between">
-                                        <span className="text-gray-400">Output #1 (0.5 SOL)</span>
-                                        <span className="text-gray-600">Addr: {txData.decoys?.[0]}</span>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-400">Stealth:</span>
+                                        <span className="text-purple-300 font-mono">{txData.stealthAddr?.slice(0, 16)}...</span>
                                     </div>
-                                    <div className="p-2 bg-white/5 rounded border border-white/10 flex justify-between">
-                                        <span className="text-gray-400">Output #2 (0.5 SOL)</span>
-                                        <span className="text-gray-600">Addr: {txData.stealthAddr?.slice(0, 16)}...</span>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-400">Ring Size:</span>
+                                        <span className="text-blue-300">4 (3 decoys)</span>
                                     </div>
-                                    <div className="p-2 bg-white/5 rounded border border-white/10 flex justify-between">
-                                        <span className="text-gray-400">Output #3 (0.5 SOL)</span>
-                                        <span className="text-gray-600">Addr: {txData.decoys?.[1]}</span>
-                                    </div>
-                                    <div className="flex justify-between border-t border-white/5 pt-2">
-                                        <span className="text-gray-400">Scan Tx:</span>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-400">Tx:</span>
                                         {txData.signature && <TxLink signature={txData.signature} className="text-xs" />}
-                                    </div>
-                                    <div className="mt-2 text-center text-gray-500 italic">
-                                        &quot;Which one is the real payment?&quot;
                                     </div>
                                 </div>
                             </div>
                         }
                         privateView={
                             <div>
-                                <div className="text-gray-500 text-xs mb-1">Recipient View (View Key)</div>
+                                <div className="text-gray-500 text-xs mb-1">Recipient View</div>
                                 <div className="text-xs space-y-2">
-                                    <div className="p-2 opacity-30 border border-transparent flex justify-between">
-                                        <span className="text-gray-500">Output #1</span>
-                                        <span className="text-gray-600">Decoy (Ignored)</span>
+                                    <div className="flex justify-between">
+                                        <span className="text-green-300">Amount:</span>
+                                        <span className="text-white">{amount} SOL</span>
                                     </div>
-                                    <div className="p-2 bg-purple-500/20 rounded border border-purple-500/50 flex justify-between relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-purple-500/10 animate-pulse"></div>
-                                        <span className="text-purple-300 relative z-10 font-bold">Output #2 (MATCH)</span>
-                                        <span className="text-purple-300 relative z-10">Real Funds</span>
-                                    </div>
-                                    <div className="p-2 opacity-30 border border-transparent flex justify-between">
-                                        <span className="text-gray-500">Output #3</span>
-                                        <span className="text-gray-600">Decoy (Ignored)</span>
-                                    </div>
-                                    <div className="mt-2 text-center text-purple-400 font-semibold">
-                                        Recovered via ECDH scan
+                                    <div className="text-gray-500 mt-2">Decoys:</div>
+                                    <div className="flex flex-wrap gap-1">
+                                        {txData.decoys?.map((d, i) => (
+                                            <span key={i} className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded">{d.slice(0, 12)}...</span>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -225,68 +208,54 @@ export default function AITransferDemoPage() {
                     />
 
                     <div className="flex justify-center">
-                        <DemoButton onClick={resetDemo} icon={UserGroupIcon}>
-                            Make Another Transfer
+                        <DemoButton onClick={resetDemo} icon={SentIcon}>
+                            Send Another
                         </DemoButton>
                     </div>
                 </div>
             ) : (
                 <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Amount (SOL)</label>
-                            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono" disabled={step !== 'idle'} />
-                        </div>
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Recipient Pubkey</label>
-                            <input type="text" value={recipientPubkey} onChange={(e) => setRecipientPubkey(e.target.value)}
-                                placeholder="Agent B's public key..."
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono placeholder:text-gray-600" disabled={step !== 'idle'} />
-                        </div>
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-2">Amount (SOL)</label>
+                        <input
+                            type="number"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono"
+                            disabled={step !== 'idle'}
+                        />
                     </div>
 
-                    {!connected ? (
-                        <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
-                            <p className="text-gray-400 text-sm">Connect wallet to send AI transfer</p>
-                        </div>
-                    ) : (
-                        <DemoButton
-                            onClick={runTransferDemo}
-                            loading={isLoading}
-                            disabled={isLoading}
-                            icon={SentIcon}
-                            variant="gradient"
-                        >
-                            Send Stealth Transfer
-                        </DemoButton>
-                    )}
+                    <DemoButton
+                        onClick={runTransferDemo}
+                        loading={isLoading}
+                        disabled={isLoading}
+                        icon={SentIcon}
+                        variant="gradient"
+                    >
+                        {isLoading ? 'Processing...' : 'Execute Transfer'}
+                    </DemoButton>
+
+                    <p className="text-center text-xs text-gray-500">
+                        Server-side API • No wallet required
+                    </p>
                 </div>
             )}
 
-            {/* Implementation Code */}
+            {/* Code Example */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
                 <CodeBlock
                     language="typescript"
-                    code={`import { Ashborn, ShadowWire, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
-
-const ashborn = new Ashborn(connection, wallet);
-const shadowWire = new ShadowWire(connection, wallet);
-
-// 1. Generate one-time stealth address for recipient
-const stealth = await shadowWire.generateStealthAddress(recipientPubkey);
-
-// 2. Transfer with decoys (Monero-style)
-const tx = await ashborn.shadowTransfer({
-  amount: 500_000_000n,              // 0.5 SOL
-  recipientStealthAddress: stealth.address,
-  useDecoys: true,                    // Adds 3 fake outputs
-  viaRelayer: true,                   // Hide sender IP
+                    code={`// Server-side transfer via API
+const stealthRes = await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({ action: 'stealth', params: { recipient } })
 });
 
-// 3. Recipient scans with View Key
-const matches = await shadowWire.scanForPayments(viewKey);`}
+const transferRes = await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({ action: 'transfer', params: { amount: 0.01 } })
+});`}
                     filename="ai-transfer.ts"
                 />
             </motion.div>

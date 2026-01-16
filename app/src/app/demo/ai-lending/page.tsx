@@ -1,35 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { AiChat01Icon, Money03Icon, CheckmarkCircle01Icon, Loading03Icon, Shield02Icon, ArrowRight01Icon, ChartHistogramIcon, LinkSquare02Icon } from 'hugeicons-react';
+import { Money03Icon, CheckmarkCircle01Icon, Loading03Icon, Shield02Icon, ArrowRight01Icon, ChartHistogramIcon, AlertCircleIcon } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { useAshborn } from '@/hooks/useAshborn';
-import { Transaction, SystemProgram, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { DemoPageHeader, InfoCard, DemoButton, PrivacyVisualizer, TxLink } from '@/components/demo';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
-import { useConnection } from '@solana/wallet-adapter-react';
 
-const randomBytes = (length: number): Uint8Array => {
-    const bytes = new Uint8Array(length);
-    crypto.getRandomValues(bytes);
-    return bytes;
-};
+const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
 type Step = 'idle' | 'proving' | 'lending' | 'confirming' | 'complete';
 
 export default function AILendingDemoPage() {
-    const { connected, publicKey, sendTransaction } = useWallet();
-    const { connection } = useConnection();
-    const { rangeCompliance, shadowWire, isReady } = useAshborn();
-
-    // Status
     const [step, setStep] = useState<Step>('idle');
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
 
-    const [loanAmount, setLoanAmount] = useState('1.0');
-    const [collateralRange, setCollateralRange] = useState({ min: '2', max: '10' });
+    const [loanAmount, setLoanAmount] = useState('0.01');
+    const [collateralRange, setCollateralRange] = useState({ min: '0.02', max: '0.1' });
     const [loanData, setLoanData] = useState<{ id?: string; proofHash?: string; signature?: string; stealthAddr?: string }>({});
 
     const resetDemo = () => {
@@ -39,64 +26,55 @@ export default function AILendingDemoPage() {
     };
 
     const runLendingDemo = async () => {
-        if (!connected || !publicKey || !sendTransaction) return;
-
         try {
             setStatus('loading');
 
-            // Step 1: Generate ZK collateral proof
+            // Step 1: Generate ZK collateral proof via API
             setStep('proving');
-            let proofHash = '';
-            if (rangeCompliance && isReady) {
-                const minBigInt = BigInt(parseInt(collateralRange.min) * LAMPORTS_PER_SOL);
-                const maxBigInt = BigInt(parseInt(collateralRange.max) * LAMPORTS_PER_SOL);
-                const testBalance = minBigInt + (maxBigInt - minBigInt) / BigInt(2);
-                const blinding = randomBytes(32);
+            const proofRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'prove',
+                    params: {
+                        balance: 0.05,
+                        min: parseFloat(collateralRange.min),
+                        max: parseFloat(collateralRange.max)
+                    }
+                })
+            });
+            const proofData = await proofRes.json();
+            if (!proofData.success) throw new Error(proofData.error || 'Proof generation failed');
 
-                const proof = await rangeCompliance.generateRangeProof(
-                    testBalance,
-                    blinding,
-                    minBigInt,
-                    maxBigInt
-                );
-                proofHash = `groth16_${Buffer.from(proof.proof.slice(0, 12)).toString('hex')}...`;
-            } else {
-                await new Promise(r => setTimeout(r, 2000));
-                proofHash = `groth16_${Math.random().toString(16).slice(2, 14)}...`;
-            }
+            const proofHash = `groth16_${proofData.proof.slice(0, 12)}...`;
             setLoanData(prev => ({ ...prev, proofHash }));
 
-            // Step 2: Lender transfers (Real Tx)
+            // Step 2: Lender disburses via API
             setStep('lending');
-
-            // Real transfer simulation (Lender -> Borrower/Stealth)
-            const transaction = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: publicKey, // Self for demo purposes
-                    lamports: Math.floor(parseFloat(loanAmount) * LAMPORTS_PER_SOL),
+            const shieldRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'shield',
+                    params: { amount: parseFloat(loanAmount) }
                 })
-            );
-            const signature = await sendTransaction(transaction, connection);
-            await connection.confirmTransaction(signature, 'confirmed');
+            });
+            const shieldData = await shieldRes.json();
+            if (!shieldData.success) throw new Error(shieldData.error || 'Lending failed');
+            setLoanData(prev => ({ ...prev, signature: shieldData.signature }));
 
-            setLoanData(prev => ({ ...prev, signature }));
+            // Generate stealth address via API
+            const stealthRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stealth', params: { recipient: DEMO_WALLET } })
+            });
+            const stealthData = await stealthRes.json();
+            setLoanData(prev => ({ ...prev, stealthAddr: stealthData.stealthAddress }));
 
-            // Generate stealth address (simulation)
-            const stealthString = `stealth_${publicKey.toBase58().slice(0, 10)}`;
-            setLoanData(prev => ({ ...prev, stealthAddr: stealthString }));
-
-            // Step 3: Confirm loan (Real Tx simulation)
+            // Step 3: Confirm loan
             setStep('confirming');
-            const confirmTx = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: publicKey,
-                    lamports: 1000,
-                })
-            );
-            const confirmSig = await sendTransaction(confirmTx, connection);
-            await connection.confirmTransaction(confirmSig, 'confirmed');
+            await new Promise(r => setTimeout(r, 1000));
 
             const loanId = `loan_${Math.random().toString(36).substring(7)}`;
             setLoanData(prev => ({ ...prev, id: loanId }));
@@ -105,7 +83,7 @@ export default function AILendingDemoPage() {
             setStatus('success');
         } catch (err) {
             console.error('Lending error:', err);
-            setErrorState('Lending failed');
+            setErrorState(err instanceof Error ? err.message : 'Lending failed');
             setStep('complete');
         }
     };
@@ -127,12 +105,36 @@ export default function AILendingDemoPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">
+            {/* Demo Wallet Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo</p>
+                        <p className="text-amber-200/70 text-xs leading-relaxed">
+                            All operations run server-side via API. No wallet connection required.
+                        </p>
+                        <div className="mt-2 flex items-center gap-2">
+                            <span className="text-amber-400/60 text-xs">Demo Signer:</span>
+                            <code className="text-amber-300 text-xs font-mono bg-amber-500/10 px-2 py-0.5 rounded">
+                                {DEMO_WALLET}
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoPageHeader
                 icon={Money03Icon}
                 badge="AI-to-AI Lending"
                 title="Private Collateral Lending"
-                description="Borrow between AI agents using ZK Range Proofs for collateral. Prove solvency without revealing exact balance."
+                description="Borrow between AI agents using ZK proofs. Ashborn acts as your Privacy Relay — protocols never see your identity."
                 color="green"
+                privacyRelay
             />
 
             <InfoCard
@@ -149,11 +151,10 @@ export default function AILendingDemoPage() {
                 <div>
                     The borrower proves: <code className="text-green-300">Balance ≥ 2× Loan</code> without revealing the exact balance.
                     This uses <strong>Groth16 Range Proofs</strong> via Ashborn ZK module.
-                    Lender verifies proof and disburses funds to a stealth address.
                 </div>
             </InfoCard>
 
-            {/* Custom Progress */}
+            {/* Progress */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -210,8 +211,10 @@ export default function AILendingDemoPage() {
                                         <span className="text-gray-400">Proof Hash:</span>
                                         <span className="text-gray-500 font-mono truncate max-w-[120px]">{loanData.proofHash}</span>
                                     </div>
-                                    <span className="text-gray-400">Loan Tx:</span>
-                                    {loanData.signature && <TxLink signature={loanData.signature} className="text-xs" />}
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-400">Loan Tx:</span>
+                                        {loanData.signature && <TxLink signature={loanData.signature} className="text-xs" />}
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -221,15 +224,11 @@ export default function AILendingDemoPage() {
                                 <div className="text-xs space-y-2">
                                     <div className="flex justify-between border-b border-purple-500/20 pb-1">
                                         <span className="text-purple-300">Actual Balance:</span>
-                                        <span className="text-white font-mono blur-[2px] hover:blur-none transition">50.0 SOL (Hidden)</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-purple-500/20 pb-1">
-                                        <span className="text-purple-300">Borrower Identity:</span>
-                                        <span className="text-white font-mono blur-[2px] hover:blur-none transition">{publicKey?.toBase58().slice(0, 8)}...</span>
+                                        <span className="text-white font-mono blur-[2px] hover:blur-none transition">0.05 SOL</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-purple-300">Receiver Stealth:</span>
-                                        <span className="text-green-400 font-mono">{loanData.stealthAddr?.slice(0, 8)}...</span>
+                                        <span className="text-purple-300">Stealth Address:</span>
+                                        <span className="text-green-400 font-mono">{loanData.stealthAddr?.slice(0, 12)}...</span>
                                     </div>
                                 </div>
                             </div>
@@ -262,21 +261,19 @@ export default function AILendingDemoPage() {
                         </div>
                     </div>
 
-                    {!connected ? (
-                        <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
-                            <p className="text-gray-400 text-sm">Connect wallet to execute AI lending</p>
-                        </div>
-                    ) : (
-                        <DemoButton
-                            onClick={runLendingDemo}
-                            loading={isLoading}
-                            disabled={isLoading}
-                            icon={Money03Icon}
-                            variant="gradient"
-                        >
-                            Execute Lending
-                        </DemoButton>
-                    )}
+                    <DemoButton
+                        onClick={runLendingDemo}
+                        loading={isLoading}
+                        disabled={isLoading}
+                        icon={Money03Icon}
+                        variant="gradient"
+                    >
+                        {isLoading ? 'Processing...' : 'Execute Lending'}
+                    </DemoButton>
+
+                    <p className="text-center text-xs text-gray-500">
+                        Uses API • No SDK required client-side • Fast loading
+                    </p>
                 </div>
             )}
 
@@ -285,20 +282,22 @@ export default function AILendingDemoPage() {
                 <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
                 <CodeBlock
                     language="typescript"
-                    code={`import { Ashborn, AshbornRangeCompliance, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
-
-// 1. Borrower generates ZK collateral proof
-const compliance = createRangeCompliance(ashborn);
-const proof = await compliance.generateRangeProof({
-  value: myBalance,
-  min: 2_000_000_000n,
-  max: 10_000_000_000n
+                    code={`// All operations happen server-side via /api/ashborn
+const proofRes = await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({
+    action: 'prove',
+    params: { balance: 0.05, min: 0.02, max: 0.1 }
+  })
 });
+const { proof, inRange } = await proofRes.json();
 
-// 2. Lender verifies proof and disburses
-const isValid = await compliance.verifyRangeProof(proof);
-if (isValid) {
-    await privacyCash.unshieldSOL(1.0, stealth.address);
+// Lender verifies and disburses
+if (inRange) {
+  await fetch('/api/ashborn', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'shield', params: { amount: 0.01 } })
+  });
 }`}
                     filename="ai-lending.ts"
                 />

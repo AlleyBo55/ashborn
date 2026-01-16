@@ -13,10 +13,11 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 
-import { AshbornProvider } from '@/context/AshbornContext';
-
 // Import wallet adapter CSS
 import '@solana/wallet-adapter-react-ui/styles.css';
+
+// NOTE: AshbornProvider REMOVED - all SDK operations now go through /api/ashborn
+// This dramatically reduces homepage bundle size since heavy WASM/SDK isn't loaded globally
 
 export function Providers({ children }: { children: React.ReactNode }) {
     // Use devnet for hackathon
@@ -35,9 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
                 <WalletModalProvider>
-                    <AshbornProvider>
-                        {children}
-                    </AshbornProvider>
+                    {children}
                 </WalletModalProvider>
             </WalletProvider>
         </ConnectionProvider>

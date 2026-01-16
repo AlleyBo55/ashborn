@@ -1,30 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { motion } from 'framer-motion';
-import { ArrowRight01Icon, Shield02Icon, SentIcon, Coins01Icon, CheckmarkCircle01Icon, Loading03Icon, FlashIcon, LinkSquare02Icon } from 'hugeicons-react';
+import { ArrowRight01Icon, Shield02Icon, SentIcon, Coins01Icon, CheckmarkCircle01Icon, Loading03Icon, FlashIcon, LinkSquare02Icon, AlertCircleIcon } from 'hugeicons-react';
 import CodeBlock from '@/components/ui/CodeBlock';
-import { useAshborn } from '@/hooks/useAshborn';
-import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { DemoPageHeader, InfoCard, DemoButton, PrivacyVisualizer, TxLink } from '@/components/demo';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
-import { useConnection } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
+
+const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
 type Step = 'idle' | 'shielding' | 'transferring' | 'unshielding' | 'complete';
 
 export default function InteropDemoPage() {
-    const { connected, publicKey, sendTransaction } = useWallet();
-    const { connection } = useConnection();
-    const { shadowWire, privacyCash, isReady } = useAshborn();
-
-    // Status
     const [step, setStep] = useState<Step>('idle');
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
 
     const [amount, setAmount] = useState('0.01');
-    const [recipient, setRecipient] = useState('');
     const [txHashes, setTxHashes] = useState<{ shield?: string; transfer?: string; unshield?: string }>({});
 
     const resetDemo = () => {
@@ -34,57 +26,41 @@ export default function InteropDemoPage() {
     };
 
     const runInteropDemo = async () => {
-        if (!connected || !publicKey || !sendTransaction) {
-            console.log('Not ready:', { connected, publicKey: !!publicKey, sendTransaction: !!sendTransaction });
-            return;
-        }
-
-        console.log('Starting interop demo...');
-
         try {
             setStatus('loading');
-            const amountLamports = Math.floor(parseFloat(amount) * LAMPORTS_PER_SOL);
-            const recipientPubkey = recipient ? new PublicKey(recipient) : publicKey;
 
-            // Step 1: Shield (to self - simulates pool deposit)
+            // Step 1: Shield via /api/ashborn
             setStep('shielding');
-            const tx1 = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: publicKey,
-                    lamports: amountLamports,
-                })
-            );
-            const shieldSig = await sendTransaction(tx1, connection);
-            await connection.confirmTransaction(shieldSig, 'confirmed');
-            setTxHashes(prev => ({ ...prev, shield: shieldSig }));
+            const shieldRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'shield', params: { amount: parseFloat(amount) } })
+            });
+            const shieldData = await shieldRes.json();
+            if (!shieldData.success) throw new Error(shieldData.error || 'Shield failed');
+            setTxHashes(prev => ({ ...prev, shield: shieldData.signature }));
 
-            // Step 2: Stealth Transfer (to generated stealth address)
+            // Step 2: Generate Stealth Address via /api/ashborn
             setStep('transferring');
-            const stealth = await shadowWire.generateStealthAddress();
-            const tx2 = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: stealth.stealthPubkey,
-                    lamports: amountLamports,
-                })
-            );
-            const transferSig = await sendTransaction(tx2, connection);
-            await connection.confirmTransaction(transferSig, 'confirmed');
-            setTxHashes(prev => ({ ...prev, transfer: transferSig }));
+            const stealthRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stealth', params: { recipient: DEMO_WALLET } })
+            });
+            const stealthData = await stealthRes.json();
+            if (!stealthData.success) throw new Error(stealthData.error || 'Stealth failed');
+            setTxHashes(prev => ({ ...prev, transfer: stealthData.stealthAddress }));
 
-            // Step 3: Unshield (to final recipient)
+            // Step 3: Unshield via /api/ashborn
             setStep('unshielding');
-            const tx3 = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: recipientPubkey,
-                    lamports: amountLamports,
-                })
-            );
-            const unshieldSig = await sendTransaction(tx3, connection);
-            await connection.confirmTransaction(unshieldSig, 'confirmed');
-            setTxHashes(prev => ({ ...prev, unshield: unshieldSig }));
+            const unshieldRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'unshield', params: { amount: parseFloat(amount), recipient: DEMO_WALLET } })
+            });
+            const unshieldData = await unshieldRes.json();
+            if (!unshieldData.success) throw new Error(unshieldData.error || 'Unshield failed');
+            setTxHashes(prev => ({ ...prev, unshield: unshieldData.signature }));
 
             setStep('complete');
             setStatus('success');
@@ -96,9 +72,9 @@ export default function InteropDemoPage() {
     };
 
     const steps = [
-        { id: 'shielding', label: 'Shield via PrivacyCash', icon: Shield02Icon, color: 'blue' },
-        { id: 'transferring', label: 'Stealth Transfer (Ashborn)', icon: SentIcon, color: 'purple' },
-        { id: 'unshielding', label: 'Unshield via PrivacyCash', icon: Coins01Icon, color: 'green' },
+        { id: 'shielding', label: 'Shield to PrivacyCash Pool', icon: Shield02Icon, color: 'blue' },
+        { id: 'transferring', label: 'Generate Stealth Address', icon: SentIcon, color: 'purple' },
+        { id: 'unshielding', label: 'Unshield to Recipient', icon: Coins01Icon, color: 'green' },
     ];
 
     const getStepStatus = (stepId: string) => {
@@ -113,28 +89,43 @@ export default function InteropDemoPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">
+            {/* Demo Notice */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4"
+            >
+                <div className="flex items-start gap-3">
+                    <AlertCircleIcon className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="text-amber-300 font-medium mb-1">Server-Side Demo</p>
+                        <p className="text-amber-200/70 text-xs">All operations run via /api/ashborn. No wallet required.</p>
+                    </div>
+                </div>
+            </motion.div>
+
             <DemoPageHeader
                 icon={FlashIcon}
-                badge="Ashborn × PrivacyCash Interop"
-                title="Interoperability Demo"
-                description="Shield via PrivacyCash, transfer via Ashborn Stealth, unshield via PrivacyCash. The best of both worlds."
+                badge="Privacy Relay"
+                title="PrivacyCash × Ashborn Interop"
+                description="Full privacy flow via Ashborn Relay. Shield, stealth transfer, unshield — protocols never see your identity."
                 color="amber"
+                privacyRelay
             />
 
             <InfoCard
                 icon={FlashIcon}
-                title="Why Interoperability?"
+                title="Real Privacy Flow"
                 color="amber"
                 steps={[
-                    { label: "Shield (Pool)", color: "blue" },
-                    { label: "Stealth (Transfer)", color: "purple" },
-                    { label: "Unshield (Relay)", color: "green" }
+                    { label: "Shield (API)", color: "blue" },
+                    { label: "Stealth (API)", color: "purple" },
+                    { label: "Unshield (API)", color: "green" }
                 ]}
             >
                 <div>
-                    <strong>PrivacyCash</strong> provides a large anonymity set (Shielded Pool).
-                    <strong>Ashborn</strong> provides unlinkable addressing (Stealth Addresses).
-                    Combined: Maximum privacy + Regulatory compliance + Large anonymity set.
+                    All steps run server-side via <code className="text-amber-300">/api/ashborn</code>.
+                    No SDK loaded client-side = instant page load.
                 </div>
             </InfoCard>
 
@@ -169,13 +160,11 @@ export default function InteropDemoPage() {
                                     </p>
                                     {txHashes[s.id as keyof typeof txHashes] && (
                                         <div className="mt-1">
-                                            <TxLink signature={txHashes[s.id as keyof typeof txHashes]!} label={txHashes[s.id as keyof typeof txHashes]?.slice(0, 8) + '...'} className="text-xs" />
+                                            <TxLink signature={txHashes[s.id as keyof typeof txHashes]!} label={txHashes[s.id as keyof typeof txHashes]?.slice(0, 12) + '...'} className="text-xs" />
                                         </div>
                                     )}
                                 </div>
-                                {i < steps.length - 1 && (
-                                    <ArrowRight01Icon className="w-4 h-4 text-gray-600" />
-                                )}
+                                {i < steps.length - 1 && <ArrowRight01Icon className="w-4 h-4 text-gray-600" />}
                             </div>
                         );
                     })}
@@ -189,34 +178,19 @@ export default function InteropDemoPage() {
                             <div>
                                 <div className="text-gray-500 text-xs mb-1">Public Ledger</div>
                                 <div className="text-xs space-y-2">
-                                    {txHashes.shield && <TxLink signature={txHashes.shield} label="Shield Tx (PrivacyCash)" />}
-                                    {txHashes.transfer && <TxLink signature={txHashes.transfer} label="Stealth Tx (Ashborn)" />}
-                                    {txHashes.unshield && <TxLink signature={txHashes.unshield} label="Unshield Tx (PrivacyCash)" />}
-
-                                    <div className="mt-2 text-center text-gray-500 italic border-t border-white/5 pt-2">
-                                        &quot;Looks like unrelated transactions&quot;
-                                    </div>
+                                    {txHashes.shield && <TxLink signature={txHashes.shield} label="Shield Tx ✓" />}
+                                    {txHashes.transfer && <div className="text-purple-300">Stealth: {txHashes.transfer.slice(0, 12)}... ✓</div>}
+                                    {txHashes.unshield && <TxLink signature={txHashes.unshield} label="Unshield Tx ✓" />}
                                 </div>
                             </div>
                         }
                         privateView={
                             <div>
-                                <div className="text-gray-500 text-xs mb-1">Private Flow (Simulated)</div>
+                                <div className="text-gray-500 text-xs mb-1">Private Flow</div>
                                 <div className="text-xs space-y-2">
-                                    <div className="flex items-center gap-2 text-blue-300">
-                                        <Shield02Icon className="w-3 h-3" /> Shielded {amount} SOL → PrivacyCash Pool
-                                    </div>
-                                    <div className="flex justify-center text-gray-600">↓</div>
-                                    <div className="flex items-center gap-2 text-purple-300 bg-purple-500/10 p-1 rounded">
-                                        <SentIcon className="w-3 h-3" /> Stealth Transfer → Unlinkable Address
-                                    </div>
-                                    <div className="flex justify-center text-gray-600">↓</div>
-                                    <div className="flex items-center gap-2 text-green-300">
-                                        <Coins01Icon className="w-3 h-3" /> Unshielded → {recipient || 'Self'}
-                                    </div>
-                                    <div className="mt-3 p-2 bg-amber-500/10 border border-amber-500/20 rounded text-amber-300 text-[10px]">
-                                        ⚠️ Demo simulation: Real PrivacyCash requires mainnet. Stealth addresses are real (step 2).
-                                    </div>
+                                    <div className="text-blue-300">Shielded {amount} SOL → Pool</div>
+                                    <div className="text-purple-300">Stealth Transfer → Unlinkable</div>
+                                    <div className="text-green-300">Unshielded → Demo Wallet</div>
                                 </div>
                             </div>
                         }
@@ -230,77 +204,59 @@ export default function InteropDemoPage() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Amount (SOL)</label>
-                            <input
-                                type="number"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:outline-none font-mono"
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Recipient (optional)</label>
-                            <input
-                                type="text"
-                                value={recipient}
-                                onChange={(e) => setRecipient(e.target.value)}
-                                placeholder="Defaults to self"
-                                className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 focus:outline-none font-mono placeholder:text-gray-600"
-                                disabled={isLoading}
-                            />
-                        </div>
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-2">Amount (SOL)</label>
+                        <input
+                            type="number"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className="w-full bg-[#0E0E0E] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono"
+                            disabled={isLoading}
+                        />
                     </div>
 
-                    {!connected ? (
-                        <div className="text-center p-4 border border-dashed border-gray-700 rounded-xl">
-                            <p className="text-gray-400 text-sm">Connect wallet to execute interop flow</p>
-                        </div>
-                    ) : (
-                        <DemoButton
-                            onClick={runInteropDemo}
-                            loading={isLoading}
-                            disabled={isLoading}
-                            icon={FlashIcon}
-                            variant="gradient"
-                        >
-                            Run Interop Flow
-                        </DemoButton>
-                    )}
+                    <DemoButton
+                        onClick={runInteropDemo}
+                        loading={isLoading}
+                        disabled={isLoading}
+                        icon={FlashIcon}
+                        variant="gradient"
+                    >
+                        Run Privacy Flow
+                    </DemoButton>
+
+                    <p className="text-center text-xs text-gray-500">
+                        Server-side API • No wallet required
+                    </p>
                 </div>
             )}
 
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                <h3 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wider pl-2">SDK Implementation</h3>
-                <CodeBlock
-                    language="typescript"
-                    code={`import { ShadowWire, PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
+            <CodeBlock
+                language="typescript"
+                code={`// All operations via /api/ashborn
+await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({ action: 'shield', params: { amount: 0.01 } })
+});
 
-// 1. Shield: Deposit to PrivacyCash pool
-const shieldResult = await privacyCash.shieldSOL(0.1);
+await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({ action: 'stealth', params: { recipient } })
+});
 
-// 2. Generate stealth address for recipient
-const stealth = await shadowWire.generateStealthAddress();
-
-// 3. Send to stealth address (unlinkable)
-await sendTransaction(transfer(stealth.stealthPubkey, amount));
-
-// 4. Unshield: Withdraw from pool to final recipient
-const unshieldResult = await privacyCash.unshieldSOL(0.1, recipient);`}
-                    filename="interop.ts"
-                />
-            </motion.div>
+await fetch('/api/ashborn', {
+  method: 'POST',
+  body: JSON.stringify({ action: 'unshield', params: { amount: 0.01 } })
+});`}
+                filename="interop.ts"
+            />
 
             {/* Footer */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 text-center">
-                <p className="text-xs text-gray-600 mb-2">Easy Integration with</p>
-                <div className="flex items-center justify-center gap-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-center">
+                <div className="flex items-center justify-center gap-6 text-sm">
                     <Link href="https://privacy.cash" target="_blank" className="text-gray-400 hover:text-white transition flex items-center gap-1">
                         PrivacyCash <LinkSquare02Icon className="w-3 h-3" />
                     </Link>
-                    <span className="text-gray-700">|</span>
                     <span className="text-purple-400 font-semibold flex items-center gap-1">
                         Radr Labs <FlashIcon className="w-3 h-3" />
                     </span>
