@@ -254,32 +254,33 @@ export default function DocsPage() {
                             <span className="px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] uppercase tracking-wider font-semibold">Docs v0.2.2</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white via-white to-gray-500 bg-clip-text text-transparent">
-                            Ashborn Protocol
-                        </h1>
-                        <p className="text-lg text-gray-400 leading-relaxed max-w-2xl mb-8">
-                            The <strong className="text-white">Privacy Relay Layer</strong> for Solana. Shield assets, execute private transfers, and prove compliance using Zero-Knowledge Proofs — while underlying protocols never see your identity.
-                        </p>
+                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white via-white to-gray-500 bg-clip-text text-transparent">
+                                Ashborn
+                            </h1>
+                            <p className="text-lg text-gray-400 leading-relaxed max-w-2xl mb-8">
+                                <strong className="text-white">The Shadow Monarch.</strong> Ashborn shadows your intent, enveloping assets and executing private transfers. The underlying world never sees your identity.
+                            </p>
 
-                        <div className="grid md:grid-cols-2 gap-4 not-prose">
-                            <Link href="/demo" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all hover:bg-white/[0.07]">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                                        <FlashIcon className="w-5 h-5" />
+                            <div className="grid md:grid-cols-2 gap-4 not-prose">
+                                <Link href="/demo" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all hover:bg-white/[0.07]">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                            <FlashIcon className="w-5 h-5" />
+                                        </div>
+                                        <span className="font-semibold text-white">Live Demo</span>
                                     </div>
-                                    <span className="font-semibold text-white">Live Demo</span>
-                                </div>
-                                <p className="text-sm text-gray-400">Try the protocol on devnet instantly.</p>
-                            </Link>
-                            <a href="#quick-start" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="p-2 rounded-lg bg-gray-800 text-gray-300 group-hover:bg-gray-700 group-hover:text-white transition-colors">
-                                        <ConsoleIcon className="w-5 h-5" />
+                                    <p className="text-sm text-gray-400">Try the protocol on devnet instantly.</p>
+                                </Link>
+                                <a href="#quick-start" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 rounded-lg bg-gray-800 text-gray-300 group-hover:bg-gray-700 group-hover:text-white transition-colors">
+                                            <ConsoleIcon className="w-5 h-5" />
+                                        </div>
+                                        <span className="font-semibold text-white">Quick Start</span>
                                     </div>
-                                    <span className="font-semibold text-white">Quick Start</span>
-                                </div>
-                                <p className="text-sm text-gray-400">Integrate the SDK in 5 minutes.</p>
-                            </a>
-                        </div>
+                                    <p className="text-sm text-gray-400">Integrate the SDK in 5 minutes.</p>
+                                </a>
+                            </div>
                     </section>
 
                     <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-12" />
@@ -446,12 +447,12 @@ export default function DocsPage() {
                     <section id="privacy-relay" className="mb-20 scroll-mt-24">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                Privacy Relay <span className="text-xs font-normal text-green-500 font-mono border border-green-500/20 px-1.5 py-0.5 rounded bg-green-500/5">v1.0</span>
+                                The Shadow Monarch
                             </h2>
                         </div>
                         <p className="text-gray-400 mb-6">
-                            Ashborn acts as a <strong className="text-white">Privacy Relay</strong> between users and underlying protocols.
-                            Protocols only see Ashborn&apos;s omnibus identity — never your identity.
+                            Ashborn is <strong className="text-white">The Shadow Monarch</strong>.
+                            Protocols only see The Monarch&apos;s army — never your identity.
                         </p>
 
                         {/* Architecture Diagram */}
@@ -462,8 +463,8 @@ export default function DocsPage() {
                                     <div className="text-gray-500">(Anonymous)</div>
                                 </div>
                                 <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                                    <div className="text-green-300 mb-1">🔒 ASHBORN RELAY</div>
-                                    <div className="text-gray-500">(Omnibus ID)</div>
+                                    <div className="text-green-300 mb-1">👑 SHADOW MONARCH</div>
+                                    <div className="text-gray-500">(The Entity)</div>
                                 </div>
                                 <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
                                     <div className="text-purple-300 mb-1">🛡️ Protocols</div>
@@ -472,7 +473,7 @@ export default function DocsPage() {
                             </div>
                             <div className="flex justify-center gap-4 mt-4 text-gray-500 text-xs">
                                 <span>→ Identity Hidden</span>
-                                <span>→ Protocols see &quot;Ashborn&quot;</span>
+                                <span>→ Protocols see &quot;The Monarch&quot;</span>
                             </div>
                         </div>
 
@@ -496,7 +497,7 @@ export default function DocsPage() {
                         <div className="mt-6">
                             <CodeBlock
                                 language="typescript"
-                                code={`// Server-side: Privacy Relay
+                                code={`// Server-side: The Shadow Monarch
 import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
 
 const relay = new PrivacyRelay({
@@ -504,8 +505,8 @@ const relay = new PrivacyRelay({
   rpcUrl: 'https://api.devnet.solana.com',
 });
 
-// All operations use relay identity
-await relay.shield({ amount: 0.1 });      // PrivacyCash sees "Relay"
+// All operations used the Monarch's identity
+await relay.shield({ amount: 0.1 });      // PrivacyCash sees "Monarch"
 await relay.generateStealth({ hint: 'x' }); // Unlinkable address
 await relay.prove({ balance: 0.5 });       // ZK range proof`}
                                 filename="privacy-relay.ts"
@@ -574,7 +575,7 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
 
                         {/* Integration Badges */}
                         <div className="flex flex-wrap gap-2 mb-6">
-                            <span className="text-[10px] font-mono bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20">🔥 Ashborn (Core)</span>
+                            <span className="text-[10px] font-mono bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20">👑 Ashborn (Monarch)</span>
                             <span className="text-[10px] font-mono bg-blue-500/10 text-blue-400 px-2 py-1 rounded border border-blue-500/20">🛡️ PrivacyCash</span>
                             <span className="text-[10px] font-mono bg-purple-500/10 text-purple-400 px-2 py-1 rounded border border-purple-500/20">👻 Radr Labs</span>
                             <span className="text-[10px] font-mono bg-green-500/10 text-green-400 px-2 py-1 rounded border border-green-500/20">⚡ Light Protocol</span>
