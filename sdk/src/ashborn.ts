@@ -1,7 +1,7 @@
 /**
  * Core Ashborn SDK class - The unified privacy interface
  *
- * "I alone level up." — Sung Jin-Woo
+ * "There is no need for words among shadows." — The Shadow Monarch
  */
 
 import {

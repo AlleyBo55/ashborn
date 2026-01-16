@@ -89,7 +89,7 @@ export default function Comparison() {
                                 <LockIcon className="w-6 h-6 text-green-500" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-green-500 uppercase">Ashborn Protocol</h3>
+                                <h3 className="text-xl font-bold text-green-500 uppercase">The Shadow Monarch</h3>
                                 <div className="text-[10px] text-green-800 font-mono">CLEARANCE: SOVEREIGN</div>
                             </div>
                         </div>

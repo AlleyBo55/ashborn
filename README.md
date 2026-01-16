@@ -2,11 +2,13 @@
 
 # 🌑 **ASHBORN: The Shadow Monarch** 🌑
 
-> *"I alone level up."* — Sung Jin-Woo
+> *"I shall protect my family, even if it means turning the entire world against me.*  
+> *There is no need for words among shadows."*  
+> — The Shadow Monarch
 
 ---
 
-## ⚡ THE SHADOW RELAY — Your Identity Dies Here
+## ⚡ THE SHADOW MONARCH — Your Identity Dies Here
 
 **Stop exposing yourself to every protocol.**
 
@@ -20,31 +22,31 @@ When you use *any* privacy protocol → **That protocol sees YOU.**
 
 ```
 ┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
-│      YOU        │ ───▶ │  ASHBORN RELAY  │ ───▶ │  PrivacyCash    │
-│   (Invisible)   │      │ "The Monarch"   │      │  (Sees Ashborn) │
+│      YOU        │ ───▶ │  SHADOW MONARCH │ ───▶ │  PrivacyCash    │
+│   (Invisible)   │      │   (The Entity)  │      │ (Sees Monarch)  │
 └─────────────────┘      └─────────────────┘      └─────────────────┘
                                 │
                                 ▼
                          ┌─────────────────┐
                          │   Radr Labs     │
-                         │  (Sees Ashborn) │
+                         │ (Sees Monarch)  │
                          └─────────────────┘
 ```
 
-**PrivacyCash sees "Ashborn Relay."**  
-**Radr Labs sees "Ashborn Relay."**  
+**PrivacyCash sees "The Shadow Monarch."**  
+**Radr Labs sees "The Shadow Monarch."**  
 **You? You're a ghost.**
 
 ---
 
-## 🔥 Why The Shadow Relay Changes Everything
+## 🔥 Why The Shadow Monarch Changes Everything
 
-| Without Ashborn | With Ashborn Shadow Relay |
-|-----------------|---------------------------|
-| PrivacyCash knows your wallet | PrivacyCash sees **Ashborn** |
-| Radr Labs tracks your stealth | Radr Labs sees **Ashborn** |
-| Light Protocol links your proofs | Light Protocol sees **Ashborn** |
-| You hide in 1 protocol's pool | You hide in **Ashborn + ALL protocols** |
+| Without Ashborn | With The Shadow Monarch |
+|-----------------|-------------------------|
+| PrivacyCash knows your wallet | PrivacyCash sees **The Monarch** |
+| Radr Labs tracks your stealth | Radr Labs sees **The Monarch** |
+| Light Protocol links your proofs | Light Protocol sees **The Monarch** |
+| You hide in 1 protocol's pool | You hide in **The Monarch's Army** |
 | 1 protocol breach = you're exposed | **K-Anonymity Amplified** |
 
 ---
@@ -55,9 +57,9 @@ When you use *any* privacy protocol → **That protocol sees YOU.**
 > *"The Shadow Army sees only the Monarch. The Enemy sees nothing."*
 
 1. **You send intent to Ashborn** (shield 1 SOL, transfer 0.5 SOL privately)
-2. **Ashborn wraps it in a Shadow Envelope** (strips your IP, wallet, metadata)
-3. **Ashborn calls PrivacyCash/Radr with ITS OWN identity**
-4. **Protocols execute** — they only see Ashborn's omnibus wallet
+2. **The Shadow Monarch envelopes it** (strips your IP, wallet, metadata)
+3. **The Monarch calls PrivacyCash/Radr with ITS OWN identity**
+4. **Protocols execute** — they only see The Monarch's omnibus wallet
 5. **You receive results** — unlinkable, anonymous, untraceable
 
 ---

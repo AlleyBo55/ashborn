@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+// Force restart: docs page fix
 const path = require('path');
 
 /** @type {import('next').NextConfig} */
@@ -44,13 +45,22 @@ const nextConfig = {
     return config;
   },
   // Optimize for Solana web3.js
+  // NOTE: Removed @solana/web3.js and @coral-xyz/anchor from transpilePackages to speed up build
+  // They are usually pre-compiled enough for Next.js to handle without forced transpilation.
   transpilePackages: [
-    "@solana/web3.js",
-    "@coral-xyz/anchor",
     "privacycash",
     "@alleyboss/ashborn-sdk",
     "@lightprotocol/hasher.rs"
   ],
+  swcMinify: true, // Enable SWC minification for faster builds
+
+  // Vercel Lead Engineer Optimization: Tree-shake icon libraries
+  // Note: hugeicons-react removed due to non-standard snake_case file naming making transforms difficult
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{member}}',
+    }
+  },
   // output: "standalone",
 };
 

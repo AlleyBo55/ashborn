@@ -6,71 +6,122 @@
 </p>
 
 <p align="center">
+  <em>"I shall protect my family, even if it means turning the entire world against me.<br/>
+  There is no need for words among shadows."</em><br/>
+  — The Shadow Monarch
+</p>
+
+<p align="center">
   <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/v/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/@alleyboss/ashborn-sdk"><img src="https://img.shields.io/npm/dm/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="downloads" /></a>
   <a href="https://github.com/AlleyBo55/ashborn/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@alleyboss/ashborn-sdk.svg?style=flat-square" alt="license" /></a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/🔒_Shadow_Relay-Protocol_Anonymity-red?style=flat-square" alt="Shadow Relay" />
-  <img src="https://img.shields.io/badge/Integration-PrivacyCash-blueviolet?style=flat-square" alt="PrivacyCash" />
-  <img src="https://img.shields.io/badge/Integration-Radr_Labs-purple?style=flat-square" alt="Radr Labs" />
+  <img src="https://img.shields.io/badge/🛡️_Shadow_Relay-Network_Privacy-red?style=flat-square" />
+  <img src="https://img.shields.io/badge/🤖_Shadow_Agents-AI_Commerce-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/👻_Shadow_Wire-Stealth_Address-purple?style=flat-square" />
+  <img src="https://img.shields.io/badge/🎭_Shadow_Seal-ZK_Compliance-green?style=flat-square" />
 </p>
 
 ---
 
-## ⚡ THE SHADOW RELAY
+## 🌑 THE SHADOW ARSENAL
 
-**Stop exposing yourself to every protocol.**
+Ashborn is not just a relay. It is a **complete privacy operating system** for Solana.
 
-When you use PrivacyCash directly → **PrivacyCash knows your wallet.**  
-When you use Radr Labs directly → **Radr Labs knows your identity.**  
+### 1. ⚡ THE SHADOW RELAY (Network Privacy)
+**"The Monarch stands in front. The world sees only Him."**
+Ashborn acts as a sovereign entity, wrapping your interactions with other protocols.
+- **PrivacyCash** sees "Ashborn Relay".
+- **Radr Labs** sees "Ashborn Relay".
+- **You** remain a ghost.
 
-### With Ashborn? **They see NOTHING.**
+### 2. 🤖 SHADOW AGENTS (Private AI Commerce)
+**"My soldiers trade in silence."**
+Compute-to-Compute payments where neither AI reveals its strategy or wallet.
+- **AI Buyers** pay for inference/data without exposing their treasury.
+- **AI Sellers** receive funds without revealing their earnings.
 
-```
-YOU ───▶ ASHBORN RELAY ───▶ PrivacyCash (sees "Ashborn")
-                       ───▶ Radr Labs   (sees "Ashborn")
-                       ───▶ Light Proto (sees "Ashborn")
-```
+### 3. 👻 SHADOW WIRE (Stealth Addresses)
+**"I am everywhere, yet nowhere."**
+Deterministic stealth addresses based on `secp256k1` (Vitalik's formula).
+- Generate infinite one-time deposit addresses from a single root key.
+- mathematically unlinkable on-chain.
 
-**K-Anonymity Amplified.** You hide in Ashborn's traffic + the protocol's pool.
+### 4. 🎭 SHADOW SEAL (ZK Compliance)
+**"Prove your power without revealing your face."**
+Zero-Knowledge Range Proofs (Groth16) to satisfy requirements without doxxing.
+- Prove "I have > 10 SOL" without revealing exact balance.
+- Compatible with regulatory gateways (e.g. "User is not sanctioned").
 
 ---
 
-## 🚀 Quick Start
 
-```bash
-npm install @alleyboss/ashborn-sdk
-```
 
-### Server-Side Privacy Relay
+## 💻 THE SHADOW PROTOCOL (Usage)
 
+> **"One interface to rule them all."**
+
+### 1. Initialize The Monarch
 ```typescript
 import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
 
-const relay = new PrivacyRelay({
-  relayKeypair: serverKeypair,
-  rpcUrl: 'https://api.devnet.solana.com',
+const monarch = new PrivacyRelay({
+  relayKeypair: process.env.RELAY_KEYPAIR, // Server-side sovereign identity
+  rpcUrl: 'https://api.mainnet-beta.solana.com' 
 });
-
-// PrivacyCash NEVER sees your user
-await relay.shield({ amount: 0.1 });
-
-// Radr Labs NEVER sees your user
-await relay.generateStealth({ viewPubKey, spendPubKey });
-
-// ZK proof WITHOUT identity exposure  
-await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
 ```
 
-### Client-Side (Direct SDK)
-
+### 2. 🤖 SHADOW AGENT (Private Commerce)
+*AI Buyer pays an AI Seller anonymously.*
 ```typescript
-import { Ashborn } from '@alleyboss/ashborn-sdk';
+// 1. Buyer shields funds (Network sees "Ashborn Relay")
+const { note } = await monarch.shield({ 
+  amount: 10_000_000_000n, // 10 SOL
+  mint: SOL_MINT
+});
 
-const ashborn = new Ashborn(connection, wallet);
-await ashborn.shield({ amount: 1_000_000_000n, mint: SOL_MINT });
+// 2. Buyer pays Seller (Unlinkable transfer)
+await monarch.transfer({
+  recipient: sellerStealthAddress,
+  amount: 5 // 5 SOL
+});
+```
+
+### 3. 👻 SHADOW WIRE (Stealth Addresses)
+*Generate infinite unlinkable deposit addresses.*
+```typescript
+import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
+
+// Sender generates a unique address for Recipient
+// Only Recipient can derive the private key
+const stealthAddress = await ShadowWire.deriveStealthAddress({
+  rootKey: recipientPublicKey,
+  ephemeralSecret: oneTimeSecret
+});
+```
+
+### 4. 🎭 SHADOW SEAL (ZK Compliance)
+*Prove solvency without doxxing.*
+```typescript
+// Prove balance > 100 SOL (Zero-Knowledge)
+const proof = await monarch.prove({
+  statement: "Balance > 100 SOL",
+  min: 100_000_000_000n,
+  max: Infinity
+});
+```
+
+### 5. ☀️ UNSHIELD (Exit Shadows)
+*Withdraw to a clean public wallet.*
+```typescript
+// Relay handles the withdrawal. PrivacyCash sees "Ashborn Relay".
+// Your destination wallet remains unconnected to the source.
+await monarch.unshield({
+  amount: 2.5, // 2.5 SOL
+  recipient: "PublicWalletAddress123..."
+});
 ```
 
 ---
