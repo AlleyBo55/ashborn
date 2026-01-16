@@ -273,6 +273,7 @@ export class PrivacyRelay {
 
         try {
             // Dynamic import to avoid bundling PrivacyCash in client
+            // @ts-ignore
             const { PrivacyCash } = await import("privacycash");
             const privacyCash = new (PrivacyCash as any)({
                 RPC_url: this.connection.rpcEndpoint,
@@ -316,6 +317,7 @@ export class PrivacyRelay {
         const { amount = 0.01, recipient } = envelope.params;
 
         try {
+            // @ts-ignore
             const { PrivacyCash } = await import("privacycash");
             const privacyCash = new (PrivacyCash as any)({
                 RPC_url: this.connection.rpcEndpoint,

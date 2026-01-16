@@ -12,13 +12,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-    title: 'Ashborn | Compliant Private Payment Protocol on Solana',
-    description: 'A unified privacy layer on Solana. Shield your assets, transfer in shadows, reveal only what you choose. Compliant by design.',
+    title: 'Ashborn | The Shadow Monarch',
+    description: 'I shall protect my family. There is no need for words among shadows.',
     keywords: ['solana', 'privacy', 'zk-proofs', 'blockchain', 'crypto', 'defi'],
     authors: [{ name: 'Ashborn Protocol' }],
     openGraph: {
         title: 'Ashborn | The Shadow Monarch',
-        description: 'I alone level up. Unified privacy on Solana.',
+        description: 'There is no need for words among shadows. Unified privacy on Solana.',
         type: 'website',
     },
 };

@@ -2,7 +2,9 @@
 
 # 🌑 **ASHBORN: The Shadow Monarch** 🌑
 
-> *"I alone level up."* — Sung Jin-Woo
+> *"I shall protect my family, even if it means turning the entire world against me.*  
+> *There is no need for words among shadows."*  
+> — The Shadow Monarch
 
 ---
 

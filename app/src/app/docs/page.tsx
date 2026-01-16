@@ -254,33 +254,32 @@ export default function DocsPage() {
                             <span className="px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] uppercase tracking-wider font-semibold">Docs v0.2.2</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white via-white to-gray-500 bg-clip-text text-transparent">
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white via-white to-gray-500 bg-clip-text text-transparent">
-                                Ashborn
-                            </h1>
-                            <p className="text-lg text-gray-400 leading-relaxed max-w-2xl mb-8">
-                                <strong className="text-white">The Shadow Monarch.</strong> Ashborn shadows your intent, enveloping assets and executing private transfers. The underlying world never sees your identity.
-                            </p>
+                            Ashborn
+                        </h1>
+                        <p className="text-lg text-gray-400 leading-relaxed max-w-2xl mb-8">
+                            <strong className="text-white">The Shadow Monarch.</strong> Ashborn shadows your intent, enveloping assets and executing private transfers. The underlying world never sees your identity.
+                        </p>
 
-                            <div className="grid md:grid-cols-2 gap-4 not-prose">
-                                <Link href="/demo" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all hover:bg-white/[0.07]">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                                            <FlashIcon className="w-5 h-5" />
-                                        </div>
-                                        <span className="font-semibold text-white">Live Demo</span>
+                        <div className="grid md:grid-cols-2 gap-4 not-prose">
+                            <Link href="/demo" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all hover:bg-white/[0.07]">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                        <FlashIcon className="w-5 h-5" />
                                     </div>
-                                    <p className="text-sm text-gray-400">Try the protocol on devnet instantly.</p>
-                                </Link>
-                                <a href="#quick-start" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="p-2 rounded-lg bg-gray-800 text-gray-300 group-hover:bg-gray-700 group-hover:text-white transition-colors">
-                                            <ConsoleIcon className="w-5 h-5" />
-                                        </div>
-                                        <span className="font-semibold text-white">Quick Start</span>
+                                    <span className="font-semibold text-white">Live Demo</span>
+                                </div>
+                                <p className="text-sm text-gray-400">Try the protocol on devnet instantly.</p>
+                            </Link>
+                            <a href="#quick-start" className="group p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 rounded-lg bg-gray-800 text-gray-300 group-hover:bg-gray-700 group-hover:text-white transition-colors">
+                                        <ConsoleIcon className="w-5 h-5" />
                                     </div>
-                                    <p className="text-sm text-gray-400">Integrate the SDK in 5 minutes.</p>
-                                </a>
-                            </div>
+                                    <span className="font-semibold text-white">Quick Start</span>
+                                </div>
+                                <p className="text-sm text-gray-400">Integrate the SDK in 5 minutes.</p>
+                            </a>
+                        </div>
                     </section>
 
                     <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-12" />
@@ -447,7 +446,7 @@ export default function DocsPage() {
                     <section id="privacy-relay" className="mb-20 scroll-mt-24">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                The Shadow Monarch
+                                The Shadow Arsenal
                             </h2>
                         </div>
                         <p className="text-gray-400 mb-6">
@@ -457,23 +456,26 @@ export default function DocsPage() {
 
                         {/* Architecture Diagram */}
                         <div className="bg-gradient-to-br from-[#0a1a0a] to-black border border-green-500/20 rounded-xl p-6 mb-6">
-                            <div className="grid grid-cols-3 gap-4 text-center text-xs font-mono">
-                                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                                    <div className="text-blue-300 mb-1">👤 User/Agent</div>
-                                    <div className="text-gray-500">(Anonymous)</div>
+                            <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-mono">
+                                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                    <div className="text-red-300 mb-1">⚡ RELAY</div>
+                                    <div className="text-gray-500 leading-tight">Network Privacy</div>
                                 </div>
-                                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                                    <div className="text-green-300 mb-1">👑 SHADOW MONARCH</div>
-                                    <div className="text-gray-500">(The Entity)</div>
+                                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                                    <div className="text-blue-300 mb-1">🤖 AGENTS</div>
+                                    <div className="text-gray-500 leading-tight">AI Commerce</div>
                                 </div>
-                                <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                                    <div className="text-purple-300 mb-1">🛡️ Protocols</div>
-                                    <div className="text-gray-500">(PrivacyCash/Radr)</div>
+                                <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                                    <div className="text-purple-300 mb-1">👻 WIRE</div>
+                                    <div className="text-gray-500 leading-tight">Stealth Addr</div>
+                                </div>
+                                <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                    <div className="text-green-300 mb-1">🎭 SEAL</div>
+                                    <div className="text-gray-500 leading-tight">ZK Proofs</div>
                                 </div>
                             </div>
-                            <div className="flex justify-center gap-4 mt-4 text-gray-500 text-xs">
-                                <span>→ Identity Hidden</span>
-                                <span>→ Protocols see &quot;The Monarch&quot;</span>
+                            <div className="flex justify-center gap-4 mt-6 text-gray-500 text-xs text-center border-t border-white/5 pt-4">
+                                <span>All converge into <strong className="text-white">THE SHADOW MONARCH</strong></span>
                             </div>
                         </div>
 

@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+// Force restart: docs page fix
 const path = require('path');
 
 /** @type {import('next').NextConfig} */

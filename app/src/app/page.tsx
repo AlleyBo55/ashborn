@@ -44,8 +44,8 @@ export default function Home() {
                 {/* PRIVACY RELAY SHOWCASE - Hard Sell */}
                 <PrivacyRelayShowcase />
 
-                {/* ECDH SHOWCASE - HIDDEN as per request */}
-                {/* <ShadowECDHShowcase /> */}
+                {/* ECDH SHOWCASE - Keypair Logic (Restored below Relay) */}
+                <ShadowECDHShowcase />
 
                 {/* System Alert - Slant Right ("Opening the wound") - HIDDEN as per request */}
                 {/* <SlashSection slant="right" className="relative z-20">
@@ -68,9 +68,9 @@ export default function Home() {
                 </SlashSection>
 
                 {/* THE ARSENAL - No Slant (Top Grid) */}
-                <SlashSection slant="none" className="relative z-20">
+                {/* <SlashSection slant="none" className="relative z-20">
                     <MarketingArsenal />
-                </SlashSection>
+                </SlashSection> */}
 
                 {/* Skill Combo - HIDDEN for hackathon focus on Shadow Agent */}
                 {/* <SlashSection slant="left" className="relative z-30">
