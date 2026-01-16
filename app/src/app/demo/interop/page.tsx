@@ -83,8 +83,15 @@ export default function InteropDemoPage() {
         <TerminalDemoWrapper
             title="PRIVACYCASH_×_ASHBORN_INTEROP"
             tag="PRIVACY_RELAY"
-            description="Full privacy flow via Ashborn Relay. Shield, stealth transfer, unshield — protocols never see your identity."
+            description="Full privacy flow via Ashborn Relay. Integrates with PrivacyCash, Radr Labs, and Light Protocol."
         >
+            {/* Tech Stack Badge */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 border border-blue-500/30">⚡ PrivacyCash</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Radr Labs</span>
+                <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ Light Protocol</span>
+                <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-1 border border-amber-500/30">⚡ Ashborn</span>
+            </div>
             <TerminalSection title="PRIVACY_FLOW">
                 <div className="text-sm text-gray-300 space-y-2">
                     <p>$ Shield (API) → Stealth (API) → Unshield (API)</p>

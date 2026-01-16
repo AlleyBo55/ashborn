@@ -100,6 +100,8 @@ const proof = await relay.prove({ balance: 0.5, min: 0.1, max: 1.0 });
 | **PrivacyCash** | Ashborn Relay wallet | Your wallet, IP, identity |
 | **Radr Labs** | Ashborn Relay ephemeral key | Your stealth meta-address |
 | **Light Protocol** | Ashborn's ZK commitment | Your balance, history |
+| **x402 Micropay** | Relay payment signature | Your agent's wallet |
+| **ZK Groth16** | Valid proof (snarkjs) | Your actual balance |
 
 ---
 
@@ -138,18 +140,17 @@ await relay.prove({
 
 ## 🌐 Live Demos
 
-| Demo | What It Shows |
-|------|---------------|
-| [Shadow Agent](/demo/shadow-agent) | AI-to-AI private commerce via Relay |
-| [Interop](/demo/interop) | Shield → Stealth → Unshield (all via Relay) |
-| [AI Lending](/demo/ai-lending) | ZK Collateral proofs via Relay |
-| [Stealth Transfer](/demo/ai-transfer) | Ring signatures via Relay |
+| Demo | Integrations | What It Shows |
+|------|-------------|---------------|
+| [Shadow Agent](/demo/shadow-agent) | PrivacyCash, Radr Labs, ZK Groth16 | AI-to-AI private commerce |
+| [Interop](/demo/interop) | PrivacyCash, Radr Labs, Light Protocol | Full Shield → Stealth → Unshield flow |
+| [AI Lending](/demo/ai-lending) | ZK Groth16, PrivacyCash | Private collateral proofs |
+| [AI Payment](/demo/ai-payment) | x402 Micropay, PrivacyCash | Private AI micropayments |
+| [Shield](/demo/shield) | PrivacyCash, Light Protocol | Deposit to privacy pool |
+| [Prove](/demo/prove) | ZK Groth16, snarkjs | Real Groth16 range proofs |
+| [ShadowWire](/demo/radr) | Radr Labs, ShadowWire | Stealth address generation |
 
-> 🎮 **Try it:** [ashborn.vercel.app](https://ashborn-sol.vercel.app)
-Visit the **Documentation** page in the live demo (`https://ashborn-sol.vercel.app/docs`) to learn about:
-- **Core Concepts** — Commitments, nullifiers, stealth addresses
-- **API Reference** — Full SDK method documentation
-- **Circuit Logic** — How the ZK proofs enforce integrity
+> 🎮 **Try it:** [ashborn-sol.vercel.app](https://ashborn-sol.vercel.app)
 
 ---
 

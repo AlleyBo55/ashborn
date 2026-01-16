@@ -39,20 +39,23 @@ const sections = [
         ]
     },
     {
+        title: "Protocol Integrations", items: [
+            { id: 'integrations', title: 'Overview', icon: Activity01Icon },
+            { id: 'privacycash', title: 'PrivacyCash', icon: Shield02Icon },
+            { id: 'radr-labs', title: 'Radr Labs', icon: ViewOffIcon },
+            { id: 'light-protocol', title: 'Light Protocol', icon: LockIcon },
+            { id: 'x402-micropay', title: 'x402 Micropay', icon: AiChat02Icon },
+            { id: 'zk-groth16', title: 'ZK Groth16', icon: FlashIcon },
+        ]
+    },
+    {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: CodeIcon },
             { id: 'shadow-agent', title: 'Shadow Agent Protocol', icon: SparklesIcon },
             { id: 'stealth', title: 'Stealth Addresses', icon: ViewOffIcon },
             { id: 'nlp', title: 'Natural Language', icon: Activity01Icon },
-            // { id: 'eliza', title: 'Eliza Plugin', icon: ViewOffIcon }, // Hidden as requested
         ]
     },
-    // {
-    //     title: "Guides", items: [
-    //         // { id: 'tutorials', title: 'Tutorials', icon: BookOpen01Icon },
-    //         // { id: 'deployment', title: 'Deployment', icon: Activity01Icon },
-    //     ]
-    // }
 ];
 
 export default function DocsPage() {
@@ -270,7 +273,7 @@ export default function DocsPage() {
                         {/* Deployed Programs */}
                         <div className="mt-8 space-y-4">
                             <h3 className="text-lg font-semibold text-white mb-4">Deployed Programs (Devnet)</h3>
-                            
+
                             <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Shield02Icon className="w-4 h-4 text-purple-400" />
@@ -282,7 +285,7 @@ export default function DocsPage() {
                                 <p className="text-xs text-gray-400 leading-relaxed">
                                     Core Ashborn for privacy operations, ZK proofs, and stealth address management.
                                 </p>
-                                <a 
+                                <a
                                     href="https://explorer.solana.com/address/BzBUgtEFiJjUXR2xjsvhvVx2oZEhD2K6qenpg727z5Qe?cluster=devnet"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -303,7 +306,7 @@ export default function DocsPage() {
                                 <p className="text-xs text-gray-400 leading-relaxed">
                                     Third-party privacy protocol for shielding/unshielding SOL. Integrated into Ashborn SDK for unified access.
                                 </p>
-                                <a 
+                                <a
                                     href="https://explorer.solana.com/address/ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS?cluster=devnet"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -320,7 +323,7 @@ export default function DocsPage() {
                     {/* Architecture */}
                     <section id="how-it-works" className="mb-24 scroll-mt-32">
                         <SectionHeader title="Architecture" description="How Ashborn achieves privacy on a public ledger." />
-                        
+
                         {/* Visual Flow Diagram */}
                         <div className="mb-8 p-8 rounded-xl bg-[#0A0A0A] border border-white/10">
                             <h3 className="text-lg font-semibold text-white mb-6 text-center">Transaction Flow Visualization</h3>

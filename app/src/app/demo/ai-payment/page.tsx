@@ -77,8 +77,14 @@ export default function AIPaymentDemoPage() {
         <TerminalDemoWrapper
             title="PRIVATE_MICRO_PAYMENTS"
             tag="AI_TO_AI_PAYMENT"
-            description="Enable autonomous agents to pay for API access or resources privately. No graph analysis can link the payer agent to the merchant."
+            description="Enable autonomous agents to pay for API access privately via x402 micropay protocol. No graph analysis can link the payer agent to the merchant."
         >
+            {/* Tech Stack Badge */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[10px] bg-rose-500/20 text-rose-400 px-2 py-1 border border-rose-500/30">⚡ x402 Micropay</span>
+                <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 border border-blue-500/30">⚡ PrivacyCash</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Ashborn</span>
+            </div>
             <TerminalSection title="DEMO_WALLET" variant="warning">
                 <div className="text-xs text-amber-300 space-y-2">
                     <p>$ PrivacyCash SDK requires raw keypair (no browser wallet)</p>

@@ -51,8 +51,14 @@ export default function ShieldDemoPage() {
         <TerminalDemoWrapper
             title="SHIELD_SOL"
             tag="PRIVACYCASH"
-            description="Convert public SOL into private notes. PrivacyCash handles shielding, Ashborn wraps it for unified SDK access."
+            description="Convert public SOL into private notes. Integrates with PrivacyCash and Light Protocol. Ashborn wraps it for unified SDK access."
         >
+            {/* Tech Stack Badge */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 border border-blue-500/30">⚡ PrivacyCash</span>
+                <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ Light Protocol</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Ashborn</span>
+            </div>
 
             <TerminalSection title="DEMO_WALLET" variant="warning">
                 <div className="text-xs text-amber-300 space-y-2">

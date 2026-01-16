@@ -99,8 +99,14 @@ export default function AILendingDemoPage() {
         <TerminalDemoWrapper
             title="PRIVATE_COLLATERAL_LENDING"
             tag="AI_TO_AI_LENDING"
-            description="Borrow between AI agents using ZK proofs. Ashborn acts as your Privacy Relay — protocols never see your identity."
+            description="Borrow between AI agents using real ZK proofs. Integrates with Groth16 (snarkjs) and PrivacyCash."
         >
+            {/* Tech Stack Badge */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-1 border border-amber-500/30">⚡ ZK Groth16</span>
+                <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 border border-blue-500/30">⚡ PrivacyCash</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Ashborn</span>
+            </div>
             <TerminalSection title="DEMO_WALLET" variant="warning">
                 <div className="text-xs text-amber-300 space-y-2">
                     <p>$ All operations run server-side via API</p>

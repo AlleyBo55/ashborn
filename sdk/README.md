@@ -158,6 +158,8 @@ await monarch.unshield({
 | **PrivacyCash** | Your wallet address | `Ashborn Relay` |
 | **Radr Labs** | Your stealth meta | `Ashborn Relay` |
 | **Light Protocol** | Your ZK identity | `Ashborn Relay` |
+| **x402 Micropay** | Your agent wallet | `Ashborn Relay` |
+| **ZK Groth16** | N/A | Real snarkjs proof |
 
 ---
 

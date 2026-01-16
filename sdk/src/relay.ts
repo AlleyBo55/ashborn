@@ -25,7 +25,7 @@
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-import { Keypair, Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { Keypair, Connection, LAMPORTS_PER_SOL, Transaction, PublicKey } from "@solana/web3.js";
 
 // ============================================================================
 // TYPES
@@ -309,15 +309,73 @@ export class PrivacyRelay {
     }
 
     /**
-     * Shield funds into PrivacyCash pool.
+     * Shield funds with LAYERED PRIVACY:
+     * 1. Ashborn Program: Register commitment in on-chain Merkle tree
+     * 2. PrivacyCash: Pool the actual tokens
+     * 
      * PrivacyCash sees "Relay", not "User A".
+     * Ashborn program adds ZK layer on top.
      */
-    async shield(params: { amount?: number }): Promise<RelayResult> {
+    async shield(params: { amount?: number }): Promise<RelayResult & {
+        ashbornNote?: string;
+        commitment?: string;
+        layered?: boolean;
+    }> {
         const envelope = this.createEnvelope("shield", params);
         const { amount = 0.01 } = envelope.params;
+        const lamports = Math.floor(amount * LAMPORTS_PER_SOL);
 
+        let ashbornResult: { noteAddress?: string; commitment?: Uint8Array } | null = null;
+
+        // STEP 1: Register with Ashborn Program (commitment + Merkle tree)
         try {
-            // Dynamic import to avoid bundling PrivacyCash in client
+            const { Ashborn } = await import("./ashborn");
+            const { PROGRAM_ID } = await import("./constants");
+
+            // Create wallet interface for Ashborn class
+            const wallet = {
+                publicKey: this.relayKeypair.publicKey,
+                signTransaction: async <T extends Transaction>(tx: T): Promise<T> => {
+                    tx.sign(this.relayKeypair);
+                    return tx;
+                },
+                signAllTransactions: async <T extends Transaction>(txs: T[]): Promise<T[]> => {
+                    txs.forEach(tx => tx.sign(this.relayKeypair));
+                    return txs;
+                },
+            };
+
+            const ashborn = new Ashborn(this.connection, wallet as any, { programId: PROGRAM_ID });
+
+            // Try to initialize vault (will fail if already exists, that's OK)
+            try {
+                await ashborn.initializeVault();
+                console.log("[PrivacyRelay] Vault initialized");
+            } catch (vaultError) {
+                // Vault likely already exists
+                console.log("[PrivacyRelay] Vault exists or init skipped");
+            }
+
+            // Register commitment with Ashborn program
+            // This creates the ZK layer BEFORE PrivacyCash
+            const SOL_MINT = new PublicKey("So11111111111111111111111111111111111111112");
+            const result = await ashborn.shield({
+                amount: BigInt(lamports),
+                mint: SOL_MINT,
+            });
+
+            ashbornResult = {
+                noteAddress: result.noteAddress.toBase58(),
+                commitment: result.commitment,
+            };
+            console.log("[PrivacyRelay] Ashborn commitment registered:", ashbornResult.noteAddress);
+        } catch (ashbornError) {
+            // Ashborn program call failed - continue with PrivacyCash only
+            console.warn("[PrivacyRelay] Ashborn layer skipped:", ashbornError);
+        }
+
+        // STEP 2: Shield to PrivacyCash pool
+        try {
             // @ts-ignore
             const { PrivacyCash } = await import("privacycash");
             const privacyCash = new (PrivacyCash as any)({
@@ -327,13 +385,17 @@ export class PrivacyRelay {
                 programId: this.privacyCashProgramId,
             });
 
-            const lamports = Math.floor(amount * LAMPORTS_PER_SOL);
             const result = await privacyCash.deposit({ lamports });
             const signature = result?.tx || result?.signature || "shielded";
 
             return {
                 success: true,
                 signature,
+                ashbornNote: ashbornResult?.noteAddress,
+                commitment: ashbornResult?.commitment
+                    ? Buffer.from(ashbornResult.commitment).toString('hex')
+                    : undefined,
+                layered: !!ashbornResult,
                 relay: {
                     version: PrivacyRelay.VERSION,
                     identity: this.getRelayIdentity(),
@@ -344,6 +406,8 @@ export class PrivacyRelay {
             return {
                 success: true,
                 signature: `shield_demo_${Date.now().toString(36)}`,
+                ashbornNote: ashbornResult?.noteAddress,
+                layered: !!ashbornResult,
                 demo: true,
                 relay: { version: PrivacyRelay.VERSION },
             };
