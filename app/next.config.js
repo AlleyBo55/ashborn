@@ -60,17 +60,11 @@ const nextConfig = {
   ],
   // Externalize Node.js-only packages that use import.meta.dirname
   // Externalize Node.js-only packages that use import.meta.dirname
-  experimental: {
-    serverComponentsExternalPackages: [
-      "privacycash",
-      "node-localstorage",
-      "@lightprotocol/hasher.rs"
-    ],
-  },
-  swcMinify: true, // Enable SWC minification for faster builds
-
-  // Vercel Lead Engineer Optimization: Tree-shake icon libraries
-  // Note: hugeicons-react removed due to non-standard snake_case file naming making transforms difficult
+  serverExternalPackages: [
+    "privacycash",
+    "node-localstorage",
+    "@lightprotocol/hasher.rs"
+  ],
   modularizeImports: {
     'lucide-react': {
       transform: 'lucide-react/dist/esm/icons/{{member}}',
