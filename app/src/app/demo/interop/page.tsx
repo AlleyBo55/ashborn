@@ -24,6 +24,29 @@ export default function InteropDemoPage() {
         try {
             setStatus('loading');
 
+            // ========== ASHBORN LAYER FIRST ==========
+            setStep('stealth');
+            const stealthRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stealth', params: { recipient: DEMO_WALLET } })
+            });
+            const stealthData = await stealthRes.json();
+            if (!stealthData.success) throw new Error(stealthData.error || 'Stealth failed');
+            setTxHashes(prev => ({ ...prev, stealth: stealthData.stealthAddress }));
+
+            // Generate ZK proof
+            setStep('proving');
+            const proveRes = await fetch('/api/ashborn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'prove', params: { balance: parseFloat(amount), min: 0.001, max: 1.0 } })
+            });
+            const proveData = await proveRes.json();
+            if (!proveData.success) throw new Error(proveData.error || 'Prove failed');
+            setTxHashes(prev => ({ ...prev, proof: proveData.proof?.slice(0, 16) }));
+
+            // ========== PRIVACYCASH LAYER SECOND ==========
             setStep('shielding');
             const shieldRes = await fetch('/api/ashborn', {
                 method: 'POST',
@@ -33,16 +56,6 @@ export default function InteropDemoPage() {
             const shieldData = await shieldRes.json();
             if (!shieldData.success) throw new Error(shieldData.error || 'Shield failed');
             setTxHashes(prev => ({ ...prev, shield: shieldData.signature }));
-
-            setStep('transferring');
-            const stealthRes = await fetch('/api/ashborn', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'stealth', params: { recipient: DEMO_WALLET } })
-            });
-            const stealthData = await stealthRes.json();
-            if (!stealthData.success) throw new Error(stealthData.error || 'Stealth failed');
-            setTxHashes(prev => ({ ...prev, transfer: stealthData.stealthAddress }));
 
             setStep('complete');
             setStatus('success');
@@ -54,8 +67,9 @@ export default function InteropDemoPage() {
     };
 
     const steps = [
-        { id: 'shielding', label: 'Shield to PrivacyCash Pool', status: '1/2' },
-        { id: 'transferring', label: 'Generate Stealth Address', status: '2/2' },
+        { id: 'stealth', label: '🔐 Generate Stealth Address (Ashborn)', status: '1/3' },
+        { id: 'proving', label: '⚡ ZK Groth16 Proof (Ashborn)', status: '2/3' },
+        { id: 'shielding', label: '🏛️ Shield to PrivacyCash Pool', status: '3/3' },
     ];
 
     const getStepStatus = (stepId: string) => {
@@ -83,9 +97,35 @@ export default function InteropDemoPage() {
             </div>
             <TerminalSection title="PRIVACY_FLOW">
                 <div className="text-sm text-gray-300 space-y-2">
-                    <p>$ Shield (API) → Stealth (API)</p>
+                    <p>$ Ashborn Layer → PrivacyCash Layer</p>
                     <p className="text-xs text-gray-500">$ All steps run server-side via /api/ashborn</p>
                     <p className="text-xs text-gray-500">$ No SDK loaded client-side = instant page load</p>
+                </div>
+            </TerminalSection>
+
+            {/* Ashborn Features Before PrivacyCash */}
+            <TerminalSection title="ASHBORN_LAYER_FIRST">
+                <div className="text-xs space-y-2">
+                    <p className="text-green-400 font-bold mb-2">✓ Features that run BEFORE PrivacyCash:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center gap-2 text-green-300">
+                            <span>✅</span>
+                            <span>ECDH Stealth Addresses (ShadowWire)</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-green-300">
+                            <span>✅</span>
+                            <span>Light Protocol (Poseidon + Merkle)</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-green-300">
+                            <span>✅</span>
+                            <span>ZK Groth16 Proofs</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-green-300">
+                            <span>✅</span>
+                            <span>SOL Transfers</span>
+                        </div>
+                    </div>
+                    <p className="text-gray-500 mt-2 text-[10px]">→ Then funds enter PrivacyCash mixing pool for Layer 2 anonymity</p>
                 </div>
             </TerminalSection>
 

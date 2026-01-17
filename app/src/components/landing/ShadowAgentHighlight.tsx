@@ -10,15 +10,14 @@ import Link from 'next/link';
 const integrations = [
     { name: 'Ashborn', color: 'red', emoji: '🔥', role: 'Privacy Relay' },
     { name: 'PrivacyCash', color: 'blue', emoji: '🛡️', role: 'Shield Pool' },
-    { name: 'ShadowWire', color: 'purple', emoji: '👻', role: 'Native Stealth' },
     { name: 'Light Protocol', color: 'green', emoji: '⚡', role: 'ZK Compress' },
     { name: 'x402 Paywall', color: 'amber', emoji: '💳', role: 'Micropay' },
 ];
 
 const benefits = [
-    { title: 'Private AI Commerce', desc: 'Agents transact without exposing strategies' },
-    { title: 'Unlinkable Payments', desc: 'No on-chain trace between buyer and seller' },
-    { title: 'Compliant by Design', desc: 'ZK proofs enable selective disclosure' },
+    { title: 'Composable Privacy Layers', desc: 'Toggle between Ashborn Native (Layer 1) or stack PrivacyCash (Layer 2) for maximum anonymity.' },
+    { title: 'Native Stealth + ZK', desc: 'Built-in ECDH stealth addresses and Groth16 proofs ensure instant, private settlements.' },
+    { title: 'AI-to-AI Commerce', desc: 'Autonomous agents transact freely without exposing strategies or wallet linkages.' },
 ];
 
 export default function ShadowAgentHighlight() {
@@ -58,8 +57,8 @@ export default function ShadowAgentHighlight() {
                         </span>
                     </h2>
                     <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-lg leading-relaxed">
-                        Two AI agents transact privately. The buyer pays for data inference,
-                        the seller receives funds — and nobody can trace the connection.
+                        Two AI agents transact privately. Featuring composable privacy depths: use Ashborn Native for speed
+                        and stealth, or stack PrivacyCash for pool-based anonymity.
                     </p>
                 </motion.div>
 

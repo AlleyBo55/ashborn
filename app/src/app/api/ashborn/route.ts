@@ -148,11 +148,53 @@ export async function POST(request: NextRequest) {
             }
 
             case 'transfer': {
+                // Direct SOL transfer for Ashborn-only mode (no PrivacyCash)
                 const { amount, recipient } = envelope.params as { amount?: number; recipient?: string };
-                const relay = await getPrivacyRelay();
-                const transferResult = await relay.transfer({ amount, recipient });
+                if (!recipient) {
+                    return NextResponse.json({ success: false, error: 'Recipient address required' }, { headers, status: 400 });
+                }
+
+                const transferAmount = amount || 0.01;
+                const lamports = Math.floor(transferAmount * LAMPORTS_PER_SOL);
+                const ashbornRelay = getAshbornRelayKeypair();
+
+                // Check relay balance
+                const relayBalance = await connection.getBalance(ashbornRelay.publicKey);
+                if (relayBalance < lamports + 5000) { // 5000 lamports for fees
+                    return NextResponse.json({
+                        success: false,
+                        error: `Insufficient relay balance: ${relayBalance / LAMPORTS_PER_SOL} SOL`,
+                        simulated: true
+                    }, { headers });
+                }
+
+                // Import necessary modules for transfer
+                const { Transaction, SystemProgram, PublicKey } = await import('@solana/web3.js');
+
+                // Create transfer transaction
+                const transaction = new Transaction().add(
+                    SystemProgram.transfer({
+                        fromPubkey: ashbornRelay.publicKey,
+                        toPubkey: new PublicKey(recipient),
+                        lamports
+                    })
+                );
+
+                const { blockhash } = await connection.getLatestBlockhash();
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = ashbornRelay.publicKey;
+
+                // Sign and send
+                transaction.sign(ashbornRelay);
+                const signature = await connection.sendRawTransaction(transaction.serialize());
+                await connection.confirmTransaction(signature, 'confirmed');
+
                 return NextResponse.json({
-                    ...transferResult,
+                    success: true,
+                    signature,
+                    amount: transferAmount,
+                    from: ashbornRelay.publicKey.toBase58(),
+                    to: recipient,
                     relay: { version: ASHBORN_RELAY_VERSION }
                 }, { headers });
             }

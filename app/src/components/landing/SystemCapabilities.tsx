@@ -79,7 +79,7 @@ export default function SystemCapabilities() {
                             <p className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2 text-right">Power Integrations</p>
                             <div className="flex flex-wrap justify-end gap-3">
                                 <PartnerBadge name="Privacy Cash" role="Shielded Pool" color="blue" />
-                                <PartnerBadge name="ShadowWire" role="Stealth Network" color="purple" />
+                                <PartnerBadge name="Light Protocol" role="Merkle Trees" color="yellow" />
                                 <PartnerBadge name="X402" role="Agent Commerce" color="green" />
                             </div>
                         </div>
