@@ -12,11 +12,15 @@ export default function ShieldDemoPage() {
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
     const [step, setStep] = useState<Step>('idle');
     const [txSignature, setTxSignature] = useState<string | null>(null);
-    const [amount, setAmount] = useState('0.01');
+    const [amount, setAmount] = useState('0.1');
+    const [shieldMode, setShieldMode] = useState<'ashborn' | 'double'>('double');
+    const [resultData, setResultData] = useState<any>(null);
+    const [showProof, setShowProof] = useState(false);
 
     const resetDemo = () => {
         setStep('idle');
         setTxSignature(null);
+        setResultData(null);
         reset();
     };
 
@@ -25,11 +29,19 @@ export default function ShieldDemoPage() {
             setStatus('loading');
             setStep('shielding');
 
-            // Call server-side API that uses the demo keypair
-            const res = await fetch('/api/privacycash', {
+            // Call Ashborn Relay for LAYERED privacy (Double Shield)
+            // Layer 1: Ashborn Merkle Tree commitment
+            // Layer 2: PrivacyCash pool deposit
+            const res = await fetch('/api/ashborn', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'shield', amount: parseFloat(amount) })
+                body: JSON.stringify({
+                    action: 'shield',
+                    params: {
+                        amount: parseFloat(amount),
+                        mode: shieldMode
+                    }
+                })
             });
 
             const data = await res.json();
@@ -38,6 +50,7 @@ export default function ShieldDemoPage() {
             }
 
             setTxSignature(data.signature);
+            setResultData(data);
             setStep('complete');
             setStatus('success');
         } catch (err) {
@@ -49,9 +62,9 @@ export default function ShieldDemoPage() {
 
     return (
         <TerminalDemoWrapper
-            title="SHIELD_SOL"
-            tag="PRIVACYCASH"
-            description="Convert public SOL into private notes. Integrates with PrivacyCash and Light Protocol. Ashborn wraps it for unified SDK access."
+            title="DOUBLE_SHIELD"
+            tag="LAYERED_PRIVACY"
+            description="Two layers of protection: Ashborn Merkle Tree + PrivacyCash Pool. Maximum anonymity with commitment proof."
         >
             {/* Tech Stack Badge */}
             <div className="flex flex-wrap gap-2 mb-4">
@@ -67,10 +80,20 @@ export default function ShieldDemoPage() {
                 </div>
             </TerminalSection>
 
-            <TerminalSection title="HOW_SHIELDING_WORKS">
+            <TerminalSection title={shieldMode === 'double' ? "DOUBLE_SHIELD_ARCHITECTURE" : "SHADOW_SHIELD"}>
                 <div className="text-sm text-gray-300 space-y-2">
-                    <p>$ Public SOL → Deposit to Pool → Receive Private Note</p>
-                    <p className="text-xs text-gray-500">$ Observers see deposit but cannot link to future withdrawal</p>
+                    {shieldMode === 'double' ? (
+                        <>
+                            <p>$ Layer 1: Ashborn → Commitment + Merkle Tree (ZK proof of deposit)</p>
+                            <p>$ Layer 2: PrivacyCash → Token Pool (Mixing anonymity)</p>
+                            <p className="text-xs text-gray-500">$ Even if one layer is compromised, the other still provides protection</p>
+                        </>
+                    ) : (
+                        <>
+                            <p>$ Layer 1: Ashborn → Commitment + Merkle Tree (ZK proof of deposit)</p>
+                            <p className="text-xs text-gray-500">$ Standard compliance proof. Lighter, faster, but relies on Relay specifically.</p>
+                        </>
+                    )}
                 </div>
             </TerminalSection>
             {isSuccess ? (
@@ -78,16 +101,62 @@ export default function ShieldDemoPage() {
                     <TerminalSection title="TRANSACTION_RESULT" variant="success">
                         <TerminalOutput
                             lines={[
-                                `Action: Shield to PrivacyCash Pool`,
+                                `Action: ${shieldMode === 'double' ? 'DOUBLE_SHIELD' : 'ASHBORN_SHIELD'}`,
                                 `Amount: ${amount} SOL`,
-                                `Signer: ${DEMO_WALLET.slice(0, 16)}...`,
-                                `Program: PrivacyCash (ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS)`,
-                                txSignature ? `Tx: ${txSignature.slice(0, 16)}...` : 'Tx: pending',
-                                `Note: note_7x9... (Saved to Vault)`,
+                                `Layer 1: Ashborn Commitment ✓`,
+                                shieldMode === 'double' ? `Layer 2: PrivacyCash Pool ✓` : null,
+                                txSignature?.startsWith('simulated_')
+                                    ? `Tx: [SIMULATION_MODE] ${txSignature.slice(0, 16)}...`
+                                    : (txSignature ? `Tx: ${txSignature.slice(0, 16)}...` : 'Tx: pending'),
+                                shieldMode === 'double' ? `Protection: 🛡️🛡️ Two Layers Active` : `Protection: 🛡️ Single Layer Active`,
+                                resultData?.ashbornNote ? `Note: ${resultData.ashbornNote.slice(0, 16)}...` : null,
                                 `Status: ✓ COMPLETE`
-                            ]}
+                            ].filter(Boolean) as string[]}
                             type="success"
                         />
+                        {txSignature?.startsWith('simulated_') ? (
+                            <div className="mt-4 p-3 border border-yellow-500/30 bg-yellow-500/10 rounded text-xs">
+                                <p className="text-yellow-400 font-bold mb-1">⚠ SIMULATION MODE ACTIVE</p>
+                                <p className="text-gray-400 mb-2">
+                                    Devnet currently returning <span className="text-white font-mono">0x65 InstructionFallbackNotFound</span>.
+                                    The demo is simulating the successful path to showcase the UX flow.
+                                </p>
+
+                                <button
+                                    onClick={() => setShowProof(!showProof)}
+                                    className="mt-2 text-yellow-500 hover:text-yellow-400 underline font-mono text-[10px] uppercase block mb-2"
+                                >
+                                    [{showProof ? 'HIDE_PROOF_DATA' : 'VIEW_SIMULATED_PROOF_DATA'}]
+                                </button>
+
+                                {showProof && (
+                                    <div className="bg-black/50 p-2 rounded border border-yellow-500/20 font-mono text-[9px] text-gray-400 overflow-x-auto">
+                                        <pre>{JSON.stringify({
+                                            signature: txSignature,
+                                            commitment: resultData?.commitment || 'hidden',
+                                            note: resultData?.ashbornNote || 'hidden',
+                                            proofType: 'GROTH16_SIMULATION',
+                                            verification: 'SUCCESS'
+                                        }, null, 2)}</pre>
+                                    </div>
+                                )}
+
+                                <p className="text-gray-500 italic mt-2">
+                                    On Mainnet, this would deliver a real ZK proof verification.
+                                </p>
+                            </div>
+                        ) : txSignature && (
+                            <div className="mt-4 text-center">
+                                <a
+                                    href={`https://solscan.io/tx/${txSignature}?cluster=devnet`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-blue-400 hover:text-blue-300 underline font-mono"
+                                >
+                                    [VIEW_ON_SOLSCAN]
+                                </a>
+                            </div>
+                        )}
                     </TerminalSection>
 
                     <div className="flex justify-center">
@@ -98,16 +167,45 @@ export default function ShieldDemoPage() {
                 <TerminalSection title="SHIELD_CONFIGURATION">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs text-green-500 mb-2 font-mono">$ AMOUNT_TO_SHIELD (SOL)</label>
+                            <label className="block text-xs text-green-500 mb-2 font-mono">$ AMOUNT_TO_SHIELD (Allowed: 0.1, 1, 10...)</label>
                             <input
                                 type="number"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 className="w-full bg-black border border-green-500/30 px-4 py-3 text-sm text-green-400 font-mono focus:border-green-500 focus:outline-none"
                                 disabled={step !== 'idle'}
-                                min="0.001"
-                                step="0.01"
+                                min="0.1"
+                                step="0.1"
                             />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-green-500 mb-2 font-mono">$ PRIVACY_MODE</label>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setShieldMode('ashborn')}
+                                    className={`flex-1 py-2 px-4 text-xs font-mono border transition-all ${shieldMode === 'ashborn'
+                                        ? 'bg-pink-500/20 border-pink-500 text-pink-400'
+                                        : 'bg-black border-gray-800 text-gray-500 hover:border-pink-500/50'
+                                        }`}
+                                >
+                                    ASHBORN_ONLY
+                                </button>
+                                <button
+                                    onClick={() => setShieldMode('double')}
+                                    className={`flex-1 py-2 px-4 text-xs font-mono border transition-all ${shieldMode === 'double'
+                                        ? 'bg-green-500/20 border-green-500 text-green-400'
+                                        : 'bg-black border-gray-800 text-gray-500 hover:border-green-500/50'
+                                        }`}
+                                >
+                                    DOUBLE_SHIELD
+                                </button>
+                            </div>
+                            <p className="text-[10px] text-gray-500 mt-2 font-mono">
+                                {shieldMode === 'double'
+                                    ? '> Max security. Merkle tree + Mixed Pool.'
+                                    : '> Standard security. Merkle tree commitment only.'}
+                            </p>
                         </div>
 
                         <TerminalButton
@@ -128,15 +226,26 @@ export default function ShieldDemoPage() {
             <TerminalSection title="SDK_IMPLEMENTATION">
                 <TerminalCodeBlock
                     language="typescript"
-                    code={`import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk';
+                    code={shieldMode === 'double' ? `import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
 
-const privacyCash = new PrivacyCashOfficial({
-  rpcUrl: "https://api.devnet.solana.com",
-  owner: keypair,
-  programId: "ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS"
+// Initialize the Privacy Relay (server-side)
+const relay = new PrivacyRelay({
+  relayKeypair: process.env.RELAY_KEYPAIR,
+  rpcUrl: process.env.RPC_URL,
+  privacyCashProgramId: 'ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS'
 });
 
-const result = await privacyCash.shieldSOL(0.1);`}
+// DOUBLE SHIELD: Ashborn Merkle + PrivacyCash Pool
+const result = await relay.shield({ amount: 0.1 });` : `import { Ashborn } from '@alleyboss/ashborn-sdk';
+
+// Initialize Standard SDK
+const ashborn = new Ashborn(connection, wallet);
+
+// ASHBORN ONLY: Merkle Tree Commitment
+const result = await ashborn.shield({
+    amount: BigInt(amount_lamports),
+    mint: NATIVE_MINT
+});`}
                 />
             </TerminalSection>
         </TerminalDemoWrapper>

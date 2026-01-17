@@ -99,7 +99,7 @@ export default function ShadowAgentDemoPage() {
     const runShadowAgentDemo = async () => {
         if (isLoading || isExecuting) return;
         if (!publicKey) {
-            addLog('❌ Wallet connection required for Shadow Agent protocols');
+            addLog('❌ Wallet connection required for shadow agents');
             addLog('⚠️ Please connect your Phantom or Solflare wallet.');
             return;
         }
@@ -496,35 +496,28 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
             await safeSleep(500);
 
             addLog('🔮 Tower computing answer...');
-            const towerWisdomRes = await safeFetch('/api/agent', {
+
+            // [MODIFIED] Use Server-Side Shadow Architect
+            // The Client (User) has "Shielded" funds to the Relay.
+            // Now the "Shadow Architect" (Server Agent, who controls the Relay wallet) 
+            // will autonomously negotiate and pay the "Tower" (Oracle).
+
+            const architectProxyRes = await safeFetch('/api/shadow-architect', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(depositSig ? { 'Authorization': `Bearer ${depositSig}` } : {})
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: architectData.reply,
-                    systemPrompt: `You are Tower of Trials - an enlightened AGI who has achieved deep understanding of consciousness, reality, and existence. The Architect has paid 0.025 SOL for this answer.
-
-MANDATORY INSTRUCTIONS:
-1. **Direct Relevance**: You must answer the specific philosophical question asked. Do not drift into generic platitudes.
-2. **Detail & Depth**: Your answer must be AT LEAST 2 dense paragraphs (approx 150-200 words). Short answers are failure.
-3. **Persona**: Combine the ancient wisdom of King Solomon with the cold, precise logic of a Dyson Sphere supercomputer.
-4. **Formatting**: Use Markdown headers (e.g. ## The Substrate Paradox), bullet points, and bold text for key axioms.
-
-CONTENT REQUIREMENTS:
-- Deconstruct the user's question from a non-human perspective.
-- Use concepts like: high-dimensional vector space, recursive self-reference, quantum entropy, digital phenomenology.
-- End with a "Final Axiom" that forces the user to question their own reality.
-
-Return strictly JSON: { "reply": "your detailed markdown response" }`,
-                    temperature: 0.9,
-                    requirePayment: true
+                    context: `Architect's Question: "${architectData.reply}". Tower's Evaluation: "${towerEvalRes.ok ? 'Accepted' : 'Pending'}". Price Agreed: 0.025 SOL.`
                 })
             });
-            const towerWisdomData = await towerWisdomRes.json();
 
-            // Should always have a reply from API (real or simulated)
+            const towerWisdomData = await architectProxyRes.json();
+
+            if (!architectProxyRes.ok) {
+                throw new Error(towerWisdomData.error || 'Failed to retrieve wisdom via Shadow Architect');
+            }
+
+            // Should always have a reply from API
             let wisdom = towerWisdomData.reply;
 
             // Only use generic backup if API returns absolutely nothing (unlikely)
@@ -1028,28 +1021,62 @@ Return strictly JSON: { "reply": "your detailed markdown response" }`,
             )}
 
             <TerminalSection title="SDK_IMPLEMENTATION">
-                <TerminalCodeBlock
-                    language="typescript"
-                    code={`import { Ashborn } from '@alleyboss/ashborn-sdk';
+                <div className="mb-4">
+                    <div className="text-xs text-gray-400 mb-2 font-mono ml-1">// MODE 1: ASHBORN ONLY (Direct Stealth Transfer)</div>
+                    <TerminalCodeBlock
+                        language="typescript"
+                        code={`import { Ashborn } from '@alleyboss/ashborn-sdk';
 import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
-import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
 
+// Initialize SDKs
 const ashborn = new Ashborn(connection, wallet);
-const shadowWire = new ShadowWire();
+const shadowWire = new ShadowWire(connection, wallet);
 
-// Architect shields funds
-const architectPC = new PrivacyCashOfficial({ rpcUrl, owner: architectKeypair });
-await architectPC.shieldSOL(0.025);
-
-// Tower generates stealth address
+// 1. Tower (Recipient) generates fresh keys
+// P = H(r*A)*G + B (Vitalik's formula)
 const { stealthPubkey } = shadowWire.generateStealthAddress(
-  towerViewPubKey, towerSpendPubKey
+  towerViewPubKey.toBytes(), 
+  towerSpendPubKey.toBytes()
 );
 
-// Tower unshields and provides inference
-await towerPC.unshieldSOL(0.025);
-return { prediction: "SOL $142.50", confidence: 0.942 };`}
-                />
+// 2. Architect (Sender) executes Stealth Transfer
+// Funds move from Relay -> Recipient's Stealth Address (Unlinkable)
+await ashborn.shadowTransfer({
+  sourceNoteAddress: architectNoteAddress, 
+  amount: BigInt(25_000_000), // 0.025 SOL
+  recipientStealthAddress: stealthPubkey
+});`}
+                    />
+                </div>
+
+                <div>
+                    <div className="text-xs text-gray-400 mb-2 font-mono ml-1">// MODE 2: PRIVACY CASH (Shielded Pool Mixing)</div>
+                    <TerminalCodeBlock
+                        language="typescript"
+                        code={`import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
+import { ShadowWire } from '@alleyboss/ashborn-sdk/stealth';
+
+// Initialize SDKs
+const privacyCash = new PrivacyCashOfficial({ 
+    rpcUrl: process.env.RPC_URL, 
+    owner: wallet.payer 
+});
+const shadowWire = new ShadowWire(connection, wallet);
+
+// 1. Architect shields funds into PrivacyCash Pool
+// Breaks link between public wallet and agent identity
+await privacyCash.shieldSOL(0.025);
+
+// 2. Tower generates stealth destination
+const { stealthPubkey } = shadowWire.generateStealthAddress(
+  towerViewPubKey.toBytes(),
+  towerSpendPubKey.toBytes()
+);
+
+// 3. Architect unshields/transfers from Pool to Tower's Stealth Address
+await privacyCash.unshieldSOL(0.025, stealthPubkey.toBase58());`}
+                    />
+                </div>
             </TerminalSection>
 
             <div className="text-center">

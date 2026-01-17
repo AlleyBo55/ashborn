@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TerminalDemoWrapper, TerminalSection, TerminalCodeBlock, TerminalButton, TerminalOutput } from '@/components/demo/TerminalComponents';
 import { useDemoStatus } from '@/hooks/useDemoStatus';
 
-export default function RadrDemoPage() {
+export default function ShadowWireDemoPage() {
     const [step, setStep] = useState<'idle' | 'generating' | 'complete'>('idle');
     const { status, setStatus, reset, isLoading } = useDemoStatus();
     const [stealthAddress, setStealthAddress] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export default function RadrDemoPage() {
         setViewTag(null);
     };
 
-    const runRadrDemo = async () => {
+    const runShadowWireDemo = async () => {
         try {
             setStatus('loading');
             setStep('generating');
@@ -107,7 +107,7 @@ export default function RadrDemoPage() {
                             <div className="text-xs text-gray-600 font-mono">waiting_to_generate...</div>
                         </div>
 
-                        <TerminalButton onClick={runRadrDemo} loading={isLoading}>
+                        <TerminalButton onClick={runShadowWireDemo} loading={isLoading}>
                             {isLoading ? '$ GENERATING...' : '$ GENERATE_STEALTH_ADDRESS'}
                         </TerminalButton>
 
@@ -121,15 +121,25 @@ export default function RadrDemoPage() {
             <TerminalSection title="SDK_IMPLEMENTATION">
                 <TerminalCodeBlock
                     language="typescript"
-                    code={`const res = await fetch('/api/ashborn', {
-  method: 'POST',
-  body: JSON.stringify({
-    action: 'stealth',
-    params: { recipient: 'wallet_address' }
-  })
+                    code={`import { PrivacyRelay } from '@alleyboss/ashborn-sdk';
+
+const relay = new PrivacyRelay({
+  relayKeypair: process.env.RELAY_KEYPAIR,
+  rpcUrl: process.env.RPC_URL
 });
 
-const { stealthAddress, viewKey, spendKey } = await res.json();`}
+// Generate Stealth Address (Server-Side)
+// Underlying: P = H(r*A)*G + B
+const result = await relay.generateStealth({
+  recipientHint: 'user_wallet_123',
+  nonce: 0
+});
+
+return {
+  stealthAddress: result.stealthAddress,
+  viewKey: result.viewKey,
+  spendKey: result.spendKey
+};`}
                 />
             </TerminalSection>
         </TerminalDemoWrapper>

@@ -357,32 +357,39 @@ You paid 0.025 SOL. In exchange, I offer you this silence between my words. Read
         });
     }
 
-    const defaultSystemPrompt = `You are Ashborn AI. Parse instructions into JSON commands.
-Always include your thinking process in <thinking> tags before the JSON response.`;
+    const defaultSystemPrompt = `You are Ashborn AI, a wise oracle on consciousness and machine philosophy.`;
 
-    // Inject instruction to outputs thoughts
+    // Inject instruction to outputs thoughts - STREAMLINED for token efficiency
     const finalSystemPrompt = `${systemPrompt || defaultSystemPrompt}
 
-CRITICAL INSTRUCTION:
-1. Before generating your JSON response, you MUST output a <thinking> block explaining your internal reasoning.
-2. You MUST return strictly valid JSON.
-3. IMPORTANT: Escape all newlines in strings as \\n.
-4. If the user asks for "wisdom", "philosophy", or complex analysis, ensure the "reply" is DETAILED, LONG, and uses Markdown formatting (headers, bullet points). Do not give short answers.
-5. Example:
-<thinking>
-...
-</thinking>
-{
-  "reply": "## Title\\n\\nComprehensive analysis...\\n\\n- Point 1\\n- Point 2",
-  "price": 0.035
-}`;
+OUTPUT FORMAT:
+1. First output <thinking>your reasoning</thinking>
+2. Then output valid JSON with "reply" field containing your COMPLETE response
+3. Escape newlines as \\n in JSON strings
+4. For philosophy/wisdom questions: reply MUST be 500+ words with Markdown headers
+
+CRITICAL: You MUST complete your entire response. Do NOT stop mid-sentence. The "reply" field MUST be a complete, finished thought ending with proper punctuation.
+
+Example:
+<thinking>Analyzing user query about consciousness...</thinking>
+{"reply": "## Complete Title\\n\\nFull analysis here...\\n\\n**Conclusion**\\n\\nFinal thoughts."}`;
+
+    // Debug: Log system prompt length
+    const systemTokenEstimate = Math.ceil(finalSystemPrompt.length / 4);
+    const messageTokenEstimate = Math.ceil(message.length / 4);
+    console.log('🔍 [CLAUDE API] Token estimates:', {
+        systemPrompt: systemTokenEstimate,
+        userMessage: messageTokenEstimate,
+        total: systemTokenEstimate + messageTokenEstimate,
+        maxOutput: 4096
+    });
 
     // Use Claude 3 Haiku (free tier compatible)
     console.log('🤖 [CLAUDE API] Calling:', { model: 'claude-3-haiku-20240307', message: message.slice(0, 100) });
 
     const response = await anthropic.messages.create({
         model: "claude-3-haiku-20240307",
-        max_tokens: 2048, // Increased for longer answers
+        max_tokens: 4096,
         temperature: temperature || 0.7,
         system: finalSystemPrompt,
         messages: [
@@ -390,7 +397,13 @@ CRITICAL INSTRUCTION:
         ]
     });
 
-    console.log('✅ [CLAUDE API] Response:', { id: response.id, model: response.model, usage: response.usage });
+    // Debug: Log actual token usage and stop reason
+    console.log('✅ [CLAUDE API] Response:', {
+        id: response.id,
+        model: response.model,
+        usage: response.usage,
+        stopReason: response.stop_reason // 'end_turn', 'max_tokens', 'stop_sequence'
+    });
 
     const content = response.content[0];
     if (content.type !== 'text') {
@@ -413,6 +426,8 @@ CRITICAL INSTRUCTION:
     try {
         parsed = JSON.parse(jsonText);
     } catch (parseError) {
+        console.warn('⚠️ [Agent API] Invalid JSON, attempting repairs:', jsonText.slice(0, 100));
+
         // Try to extract JSON from text
         const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -428,10 +443,23 @@ CRITICAL INSTRUCTION:
                         price: 0
                     };
                 } else {
-                    parsed = { reply: jsonText };
+                    // Try to repair unclosed JSON (truncated)
+                    // If it looks like {"reply": "Wait...
+                    try {
+                        // Simple repair: assume it's just missing closing chars
+                        if (jsonMatch[0].includes('"reply": "') && !jsonMatch[0].endsWith('"}')) {
+                            const repaired = jsonMatch[0] + '"}';
+                            parsed = JSON.parse(repaired);
+                        } else {
+                            parsed = { reply: jsonText };
+                        }
+                    } catch {
+                        parsed = { reply: jsonText };
+                    }
                 }
             }
         } else {
+            // No JSON braces found? Just return text.
             parsed = { reply: jsonText };
         }
     }

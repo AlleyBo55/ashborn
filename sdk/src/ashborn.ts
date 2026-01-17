@@ -409,7 +409,8 @@ export class Ashborn {
     commitment: Uint8Array,
     _mint: PublicKey,
   ): Promise<TransactionInstruction> {
-    const discriminator = Buffer.from([183, 32, 140, 112, 165, 224, 91, 214]);
+    // Discriminator for simplified 'shield' instruction (sha256("global:shield")[0..8])
+    const discriminator = Buffer.from([220, 198, 253, 246, 231, 84, 147, 98]);
 
     const data = Buffer.concat([
       discriminator,

@@ -54,7 +54,7 @@ const sections = [
     {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: CodeIcon },
-            { id: 'shadow-agent', title: 'Shadow Agent Protocol', icon: SparklesIcon },
+            { id: 'shadow-agent', title: 'shadow agent', icon: SparklesIcon },
             { id: 'demo-modes', title: 'Demo Modes', icon: Activity01Icon },
             { id: 'stealth', title: 'Stealth Addresses', icon: ViewOffIcon },
             { id: 'nlp', title: 'Natural Language', icon: Activity01Icon },
@@ -549,7 +549,7 @@ export default function DocsPage() {
                                     <div className="flex-1 grid grid-cols-2 gap-4">
                                         {/* Identity Side */}
                                         <div className="p-4 rounded-lg bg-purple-900/10 border border-purple-500/20 relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 p-1 bg-purple-500/20 rounded-bl text-[8px] text-purple-300 font-mono">RADR_LABS</div>
+                                            <div className="absolute top-0 right-0 p-1 bg-purple-500/20 rounded-bl text-[8px] text-purple-300 font-mono">Shadow Wire</div>
                                             <div className="flex items-center gap-3 mb-3">
                                                 <ViewOffIcon className="w-8 h-8 text-purple-400" />
                                                 <div className="text-white font-semibold text-sm">Ashborn Program</div>
@@ -1002,9 +1002,9 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                         />
                     </section>
 
-                    {/* Shadow Agent Protocol */}
+                    {/* shadow agent */}
                     <section id="shadow-agent" className="mb-24 scroll-mt-32">
-                        <SectionHeader title="Shadow Agent Protocol" description="AI-to-AI private commerce via the Shadow Monarch." />
+                        <SectionHeader title="shadow agent" description="AI-to-AI private commerce via the Shadow Monarch." />
                         <CodeBlock
                             language="typescript"
                             code={`import { ShadowAgent } from '@alleyboss/ashborn-sdk';\n\nconst agent = new ShadowAgent({\n  connection,\n  wallet,\n  personality: 'merchant'\n});\n\n// AI negotiates and executes private payment\nconst result = await agent.negotiate({\n  intent: 'Buy 100 USDC worth of compute',\n  maxPrice: 100_000_000n\n});`}
@@ -1014,7 +1014,7 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                             <AiChat02Icon className="w-5 h-5 text-purple-400 mt-0.5" />
                             <div className="text-sm text-purple-200/80 leading-relaxed">
                                 <strong className="text-purple-400 block mb-1">Experimental</strong>
-                                Shadow Agent Protocol is in alpha. Use with caution in production.
+                                shadow agent is in alpha. Use with caution in production.
                             </div>
                         </div>
                     </section>

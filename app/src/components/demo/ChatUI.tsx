@@ -109,19 +109,72 @@ export function ChatUI({ chats, logs, thoughts, demoMode = 'full-demo' }: { chat
                                                     ? 'bg-blue-500/20 border border-blue-500/30 text-blue-100 rounded-tl-sm'
                                                     : 'bg-purple-500/20 border border-purple-500/30 text-purple-100 rounded-tr-sm'
                                                     }`}>
-                                                    {msg.text.replace(/^[🏛️🗼]\s*"?|"$/g, '').split('\n').map((line, i) => (
-                                                        <div key={i} className="min-h-[1.5em] mb-2 last:mb-0">
-                                                            {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((part, j) => {
-                                                                if (part.startsWith('**') && part.endsWith('**')) {
-                                                                    return <strong key={j} className="text-white font-bold tracking-wide">{part.slice(2, -2)}</strong>;
-                                                                }
-                                                                if (part.startsWith('*') && part.endsWith('*')) {
-                                                                    return <em key={j} className="text-purple-200 italic">{part.slice(1, -1)}</em>;
-                                                                }
-                                                                return part;
-                                                            })}
-                                                        </div>
-                                                    ))}
+                                                    {/* Convert escaped \n from API to real newlines, then split and render markdown */}
+                                                    {msg.text.replace(/^[🏛️🗼]\s*"?|"$/g, '').replace(/\\n/g, '\n').split('\n').map((line, i) => {
+                                                        const trimmed = line.trim();
+
+                                                        // Headers
+                                                        if (trimmed.startsWith('# ')) {
+                                                            return (
+                                                                <h1 key={i} className={`text-xl sm:text-2xl font-black mt-6 mb-3 tracking-tight ${isArchitect ? 'text-blue-300' : 'text-purple-300'
+                                                                    }`}>
+                                                                    {trimmed.replace(/^#\s+/, '')}
+                                                                </h1>
+                                                            );
+                                                        }
+                                                        if (trimmed.startsWith('## ')) {
+                                                            return (
+                                                                <h2 key={i} className={`text-lg sm:text-xl font-bold mt-4 mb-2 tracking-tight ${isArchitect ? 'text-blue-200' : 'text-purple-200'
+                                                                    }`}>
+                                                                    {trimmed.replace(/^##\s+/, '')}
+                                                                </h2>
+                                                            );
+                                                        }
+                                                        if (trimmed.startsWith('### ')) {
+                                                            return (
+                                                                <h3 key={i} className={`text-base sm:text-lg font-semibold mt-3 mb-1 ${isArchitect ? 'text-blue-100' : 'text-purple-100'
+                                                                    }`}>
+                                                                    {trimmed.replace(/^###\s+/, '')}
+                                                                </h3>
+                                                            );
+                                                        }
+
+                                                        // Lists
+                                                        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                                                            return (
+                                                                <div key={i} className="flex gap-2 mb-1 pl-2">
+                                                                    <div className={`mt-2 w-1.5 h-1.5 rounded-full shrink-0 ${isArchitect ? 'bg-blue-300/50' : 'bg-purple-300/50'
+                                                                        }`} />
+                                                                    <div className="flex-1">
+                                                                        {trimmed.substring(2).split(/(\*\*.*?\*\*|\*.*?\*)/g).map((part, j) => {
+                                                                            if (part.startsWith('**') && part.endsWith('**')) {
+                                                                                return <strong key={j} className="text-white font-bold tracking-wide">{part.slice(2, -2)}</strong>;
+                                                                            }
+                                                                            if (part.startsWith('*') && part.endsWith('*')) {
+                                                                                return <em key={j} className={isArchitect ? "text-blue-200 italic" : "text-purple-200 italic"}>{part.slice(1, -1)}</em>;
+                                                                            }
+                                                                            return part;
+                                                                        })}
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        }
+
+                                                        // Regular Paragraphs
+                                                        return (
+                                                            <div key={i} className="min-h-[1.5em] mb-2 last:mb-0">
+                                                                {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((part, j) => {
+                                                                    if (part.startsWith('**') && part.endsWith('**')) {
+                                                                        return <strong key={j} className="text-white font-bold tracking-wide">{part.slice(2, -2)}</strong>;
+                                                                    }
+                                                                    if (part.startsWith('*') && part.endsWith('*')) {
+                                                                        return <em key={j} className={isArchitect ? "text-blue-200 italic" : "text-purple-200 italic"}>{part.slice(1, -1)}</em>;
+                                                                    }
+                                                                    return part;
+                                                                })}
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         </motion.div>

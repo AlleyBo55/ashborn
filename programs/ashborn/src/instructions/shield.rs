@@ -131,3 +131,76 @@ pub fn handler(
 
     Ok(())
 }
+
+// ============================================================================
+// SIMPLIFIED SHIELD (SDK-Compatible) - For Demo Purposes
+// Matches SDK signature: shield(amount, commitment)
+// ============================================================================
+
+/// Simplified accounts for SDK-compatible shield
+#[derive(Accounts)]
+pub struct Shield<'info> {
+    /// The user's vault
+    #[account(
+        mut,
+        seeds = [b"shadow_vault", owner.key().as_ref()],
+        bump = vault.bump,
+        has_one = owner @ AshbornError::Unauthorized,
+    )]
+    pub vault: Box<Account<'info, ShadowVault>>,
+
+    /// The new shielded note
+    #[account(
+        init,
+        payer = owner,
+        space = ShieldedNote::SIZE,
+        seeds = [b"shielded_note", vault.key().as_ref(), &(vault.note_count + 1).to_le_bytes()],
+        bump,
+    )]
+    pub note: Box<Account<'info, ShieldedNote>>,
+
+    /// Owner (payer)
+    #[account(mut)]
+    pub owner: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+/// Simplified shield handler matching SDK signature
+/// Creates a commitment record without full Merkle tree / ZK proof validation
+/// Suitable for demo/devnet usage
+pub fn shield_simple_handler(
+    ctx: Context<Shield>,
+    amount: u64,
+    commitment: [u8; 32],
+) -> Result<()> {
+    let vault = &mut ctx.accounts.vault;
+    let note = &mut ctx.accounts.note;
+    let clock = Clock::get()?;
+
+    // 1. Validate denomination (privacy-preserving: fixed amounts only)
+    let denomination = Denomination::from_amount(amount)
+        .ok_or(AshbornError::InvalidDenomination)?;
+
+    msg!("[Shield] Amount validated: {} lamports (tier {})", amount, denomination as u8);
+
+    // 2. Create shielded note (simplified - no Merkle tree insertion)
+    note.vault = vault.key();
+    note.commitment = commitment;
+    note.index = (vault.note_count + 1) as u64;
+    note.denomination_tier = denomination as u8;
+    note.spent = false;
+    note.created_at = clock.unix_timestamp;
+    note.unshield_after = clock.unix_timestamp + 24 * 60 * 60; // 24h privacy delay
+    note.bump = ctx.bumps.note;
+
+    // 3. Update vault state
+    vault.note_count += 1;
+    vault.last_activity = clock.unix_timestamp;
+
+    msg!("[Shield] Note #{} created with commitment: {:?}", note.index, &commitment[..8]);
+    msg!("[Shield] The shadows have accepted your offering.");
+
+    Ok(())
+}
+

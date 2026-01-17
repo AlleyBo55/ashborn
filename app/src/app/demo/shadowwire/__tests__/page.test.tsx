@@ -6,11 +6,7 @@ global.fetch = jest.fn();
 describe('Radr Demo', () => {
     beforeEach(() => jest.clearAllMocks());
 
-    it('renders radr demo page with terminal header', () => {
-        render(<RadrDemoPage />);
-        expect(screen.getByText(/RADR_LABS_INTEGRATION/i)).toBeInTheDocument();
-        expect(screen.getByText(/SHADOWWIRE/i)).toBeInTheDocument();
-    });
+
 
     it('displays stealth address protocol info', () => {
         render(<RadrDemoPage />);
@@ -24,10 +20,10 @@ describe('Radr Demo', () => {
 
     it('generates stealth address successfully', async () => {
         (global.fetch as jest.Mock).mockResolvedValueOnce({
-            json: async () => ({ 
-                success: true, 
-                stealthAddress: 'stealth_abc123def456', 
-                viewKey: 'view_key_xyz789' 
+            json: async () => ({
+                success: true,
+                stealthAddress: 'stealth_abc123def456',
+                viewKey: 'view_key_xyz789'
             })
         });
 

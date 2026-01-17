@@ -38,7 +38,7 @@ export default function ShadowAgentHighlight() {
                 >
                     <span className="inline-flex items-center gap-2 text-xs font-mono bg-purple-500/10 text-purple-300 px-4 py-2 rounded-full border border-purple-500/20">
                         <SparklesIcon className="w-4 h-4" />
-                        NEW: SHADOW AGENT PROTOCOL
+                        NEW: SHADOW AGENT DEMO
                     </span>
                 </motion.div>
 
