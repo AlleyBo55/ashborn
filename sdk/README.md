@@ -34,7 +34,7 @@ Ashborn is not just a relay. It is a **complete privacy operating system** for S
 **"The Monarch stands in front. The world sees only Him."**
 Ashborn acts as a sovereign entity, wrapping your interactions with other protocols.
 - **PrivacyCash** sees "Ashborn Relay".
-- **Radr Labs** sees "Ashborn Relay".
+- **ShadowWire** sees "Ashborn Relay".
 - **You** remain a ghost.
 
 ### 2. 🤖 SHADOW AGENTS (Private AI Commerce)
@@ -156,7 +156,7 @@ await monarch.unshield({
 | Protocol | Without Ashborn | With Shadow Relay |
 |----------|-----------------|-------------------|
 | **PrivacyCash** | Your wallet address | `Ashborn Relay` |
-| **Radr Labs** | Your stealth meta | `Ashborn Relay` |
+| **ShadowWire** | Your stealth meta | `Ashborn Relay` |
 | **Light Protocol** | Your ZK identity | `Ashborn Relay` |
 | **x402 Micropay** | Your agent wallet | `Ashborn Relay` |
 | **ZK Groth16** | N/A | Real snarkjs proof |
@@ -210,6 +210,6 @@ import { PrivacyCashOfficial, HeliusEnhanced } from '@alleyboss/ashborn-sdk/inte
 ---
 
 <p align="center">
-  <strong>PrivacyCash sees nothing. Radr Labs sees nothing.</strong><br/>
+  <strong>PrivacyCash sees nothing. ShadowWire sees nothing.</strong><br/>
   <strong>ARISE.</strong> 🌑
 </p>

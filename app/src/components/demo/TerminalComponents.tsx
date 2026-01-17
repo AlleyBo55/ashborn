@@ -48,7 +48,7 @@ export function TerminalDemoWrapper({ title, tag, description, children }: Termi
                 <div className="flex items-center justify-center gap-2 flex-wrap text-xs font-mono">
                     <span className="bg-red-500/10 text-red-400 px-2 py-1 border border-red-500/20">🔥 ASHBORN</span>
                     <span className="bg-blue-500/10 text-blue-400 px-2 py-1 border border-blue-500/20">PRIVACYCASH</span>
-                    <span className="bg-purple-500/10 text-purple-400 px-2 py-1 border border-purple-500/20">RADR_LABS</span>
+                    <span className="bg-purple-500/10 text-purple-400 px-2 py-1 border border-purple-500/20">SHADOWWIRE</span>
                     <span className="bg-amber-500/10 text-amber-400 px-2 py-1 border border-amber-500/20">X402</span>
                     <span className="bg-yellow-500/10 text-yellow-400 px-2 py-1 border border-yellow-500/20">⚡ LIGHT_PROTOCOL (MERKLE)</span>
                 </div>

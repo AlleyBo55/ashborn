@@ -10,7 +10,7 @@ import Link from 'next/link';
 const integrations = [
     { name: 'Ashborn', color: 'red', emoji: '🔥', role: 'Privacy Relay' },
     { name: 'PrivacyCash', color: 'blue', emoji: '🛡️', role: 'Shield Pool' },
-    { name: 'Radr Labs', color: 'purple', emoji: '👻', role: 'Stealth Addr' },
+    { name: 'ShadowWire', color: 'purple', emoji: '👻', role: 'Native Stealth' },
     { name: 'Light Protocol', color: 'green', emoji: '⚡', role: 'ZK Compress' },
     { name: 'x402 Paywall', color: 'amber', emoji: '💳', role: 'Micropay' },
 ];

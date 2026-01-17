@@ -49,13 +49,13 @@ export default function RadrDemoPage() {
 
     return (
         <TerminalDemoWrapper
-            title="RADR_LABS_INTEGRATION"
-            tag="SHADOWWIRE"
-            description="Generate stealth addresses using Vitalik's ECDH formula. Integrates with Radr Labs ShadowWire."
+            title="SHADOWWIRE_NATIVE"
+            tag="STELATH_INFRASTRUCTURE"
+            description="Generate stealth addresses using Vitalik's ECDH formula. Native Ashborn ShadowWire implementation."
         >
             {/* Tech Stack Badge */}
             <div className="flex flex-wrap gap-2 mb-4">
-                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Radr Labs</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Native</span>
                 <span className="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-1 border border-cyan-500/30">⚡ ShadowWire</span>
                 <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ Ashborn</span>
             </div>
