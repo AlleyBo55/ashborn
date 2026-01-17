@@ -69,14 +69,71 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: `Tower refused connection: ${response.status}` }, { status: response.status });
         }
 
-        const data = await response.json();
+        let data;
+        const contentType = response.headers.get('content-type');
+
+        // Handle SSE Stream (Real API Mode)
+        if (contentType && contentType.includes('text/event-stream')) {
+            console.log('[ShadowArchitect] Upstream returned stream, parsing...');
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            let fullText = '';
+
+            if (reader) {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n\n');
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (trimmed.startsWith('data: ')) {
+                            const d = trimmed.slice(6);
+                            if (d === '[DONE]') break;
+                            try {
+                                const j = JSON.parse(d);
+                                if (j.text) fullText += j.text;
+                            } catch { }
+                        }
+                    }
+                }
+            }
+
+            // Extract thinking and reply
+            let thought = '';
+            let reply = fullText;
+            const thinkMatch = fullText.match(/<thinking>([\s\S]*?)<\/thinking>/);
+            if (thinkMatch) {
+                thought = thinkMatch[1].trim();
+                reply = fullText.replace(thinkMatch[0], '').trim();
+            }
+
+            try {
+                // Try to find JSON in reply
+                const jsonMatch = reply.match(/(\{[\s\S]*\})/);
+                if (jsonMatch) {
+                    data = JSON.parse(jsonMatch[1]);
+                } else {
+                    data = JSON.parse(reply);
+                }
+                // Merge thinking back if needed
+                if (thought) data.thought = thought;
+            } catch {
+                data = { reply: reply, thought };
+            }
+        } else {
+            // Handle regular JSON (Mock Mode)
+            data = await response.json();
+        }
+
         console.log('[ShadowArchitect] Wisdom received successfully');
 
         return NextResponse.json(data);
 
     } catch (error: any) {
         console.error('[ShadowArchitect] Execution failed:', error);
-        return NextResponse.json({ 
+        return NextResponse.json({
             error: error.message || 'Internal Agent Error',
             details: error.toString()
         }, { status: 500 });

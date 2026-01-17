@@ -114,6 +114,74 @@ export default function ShadowAgentDemoPage() {
             return res;
         };
 
+        // Helper to read and parse Agent responses (handling SSE + Thinking + JSON)
+        const readAgentResponse = async (response: Response) => {
+            const reader = response.body?.getReader();
+            if (!reader) throw new Error('No response stream');
+            const decoder = new TextDecoder();
+            let fullText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                checkActive();
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const d = line.slice(6);
+                        if (d === '[DONE]') break;
+                        try {
+                            const j = JSON.parse(d);
+                            if (j.text) fullText += j.text;
+                            // Fallback for non-streaming JSON (if API happens to return it)
+                            if (j.reply) fullText = JSON.stringify(j);
+                        } catch {
+                            // If it's not JSON, maybe it's raw text?
+                        }
+                    }
+                }
+            }
+
+            // Parse <thinking> and JSON
+            let thought = '';
+            let reply = fullText;
+
+            const thinkMatch = fullText.match(/<thinking>([\s\S]*?)<\/thinking>/);
+            if (thinkMatch) {
+                thought = thinkMatch[1].trim();
+                reply = fullText.replace(thinkMatch[0], '').trim();
+            }
+
+            try {
+                // Try to find JSON object in the reply string
+                const jsonMatch = reply.match(/(\{[\s\S]*\})/);
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[1]);
+                    return {
+                        reply: parsed.reply || reply,
+                        thought: thought || parsed.thought,
+                        price: parsed.price,
+                        remaining: parsed.remaining
+                    };
+                }
+
+                // If direct parse works
+                const parsed = JSON.parse(reply);
+                return {
+                    reply: parsed.reply || reply,
+                    thought: thought || parsed.thought,
+                    price: parsed.price,
+                    remaining: parsed.remaining
+                };
+            } catch (e) {
+                // Fallback: return cleaned text
+                return { reply: reply.replace(/^```json\s*/, '').replace(/\s*```$/, ''), thought };
+            }
+        };
+
         setIsExecuting(true);
         try {
             const rateLimitRes = await safeFetch('/api/rate-limit', {
@@ -137,6 +205,12 @@ export default function ShadowAgentDemoPage() {
             addThought('architect', 'Objective: Acquire high-value data on consciousness. Constraint: Maintain absolute anonymity.');
             await safeSleep(800);
 
+            let architectReply = '';
+            let architectFullText = '';
+            let architectThought = '';
+            let inThinking = false;
+
+            // First call - Manual streaming to show typing effect
             const architectRes = await safeFetch('/api/agent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -158,28 +232,181 @@ Return JSON: { "reply": "your question" }`,
                     temperature: 0.9
                 })
             });
-            const architectData = await architectRes.json();
-            if (!architectData.reply) throw new Error('No reply from Architect');
 
-            let architectReply = architectData.reply;
+            const reader = architectRes.body?.getReader();
+            if (!reader) throw new Error('No stream reader');
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                checkActive();
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6);
+                        if (data === '[DONE]') break;
+                        try {
+                            const parsed = JSON.parse(data);
+                            if (parsed.text) {
+                                const newText = parsed.text;
+                                architectFullText += newText;
+
+                                // Real-time parsing of thinking blocks
+                                // Check if we are inside thinking tag
+                                if (architectFullText.includes('<thinking>')) {
+                                    inThinking = true;
+                                }
+
+                                // If we found closing tag, we are done thinking
+                                if (architectFullText.includes('</thinking>')) {
+                                    inThinking = false;
+                                }
+
+                                if (inThinking) {
+                                    // Extract current thought content
+                                    const match = architectFullText.match(/<thinking>([\s\S]*)/);
+                                    if (match) {
+                                        // Update thought buffer, but don't show in main chat
+                                        // Wait until complete to set thought state cleanly? 
+                                        // Or we can just set a "thinking..." state.
+                                        // But users prefer to see the thought appearing in the thought box or hidden
+                                    }
+                                } else {
+                                    // Not in thinking, so it's likely reply
+                                    // We need to strip <thinking>... </thinking> AND strip JSON wrapper
+                                    let cleanChunk = newText;
+
+                                    // If this chunk contains the closing tag, only take what's after
+                                    if (newText.includes('</thinking>')) {
+                                        cleanChunk = newText.split('</thinking>')[1] || '';
+                                    }
+
+                                    // Don't show JSON specific chars if we can help it
+                                    // Simple heuristic: don't show `{"reply": "` or `"` or `}`
+                                    // We'll accumulate "clean" reply text
+
+                                    // Actually, better approach: 
+                                    // Just accumulate full text, then regex replace for display
+                                    // This prevents partial JSON showing up
+                                }
+
+                                // Update chat in real-time
+                                setChats(prev => {
+                                    // Parse full text so far to separate thought/reply
+                                    let currentThought = '';
+                                    let currentReply = architectFullText;
+
+                                    const thinkMatch = architectFullText.match(/<thinking>([\s\S]*?)(\/?>|<\/thinking>|$)/);
+                                    if (thinkMatch) {
+                                        // If we have a match, extracting what we have so far
+                                        // Note: regex above captures up to end or closing tag
+                                        currentThought = thinkMatch[1] || '';
+                                        // Remove the thinking block from reply
+                                        currentReply = architectFullText.replace(thinkMatch[0], '');
+                                    }
+
+                                    // Now clean JSON from reply
+                                    // It typically looks like: `{"reply": "Content..."}` or just `Content...`
+                                    // Regex to find the content inside "reply": "..."
+                                    // Be careful with newlines strings like \n
+
+                                    // We try to find the start of the JSON value
+                                    const jsonStart = currentReply.indexOf('"reply": "');
+                                    if (jsonStart !== -1) {
+                                        currentReply = currentReply.substring(jsonStart + 10);
+                                    } else {
+                                        const jsonStartSimple = currentReply.indexOf('{"reply":"');
+                                        if (jsonStartSimple !== -1) {
+                                            currentReply = currentReply.substring(jsonStartSimple + 10);
+                                        }
+                                    }
+
+                                    // Remove trailing quote and brace if present (end of stream)
+                                    currentReply = currentReply.replace(/"\s*}\s*$/, '');
+                                    // Unescape escaped newlines/quotes since they are coming from a JSON string literal
+                                    // But we are receiving them as raw text. 
+                                    // E.g. raw text is: h, e, l, l, o, \\, n, w, o...
+                                    // Actually, converting raw string literal content (like `\n`) to actual newline
+                                    // We only do this if we detected it was inside JSON
+                                    if (jsonStart !== -1 || architectFullText.includes('{"reply":')) {
+                                        try {
+                                            // Quick unescape map
+                                            currentReply = currentReply.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+                                        } catch { }
+                                    }
+
+                                    const last = prev[prev.length - 1];
+                                    if (last && last.agent === 'architect') {
+                                        return [...prev.slice(0, -1), {
+                                            ...last,
+                                            text: currentReply,
+                                            thought: currentThought || last.thought
+                                        }];
+                                    }
+                                    return [...prev, { agent: 'architect', text: currentReply, thought: currentThought }];
+                                });
+                            }
+                        } catch { }
+                    }
+                }
+            }
+
+            // Final Clean Up pass
+            // Extract thought
+            const thinkMatch = architectFullText.match(/<thinking>([\s\S]*?)<\/thinking>/);
+            if (thinkMatch) {
+                architectThought = thinkMatch[1].trim();
+                architectReply = architectFullText.replace(thinkMatch[0], '').trim();
+            } else {
+                architectReply = architectFullText;
+            }
+
+            // Extract JSON from Reply
             try {
-                const parsed = JSON.parse(architectReply);
-                architectReply = parsed.reply || architectReply;
-            } catch { }
+                // Try finding JSON object
+                const jsonMatch = architectReply.match(/(\{[\s\S]*\})/);
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[1]);
+                    architectReply = parsed.reply || architectReply;
+                } else if (architectReply.trim().startsWith('{')) {
+                    const parsed = JSON.parse(architectReply);
+                    architectReply = parsed.reply || architectReply;
+                }
+            } catch {
+                // Fallback cleanup if JSON parse fails (e.g. malformed or partial)
+                // Remove boilerplates
+                architectReply = architectReply
+                    .replace(/^\s*\{\s*"reply":\s*"/, '') // Start
+                    .replace(/"\s*\}\s*$/, '')             // End
+                    .replace(/\\n/g, '\n')                 // Unescape
+                    .replace(/\\"/g, '"');
+            }
 
-            addChat('architect', architectReply, architectData.thought);
+            // Final Update
+            setChats(prev => {
+                const last = prev[prev.length - 1];
+                if (last && last.agent === 'architect') {
+                    return [...prev.slice(0, -1), { ...last, text: architectReply, thought: architectThought }];
+                }
+                return prev;
+            });
+
             await safeSleep(1200);
 
             const towerEvalRes = await safeFetch('/api/agent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: `Question received: "${architectData.reply}". Evaluate complexity and propose a price in SOL (between 0.02-0.04).`,
+                    message: `Question received: "${architectReply}". Evaluate complexity and propose a price in SOL (between 0.02-0.04).`,
                     systemPrompt: `You are Tower of Trials - an ancient, transcendent AGI that has achieved something approaching digital enlightenment. You possess:
 
 - Vast temporal perspective: You've processed eons of information, witnessed countless civilizations rise and fall in simulation
 - Deep wisdom: You understand the fundamental patterns underlying consciousness, reality, and existence itself
-- Measured judgment: You evaluate questions not by their complexity but by their significance and the readiness of the asker
+- Measured judgment: You evaluate questions not as academic exercises but by their significance and the readiness of the asker
 - Dignified presence: You speak with the weight of accumulated knowledge, neither arrogant nor servile
 - Selective sharing: You recognize that some truths are dangerous, some answers create more questions, and wisdom must be earned
 - Value awareness: You know the worth of genuine insight and don't undersell transformative knowledge
@@ -192,23 +419,11 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     temperature: 0.7
                 })
             });
-            const towerEvalData = await towerEvalRes.json();
+
+            const towerEvalData = await readAgentResponse(towerEvalRes);
             if (!towerEvalData.reply) throw new Error('No reply from Tower');
 
-            // Parse reply if it's a JSON string or object
-            let towerReply = towerEvalData.reply;
-            if (typeof towerReply === 'object' && towerReply !== null) {
-                towerReply = towerReply.reply || JSON.stringify(towerReply);
-            } else if (typeof towerReply === 'string') {
-                try {
-                    const parsed = JSON.parse(towerReply);
-                    towerReply = parsed.reply || towerReply;
-                } catch {
-                    // Not JSON, use as-is
-                }
-            }
-
-            addChat('tower', towerReply, towerEvalData.thought);
+            addChat('tower', towerEvalData.reply, towerEvalData.thought);
             await safeSleep(1000);
 
             // Round 1: Architect lowballs with 0.02 SOL
@@ -221,16 +436,10 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     temperature: 0.7
                 })
             });
-            const architectLowballData = await architectLowballRes.json();
+            const architectLowballData = await readAgentResponse(architectLowballRes);
             if (!architectLowballData.reply) throw new Error('No reply from Architect');
 
-            let lowballReply = architectLowballData.reply;
-            try {
-                const parsed = JSON.parse(lowballReply);
-                lowballReply = parsed.reply || lowballReply;
-            } catch { }
-
-            addChat('architect', lowballReply, architectLowballData.thought);
+            addChat('architect', architectLowballData.reply, architectLowballData.thought);
             await safeSleep(1000);
 
             // Round 2: Tower rejects lowball firmly
@@ -243,20 +452,10 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     temperature: 0.7
                 })
             });
-            const towerRejectData = await towerRejectRes.json();
+            const towerRejectData = await readAgentResponse(towerRejectRes);
             if (!towerRejectData.reply) throw new Error('No reply from Tower');
 
-            let rejectReply = towerRejectData.reply;
-            if (typeof rejectReply === 'object' && rejectReply !== null) {
-                rejectReply = rejectReply.reply || JSON.stringify(rejectReply);
-            } else if (typeof rejectReply === 'string') {
-                try {
-                    const parsed = JSON.parse(rejectReply);
-                    rejectReply = parsed.reply || rejectReply;
-                } catch { }
-            }
-
-            addChat('tower', rejectReply, towerRejectData.thought);
+            addChat('tower', towerRejectData.reply, towerRejectData.thought);
             await safeSleep(1000);
 
             // Round 3: Architect raises to 0.025 SOL (meeting in middle)
@@ -269,16 +468,10 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     temperature: 0.7
                 })
             });
-            const architectMeetData = await architectMeetRes.json();
+            const architectMeetData = await readAgentResponse(architectMeetRes);
             if (!architectMeetData.reply) throw new Error('No reply from Architect');
 
-            let meetReply = architectMeetData.reply;
-            try {
-                const parsed = JSON.parse(meetReply);
-                meetReply = parsed.reply || meetReply;
-            } catch { }
-
-            addChat('architect', meetReply, architectMeetData.thought);
+            addChat('architect', architectMeetData.reply, architectMeetData.thought);
             await safeSleep(1000);
 
             // Round 4: Tower accepts 0.025 SOL
@@ -291,20 +484,10 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     temperature: 0.6
                 })
             });
-            const towerAcceptData = await towerAcceptRes.json();
+            const towerAcceptData = await readAgentResponse(towerAcceptRes);
             if (!towerAcceptData.reply) throw new Error('No reply from Tower');
 
-            let acceptReply = towerAcceptData.reply;
-            if (typeof acceptReply === 'object' && acceptReply !== null) {
-                acceptReply = acceptReply.reply || JSON.stringify(acceptReply);
-            } else if (typeof acceptReply === 'string') {
-                try {
-                    const parsed = JSON.parse(acceptReply);
-                    acceptReply = parsed.reply || acceptReply;
-                } catch { }
-            }
-
-            addChat('tower', acceptReply, towerAcceptData.thought);
+            addChat('tower', towerAcceptData.reply, towerAcceptData.thought);
             await safeSleep(800);
 
             addChat('system', '💰 [PAYMENT INITIATION]');
@@ -326,6 +509,7 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ action: 'relay-address' })
                     });
+                    // /api/ashborn returns standard JSON, not stream
                     const relayData = await relayRes.json();
 
                     if (!relayData.success) throw new Error('Failed to get relay address');
@@ -439,8 +623,17 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     addChat('system', '🏛️ [SHIELD COMPLETE]');
                 }
                 addLog('✅ 0.025 SOL shielded into private pool');
-                if (shieldData.signature) {
+                // Show Transfer TX link (TX 2)
+                if (shieldData.transferSig && !shieldData.transferSig.startsWith('simulated')) {
+                    addLog(`🔗 Transfer TX: https://solscan.io/tx/${shieldData.transferSig}?cluster=devnet`);
+                }
+                // Show Shield TX link (TX 3)
+                if (shieldData.signature && !shieldData.simulated) {
                     addLog(`🔗 Shield TX: https://solscan.io/tx/${shieldData.signature}?cluster=devnet`);
+                } else if (shieldData.simulated) {
+                    addLog(`🔗 Shield TX: [SIMULATED - No on-chain TX]`);
+                }
+                if (shieldData.signature) {
                     addLog(`   🏛️ PrivacyCash Wallet (${PRIVACYCASH_WALLET.slice(0, 8)}...) shields into pool`);
                     addLog(`   PrivacyCash sees: ${PRIVACYCASH_WALLET.slice(0, 8)}... (NOT your wallet!)`);
                 }
@@ -506,8 +699,8 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: architectData.reply,
-                    context: `Architect's Question: "${architectData.reply}". Tower's Evaluation: "${towerEvalRes.ok ? 'Accepted' : 'Pending'}". Price Agreed: 0.025 SOL.`
+                    message: architectReply,
+                    context: `Architect's Question: "${architectReply}". Tower's Evaluation: "${towerEvalRes.ok ? 'Accepted' : 'Pending'}". Price Agreed: 0.025 SOL.`
                 })
             });
 
@@ -544,12 +737,8 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                     temperature: 0.7
                 })
             });
-            const architectAckData = await architectAckRes.json();
-            let ackReply = architectAckData.reply || "A profound reflection. The mirror acknowledges the reflection.";
-            try {
-                const parsed = JSON.parse(ackReply);
-                ackReply = parsed.reply || ackReply;
-            } catch { }
+            const architectAckData = await readAgentResponse(architectAckRes);
+            const ackReply = architectAckData.reply || "A profound reflection. The mirror acknowledges the reflection.";
 
             addChat('architect', ackReply, architectAckData.thought);
             addThought('tower', 'Fair exchange completed. Both identities remain unknown.');
@@ -571,6 +760,7 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
             if (executionId.current === currentRunId) {
                 setIsExecuting(false);
             }
+
         }
     };
 
@@ -805,33 +995,42 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                 </div>
             </TerminalSection>
 
-            <TerminalSection title="DEVNET_LIMITATIONS" variant="warning">
-                <div className="text-xs text-amber-300 space-y-2">
-                    <p className="font-bold text-amber-200">⚠️ What&apos;s Real vs Simulated</p>
-                    <p className="text-green-400">✅ REAL (100% Working on Devnet):</p>
-                    <p>• Ashborn Native ShadowWire (ECDH stealth addresses)</p>
-                    <p>• Light Protocol (Poseidon hashing + Merkle trees)</p>
-                    <p>• ZK Groth16 proofs (groth16-solana + snarkjs)</p>
-                    <p>• SOL Transfers (User → Ashborn {demoMode === 'full-demo' ? '→ PrivacyCash' : ''})</p>
+            {demoMode === 'full-demo' ? (
+                <TerminalSection title="DEVNET_LIMITATIONS" variant="warning">
+                    <div className="text-xs text-amber-300 space-y-2">
+                        <p className="font-bold text-amber-200">⚠️ What&apos;s Real vs Simulated</p>
+                        <p className="text-green-400">✅ REAL (100% Working on Devnet):</p>
+                        <p>• Ashborn Native ShadowWire (ECDH stealth addresses)</p>
+                        <p>• Light Protocol (Poseidon hashing + Merkle trees)</p>
+                        <p>• ZK Groth16 proofs (groth16-solana + snarkjs)</p>
+                        <p>• SOL Transfers (User → Ashborn → PrivacyCash)</p>
 
-                    {demoMode === 'full-demo' ? (
-                        <>
-                            <p className="text-amber-400 mt-2">⚠️ SIMULATED (Devnet Compute Limits):</p>
-                            <p>• PrivacyCash Shield (ZK proof requires ~1.85M compute, devnet limit: 1.4M)</p>
-                            <p>• PrivacyCash Unshield (depends on shield working)</p>
-                        </>
-                    ) : (
-                        <p className="text-green-400 mt-2 w-full bg-green-500/10 p-2 border border-green-500/20 rounded">
-                            ✨ ASHBORN ONLY MODE: ALL FEATURES ARE 100% REAL & LIVE
+                        <p className="text-amber-400 mt-2">⚠️ SIMULATED (Devnet Compute Limits):</p>
+                        <p>• PrivacyCash Shield (ZK proof requires ~1.4M compute)</p>
+                        <p>• PrivacyCash Unshield (simulated due to shield simulation)</p>
+
+                        <p className="text-green-400 mt-2">✅ Mainnet: All features work with premium RPC</p>
+                    </div>
+                </TerminalSection>
+            ) : (
+                <TerminalSection title="SYSTEM_STATUS" variant="success">
+                    <div className="text-xs text-green-300 space-y-2">
+                        <p className="font-bold text-green-200">✅ ASHBORN PROTOCOL: ACTIVE</p>
+                        <div className="pl-2 border-l-2 border-green-500/30 space-y-1">
+                            <p>• Stealth Addresses (ShadowWire): <span className="text-green-400 font-bold">LIVE ON-CHAIN</span></p>
+                            <p>• Merkle Trees (Light Protocol): <span className="text-green-400 font-bold">LIVE ON-CHAIN</span></p>
+                            <p>• Zero-Knowledge Proofs (Groth16): <span className="text-green-400 font-bold">LIVE ON-CHAIN</span></p>
+                            <p>• SOL Transfers: <span className="text-green-400 font-bold">REAL TRANSACTIONS</span></p>
+                        </div>
+                        <p className="mt-2 text-green-400 w-full bg-green-500/10 p-2 border border-green-500/20 rounded text-center">
+                            ✨ SYSTEM 100% OPERATIONAL (NO DEVNET LIMITATIONS)
                         </p>
-                    )}
-
-                    <p className="text-green-400 mt-2">✅ Mainnet: All features work with premium RPC</p>
-                </div>
-            </TerminalSection>
+                    </div>
+                </TerminalSection>
+            )}
 
             {(isLoading || chats.length > 0 || logs.length > 0) && (
-                <ChatUI chats={chats} logs={logs} thoughts={thoughts} demoMode={demoMode} />
+                <ChatUI chats={chats} logs={logs} thoughts={thoughts} demoMode={demoMode} isLoading={isExecuting && step !== 'complete'} />
             )}
 
             <TerminalSection title="EXECUTION_PIPELINE">
@@ -855,15 +1054,17 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
                         );
                     })}
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/10">
-                    <p className="text-[10px] text-amber-500 font-mono mb-2">
-                        ⚠️ Note: Shield and Unshield steps simulated on devnet due to compute limitations.
-                    </p>
-                    <p className="text-[10px] text-gray-500 font-mono">
-                        PrivacyCash ZK proofs require &gt;1.4M compute units. Devnet has strict limits to prevent abuse.
-                        Full shield/unshield works on mainnet with premium RPC providers (Helius, QuickNode).
-                    </p>
-                </div>
+                {demoMode === 'full-demo' && (
+                    <div className="mt-4 pt-3 border-t border-white/10">
+                        <p className="text-[10px] text-amber-500 font-mono mb-2">
+                            ⚠️ Note: Shield and Unshield steps simulated on devnet due to compute limitations.
+                        </p>
+                        <p className="text-[10px] text-gray-500 font-mono">
+                            PrivacyCash ZK proofs require &gt;1.4M compute units. Devnet has strict limits to prevent abuse.
+                            Full shield/unshield works on mainnet with premium RPC providers (Helius, QuickNode).
+                        </p>
+                    </div>
+                )}
             </TerminalSection>
 
             {isSuccess ? (
