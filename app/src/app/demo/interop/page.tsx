@@ -6,7 +6,7 @@ import { useDemoStatus } from '@/hooks/useDemoStatus';
 
 const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
-type Step = 'idle' | 'shielding' | 'transferring' | 'complete';
+type Step = 'idle' | 'stealth' | 'proving' | 'shielding' | 'transferring' | 'complete';
 
 export default function InteropDemoPage() {
     const [step, setStep] = useState<Step>('idle');

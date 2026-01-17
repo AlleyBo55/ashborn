@@ -6,21 +6,19 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config, { isServer }) => {
-    // Force alias for privacycash to avoid resolution errors
-    let privacyCashPath;
-    try {
-      privacyCashPath = path.dirname(require.resolve('privacycash/package.json'));
-    } catch (e) {
-      privacyCashPath = path.resolve(__dirname, 'node_modules/privacycash');
-    }
-
+    // Make privacycash optional - only resolve if it exists
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      'privacycash': privacyCashPath,
-      // '@lightprotocol/hasher.rs': path.resolve(__dirname, 'node_modules/@lightprotocol/hasher.rs')
-      // WASM fix: Use top-level hasher to avoid nested resolution issues
       '@lightprotocol/hasher.rs': path.resolve(__dirname, 'node_modules/@lightprotocol/hasher.rs')
     };
+
+    // Mark privacycash as external for server-side
+    if (isServer) {
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push('privacycash');
+      }
+    }
 
     if (!isServer) {
       config.resolve.fallback = {

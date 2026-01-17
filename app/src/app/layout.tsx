@@ -17,10 +17,11 @@ export const metadata: Metadata = {
     keywords: ['solana', 'privacy', 'zk-proofs', 'blockchain', 'crypto', 'defi', 'shadow monarch', 'ashborn'],
     authors: [{ name: 'Ashborn' }],
     icons: {
-        icon: '/icon.png',
+        icon: '/favicon.ico',
         shortcut: '/favicon.ico',
-        apple: '/icon.png',
+        apple: '/apple-touch-icon.png',
     },
+    manifest: '/site.webmanifest',
     openGraph: {
         title: 'Ashborn | The Shadow Monarch',
         description: 'There is no need for words among shadows. Unified privacy protocol on Solana.',
@@ -29,9 +30,9 @@ export const metadata: Metadata = {
         siteName: 'Ashborn',
         images: [
             {
-                url: '/opengraph-image.png',
-                width: 1200,
-                height: 630,
+                url: '/assets/webtoon-bg.png',
+                width: 1024,
+                height: 1024,
                 alt: 'Ashborn - The Shadow Monarch',
             },
         ],
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Ashborn | The Shadow Monarch',
         description: 'There is no need for words among shadows. Unified privacy protocol on Solana.',
-        images: ['/twitter-image.png'],
+        images: ['/assets/webtoon-bg.png'],
     },
 };
 
