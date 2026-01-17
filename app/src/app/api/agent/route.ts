@@ -387,7 +387,7 @@ Example:
     // Use Claude 3 Haiku (free tier compatible)
     console.log('🤖 [CLAUDE API] Calling:', { model: 'claude-3-haiku-20240307', message: message.slice(0, 100) });
 
-    const response = await anthropic.messages.create({
+    const response = await anthropic.messages.stream({
         model: "claude-3-haiku-20240307",
         max_tokens: 4096,
         temperature: temperature || 0.7,
@@ -397,81 +397,51 @@ Example:
         ]
     });
 
-    // Debug: Log actual token usage and stop reason
-    console.log('✅ [CLAUDE API] Response:', {
-        id: response.id,
-        model: response.model,
-        usage: response.usage,
-        stopReason: response.stop_reason // 'end_turn', 'max_tokens', 'stop_sequence'
-    });
-
-    const content = response.content[0];
-    if (content.type !== 'text') {
-        throw new Error('Unexpected response type');
-    }
-
-    const fullText = content.text;
-
-    // Extract Thinking Process
-    const thinkingMatch = fullText.match(/<thinking>([\s\S]*?)<\/thinking>/);
-    const thought = thinkingMatch ? thinkingMatch[1].trim() : null;
-
-    // Clean JSON (remove thinking tags and markdown code blocks)
-    let jsonText = fullText.replace(/<thinking>[\s\S]*?<\/thinking>/, '').trim();
-
-    // Remove markdown code blocks if present
-    jsonText = jsonText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-
-    let parsed;
-    try {
-        parsed = JSON.parse(jsonText);
-    } catch (parseError) {
-        console.warn('⚠️ [Agent API] Invalid JSON, attempting repairs:', jsonText.slice(0, 100));
-
-        // Try to extract JSON from text
-        const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            try {
-                parsed = JSON.parse(jsonMatch[0]);
-            } catch {
-                // Regex fallback for unescaped newlines or minor JSON errors
-                // Handles "reply": "..." and 'reply': '...'
-                const replyMatch = jsonMatch[0].match(/['"]?reply['"]?\s*:\s*['"]((?:[^"'\\]|\\.)*)['"]/);
-                if (replyMatch) {
-                    parsed = {
-                        reply: replyMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'"),
-                        price: 0
-                    };
-                } else {
-                    // Try to repair unclosed JSON (truncated)
-                    // If it looks like {"reply": "Wait...
-                    try {
-                        // Simple repair: assume it's just missing closing chars
-                        if (jsonMatch[0].includes('"reply": "') && !jsonMatch[0].endsWith('"}')) {
-                            const repaired = jsonMatch[0] + '"}';
-                            parsed = JSON.parse(repaired);
-                        } else {
-                            parsed = { reply: jsonText };
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+        async start(controller) {
+            let fullText = '';
+            let thought = '';
+            let inThinking = false;
+            
+            for await (const chunk of response) {
+                if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+                    const text = chunk.delta.text;
+                    fullText += text;
+                    
+                    // Extract thinking tags
+                    if (text.includes('<thinking>')) inThinking = true;
+                    if (inThinking) {
+                        thought += text;
+                        if (text.includes('</thinking>')) {
+                            inThinking = false;
+                            const match = thought.match(/<thinking>([\s\S]*?)<\/thinking>/);
+                            if (match) {
+                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'thought', text: match[1].trim() })}\n\n`));
+                                thought = '';
+                            }
                         }
-                    } catch {
-                        parsed = { reply: jsonText };
+                        continue;
+                    }
+                    
+                    // Stream reply text
+                    const cleanText = text.replace(/<\/?thinking>/g, '').replace(/```json\s*/g, '').replace(/```\s*/g, '');
+                    if (cleanText) {
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'text', text: cleanText })}\n\n`));
                     }
                 }
             }
-        } else {
-            // No JSON braces found? Just return text.
-            parsed = { reply: jsonText };
+            
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done', remaining: rateLimit.remaining })}\n\n`));
+            controller.close();
         }
-    }
+    });
 
-    console.log('📤 [CLAUDE API] Parsed:', { reply: parsed.reply?.slice(0, 100), hasThought: !!thought });
-
-    return NextResponse.json({
-        ...parsed,
-        thought,
-        remaining: rateLimit.remaining
-    }, {
+    return new Response(stream, {
         headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
             'X-RateLimit-Remaining': String(rateLimit.remaining)
         }
     });
