@@ -204,8 +204,8 @@ import { PrivacyCashOfficial, HeliusEnhanced } from '@alleyboss/ashborn-sdk/inte
 
 ## 📚 Resources
 
-- 🎮 [Live Demo](https://ashborn.vercel.app)
-- 📖 [Documentation](https://github.com/AlleyBo55/ashborn#readme)
+- 🎮 [Live Demo](https://ashborn-sol.vercel.app)
+- 📖 [Documentation](https://ashborn-sol.vercel.app/docs)
 
 ---
 
