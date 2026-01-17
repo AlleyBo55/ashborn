@@ -19,8 +19,9 @@ export const metadata: Metadata = {
     icons: {
         icon: '/favicon.ico',
         shortcut: '/favicon.ico',
-        apple: '/favicon.ico',
+        apple: '/apple-touch-icon.png',
     },
+    manifest: '/site.webmanifest',
     openGraph: {
         title: 'Ashborn | The Shadow Monarch',
         description: 'There is no need for words among shadows. Unified privacy protocol on Solana.',
