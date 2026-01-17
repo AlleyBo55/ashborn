@@ -1022,7 +1022,7 @@ Return JSON: { "reply": "your evaluation with price", "price": 0.035 }`,
 
             <TerminalSection title="SDK_IMPLEMENTATION">
                 <div className="mb-4">
-                    <div className="text-xs text-gray-400 mb-2 font-mono ml-1">// MODE 1: ASHBORN ONLY (Direct Stealth Transfer)</div>
+                    <div className="text-xs text-gray-400 mb-2 font-mono ml-1">{/* MODE 1: ASHBORN ONLY (Direct Stealth Transfer) */}</div>
                     <TerminalCodeBlock
                         language="typescript"
                         code={`import { Ashborn } from '@alleyboss/ashborn-sdk';
@@ -1050,7 +1050,7 @@ await ashborn.shadowTransfer({
                 </div>
 
                 <div>
-                    <div className="text-xs text-gray-400 mb-2 font-mono ml-1">// MODE 2: PRIVACY CASH (Shielded Pool Mixing)</div>
+                    <div className="text-xs text-gray-400 mb-2 font-mono ml-1">{/* MODE 2: PRIVACY CASH (Shielded Pool Mixing) */}</div>
                     <TerminalCodeBlock
                         language="typescript"
                         code={`import { PrivacyCashOfficial } from '@alleyboss/ashborn-sdk/integrations';
