@@ -65,6 +65,11 @@ const nextConfig = {
     "node-localstorage",
     "@lightprotocol/hasher.rs"
   ],
+  experimental: {
+    turbo: {
+      root: path.resolve(__dirname),
+    },
+  },
   modularizeImports: {
     'lucide-react': {
       transform: 'lucide-react/dist/esm/icons/{{member}}',
