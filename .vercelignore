@@ -1,0 +1,3 @@
+# Force fresh npm install
+node_modules
+.next

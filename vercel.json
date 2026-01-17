@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd app && rm -rf node_modules package-lock.json && npm install && npm run build",
+  "installCommand": "cd app && npm ci",
+  "framework": "nextjs",
+  "outputDirectory": "app/.next"
+}
