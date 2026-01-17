@@ -12,7 +12,6 @@
  * ```
  */
 
-export { PrivacyCash } from "./privacycash";
 export { PrivacyCashOfficial } from "./privacycash-official";
 export { HeliusEnhanced, createHeliusEnhanced } from "./helius";
 export { NaturalLanguageParser, NaturalLanguageAshborn } from "./nlp";

@@ -9,8 +9,9 @@
  */
 
 import { Keypair, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
-// @ts-ignore - SDK is installed from GitHub, types may not be perfect
-import { PrivacyCash } from "privacycash";
+
+// Dynamic import type for PrivacyCash
+type PrivacyCashType = any;
 
 export interface PrivacyCashConfig {
     rpcUrl: string;
@@ -39,17 +40,27 @@ export interface WithdrawResult {
  * "Two kings can make an alliance..." — Shadow Monarch
  */
 export class PrivacyCashOfficial {
-    private client: PrivacyCash;
+    private client: PrivacyCashType;
     private _publicKey: PublicKey;
 
-    constructor(config: PrivacyCashConfig) {
-        this.client = new PrivacyCash({
+    private constructor() {}
+
+    static async createAsync(config: PrivacyCashConfig): Promise<PrivacyCashOfficial> {
+        const PrivacyCashModule = await import('privacycash' as any).catch(() => null);
+        if (!PrivacyCashModule) {
+            throw new Error('PrivacyCash module not available');
+        }
+        const { PrivacyCash } = PrivacyCashModule;
+        
+        const instance = Object.create(PrivacyCashOfficial.prototype);
+        instance.client = new PrivacyCash({
             RPC_url: config.rpcUrl,
             owner: config.owner,
             enableDebug: config.enableDebug ?? false,
             ...(config.programId && { programId: config.programId }),
         });
-        this._publicKey = this.client.publicKey;
+        instance._publicKey = instance.client.publicKey;
+        return instance;
     }
 
     get publicKey(): PublicKey {
@@ -181,5 +192,4 @@ export class PrivacyCashOfficial {
     }
 }
 
-// Re-export for convenience
-export { PrivacyCash };
+// Note: PrivacyCash is only available at runtime via dynamic import

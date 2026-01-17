@@ -27,7 +27,13 @@ export async function POST(request: NextRequest) {
                 const demoKeypair = Keypair.fromSecretKey(new Uint8Array(keypairArray));
 
                 // Dynamically import PrivacyCash SDK
-                const { PrivacyCash } = await import('privacycash');
+                const PrivacyCashModule = await import('privacycash').catch(() => null);
+                if (!PrivacyCashModule) {
+                    send({ type: 'error', error: 'PrivacyCash module not available' });
+                    controller.close();
+                    return;
+                }
+                const { PrivacyCash } = PrivacyCashModule;
 
                 const envRpc = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.devnet.solana.com';
                 const envAlt = process.env.NEXT_PUBLIC_ALT_ADDRESS;

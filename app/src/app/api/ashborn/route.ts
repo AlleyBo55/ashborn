@@ -310,7 +310,11 @@ export async function POST(request: NextRequest) {
             case 'unshield': {
                 const { amount, recipient } = envelope.params as { amount?: number; recipient?: string };
                 try {
-                    const { PrivacyCash } = await import('privacycash');
+                    const PrivacyCashModule = await import('privacycash').catch(() => null);
+                    if (!PrivacyCashModule) {
+                        throw new Error('PrivacyCash module not available');
+                    }
+                    const { PrivacyCash } = PrivacyCashModule;
                     const privacyCash = new PrivacyCash({
                         RPC_url: RPC_URL,
                         owner: relayKeypair,
