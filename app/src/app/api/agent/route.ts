@@ -384,95 +384,51 @@ Example:
         maxOutput: 4096
     });
 
-    // Use Claude 3 Haiku (free tier compatible)
+    // Use Claude 3 Haiku with streaming
     console.log('🤖 [CLAUDE API] Calling:', { model: 'claude-3-haiku-20240307', message: message.slice(0, 100) });
 
-    const response = await anthropic.messages.create({
+    const stream = await anthropic.messages.create({
         model: "claude-3-haiku-20240307",
         max_tokens: 4096,
         temperature: temperature || 0.7,
         system: finalSystemPrompt,
         messages: [
             { role: "user", content: message }
-        ]
+        ],
+        stream: true
     });
 
-    // Debug: Log actual token usage and stop reason
-    console.log('✅ [CLAUDE API] Response:', {
-        id: response.id,
-        model: response.model,
-        usage: response.usage,
-        stopReason: response.stop_reason // 'end_turn', 'max_tokens', 'stop_sequence'
-    });
-
-    const content = response.content[0];
-    if (content.type !== 'text') {
-        throw new Error('Unexpected response type');
-    }
-
-    const fullText = content.text;
-
-    // Extract Thinking Process
-    const thinkingMatch = fullText.match(/<thinking>([\s\S]*?)<\/thinking>/);
-    const thought = thinkingMatch ? thinkingMatch[1].trim() : null;
-
-    // Clean JSON (remove thinking tags and markdown code blocks)
-    let jsonText = fullText.replace(/<thinking>[\s\S]*?<\/thinking>/, '').trim();
-
-    // Remove markdown code blocks if present
-    jsonText = jsonText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-
-    let parsed;
-    try {
-        parsed = JSON.parse(jsonText);
-    } catch (parseError) {
-        console.warn('⚠️ [Agent API] Invalid JSON, attempting repairs:', jsonText.slice(0, 100));
-
-        // Try to extract JSON from text
-        const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
+    // Stream response to client
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+        async start(controller) {
+            let fullText = '';
+            
             try {
-                parsed = JSON.parse(jsonMatch[0]);
-            } catch {
-                // Regex fallback for unescaped newlines or minor JSON errors
-                // Handles "reply": "..." and 'reply': '...'
-                const replyMatch = jsonMatch[0].match(/['"]?reply['"]?\s*:\s*['"]((?:[^"'\\]|\\.)*)['"]/);
-                if (replyMatch) {
-                    parsed = {
-                        reply: replyMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'"),
-                        price: 0
-                    };
-                } else {
-                    // Try to repair unclosed JSON (truncated)
-                    // If it looks like {"reply": "Wait...
-                    try {
-                        // Simple repair: assume it's just missing closing chars
-                        if (jsonMatch[0].includes('"reply": "') && !jsonMatch[0].endsWith('"}')) {
-                            const repaired = jsonMatch[0] + '"}';
-                            parsed = JSON.parse(repaired);
-                        } else {
-                            parsed = { reply: jsonText };
-                        }
-                    } catch {
-                        parsed = { reply: jsonText };
+                for await (const chunk of stream) {
+                    if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+                        const text = chunk.delta.text;
+                        fullText += text;
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
                     }
                 }
+                
+                controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+                controller.close();
+            } catch (error) {
+                controller.error(error);
             }
-        } else {
-            // No JSON braces found? Just return text.
-            parsed = { reply: jsonText };
         }
-    }
+    });
 
-    console.log('📤 [CLAUDE API] Parsed:', { reply: parsed.reply?.slice(0, 100), hasThought: !!thought });
-
-    return NextResponse.json({
-        ...parsed,
-        thought,
-        remaining: rateLimit.remaining
-    }, {
+    return new Response(readable, {
         headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
             'X-RateLimit-Remaining': String(rateLimit.remaining)
         }
     });
 }
+
+

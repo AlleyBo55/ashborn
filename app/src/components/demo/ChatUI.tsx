@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 type Message = { agent: string; text: string; thought?: string };
 type Thought = { agent: string; text: string; timestamp: string };
 
-export function ChatUI({ chats, logs, thoughts, demoMode = 'full-demo' }: { chats: Message[]; logs: Message[]; thoughts?: Thought[]; demoMode?: 'full-demo' | 'ashborn-only' }) {
+export function ChatUI({ chats, logs, thoughts, demoMode = 'full-demo', isLoading = false }: { chats: Message[]; logs: Message[]; thoughts?: Thought[]; demoMode?: 'full-demo' | 'ashborn-only'; isLoading?: boolean }) {
     const getPhaseIndicator = (index: number) => {
         const msg = chats[index];
         const nextMsg = chats[index + 1];
@@ -182,6 +182,19 @@ export function ChatUI({ chats, logs, thoughts, demoMode = 'full-demo' }: { chat
                                 </div>
                             );
                         })}
+                        {isLoading && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="flex justify-center"
+                            >
+                                <div className="flex gap-1">
+                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+                                </div>
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                 </div>
             </div>
