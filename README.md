@@ -80,7 +80,7 @@ Solana transactions have a hard limit of **1232 bytes**. PrivacyCash transaction
 
 ```mermaid
 graph TD
-    subgraph WITHOUT_ALT [❌ Without ALT (Fails)]
+    subgraph WITHOUT_ALT ["❌ Without ALT (Fails)"]
         A[ZK Proof\n400 bytes] --> B[Encrypted State\n200 bytes]
         B --> C[20 Addresses\n640 bytes]
         C --> D[Total: 1240 bytes]
@@ -89,7 +89,7 @@ graph TD
         style E fill:#ff0000,color:#fff
     end
 
-    subgraph WITH_ALT [✅ With ALT (Success)]
+    subgraph WITH_ALT ["✅ With ALT (Success)"]
         F[ZK Proof\n400 bytes] --> G[Encrypted State\n200 bytes]
         G --> H[20 Addresses\n20 bytes]
         H -- "Compressed via ALT" --> I[Total: 620 bytes]
