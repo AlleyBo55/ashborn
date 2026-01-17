@@ -4,7 +4,7 @@
 //! - Real Groth16 ZK proofs 
 //! - Merkle tree nullifiers 
 //! - Denomination-based privacy 
-//! - Radr Labs ShadowWire for unlinkable P2P transfers
+//! - Native ShadowWire for unlinkable P2P transfers
 //! - Privacy Cash for shielded stablecoin operations  
 //! - Range Compliance for selective disclosure
 //!

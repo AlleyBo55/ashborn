@@ -6,13 +6,13 @@ import { useDemoStatus } from '@/hooks/useDemoStatus';
 
 const DEMO_WALLET = '9TW3HR9WkGpiA9Ju8UvZh8LDCCZfcjELfzpSKHsqyR9f';
 
-type Step = 'idle' | 'shielding' | 'transferring' | 'unshielding' | 'complete';
+type Step = 'idle' | 'shielding' | 'transferring' | 'complete';
 
 export default function InteropDemoPage() {
     const [step, setStep] = useState<Step>('idle');
     const { status, setStatus, reset, isSuccess, isLoading, setErrorState } = useDemoStatus();
     const [amount, setAmount] = useState('0.01');
-    const [txHashes, setTxHashes] = useState<{ shield?: string; transfer?: string; unshield?: string }>({});
+    const [txHashes, setTxHashes] = useState<{ shield?: string; transfer?: string }>({});
 
     const resetDemo = () => {
         setStep('idle');
@@ -44,16 +44,6 @@ export default function InteropDemoPage() {
             if (!stealthData.success) throw new Error(stealthData.error || 'Stealth failed');
             setTxHashes(prev => ({ ...prev, transfer: stealthData.stealthAddress }));
 
-            setStep('unshielding');
-            const unshieldRes = await fetch('/api/ashborn', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'unshield', params: { amount: parseFloat(amount), recipient: DEMO_WALLET } })
-            });
-            const unshieldData = await unshieldRes.json();
-            if (!unshieldData.success) throw new Error(unshieldData.error || 'Unshield failed');
-            setTxHashes(prev => ({ ...prev, unshield: unshieldData.signature }));
-
             setStep('complete');
             setStatus('success');
         } catch (err) {
@@ -64,13 +54,12 @@ export default function InteropDemoPage() {
     };
 
     const steps = [
-        { id: 'shielding', label: 'Shield to PrivacyCash Pool', status: '1/3' },
-        { id: 'transferring', label: 'Generate Stealth Address', status: '2/3' },
-        { id: 'unshielding', label: 'Unshield to Recipient', status: '3/3' },
+        { id: 'shielding', label: 'Shield to PrivacyCash Pool', status: '1/2' },
+        { id: 'transferring', label: 'Generate Stealth Address', status: '2/2' },
     ];
 
     const getStepStatus = (stepId: string) => {
-        const stepOrder = ['shielding', 'transferring', 'unshielding'];
+        const stepOrder = ['shielding', 'transferring'];
         const currentIndex = stepOrder.indexOf(step);
         const stepIndex = stepOrder.indexOf(stepId);
         if (step === 'complete') return 'complete';
@@ -83,50 +72,20 @@ export default function InteropDemoPage() {
         <TerminalDemoWrapper
             title="PRIVACYCASH_×_ASHBORN_INTEROP"
             tag="PRIVACY_RELAY"
-            description="Full privacy flow via Ashborn Relay. Integrates with PrivacyCash, Radr Labs, and Light Protocol."
+            description="Full privacy flow via Ashborn Relay. Integrates with PrivacyCash, ShadowWire, and Light Protocol."
         >
             {/* Tech Stack Badge */}
             <div className="flex flex-wrap gap-2 mb-4">
                 <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 border border-blue-500/30">⚡ PrivacyCash</span>
-                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ Radr Labs</span>
+                <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-1 border border-purple-500/30">⚡ ShadowWire</span>
                 <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 border border-green-500/30">⚡ Light Protocol</span>
                 <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-1 border border-amber-500/30">⚡ Ashborn</span>
             </div>
             <TerminalSection title="PRIVACY_FLOW">
                 <div className="text-sm text-gray-300 space-y-2">
-                    <p>$ Shield (API) → Stealth (API) → Unshield (API)</p>
+                    <p>$ Shield (API) → Stealth (API)</p>
                     <p className="text-xs text-gray-500">$ All steps run server-side via /api/ashborn</p>
                     <p className="text-xs text-gray-500">$ No SDK loaded client-side = instant page load</p>
-                </div>
-            </TerminalSection>
-
-            <TerminalSection title="EXECUTION_PIPELINE">
-                <div className="space-y-3">
-                    {steps.map((s) => {
-                        const status = getStepStatus(s.id);
-                        return (
-                            <div key={s.id} className="flex items-center gap-3">
-                                <div className={`
-                                    w-8 h-8 flex items-center justify-center font-mono text-xs border
-                                    ${status === 'complete' ? 'bg-green-500/20 border-green-500/50 text-green-400' : ''}
-                                    ${status === 'active' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 animate-pulse' : ''}
-                                    ${status === 'pending' ? 'bg-white/5 border-white/10 text-gray-600' : ''}
-                                `}>
-                                    {status === 'complete' ? '✓' : status === 'active' ? '...' : s.status}
-                                </div>
-                                <div className="flex-1">
-                                    <p className={`text-sm font-mono ${status === 'pending' ? 'text-gray-600' : 'text-white'}`}>
-                                        {s.label}
-                                    </p>
-                                    {txHashes[s.id as keyof typeof txHashes] && (
-                                        <p className="text-xs text-gray-500 font-mono mt-1">
-                                            {txHashes[s.id as keyof typeof txHashes]?.slice(0, 16)}...
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
                 </div>
             </TerminalSection>
 
@@ -137,12 +96,47 @@ export default function InteropDemoPage() {
                             lines={[
                                 `Shield_Tx: ${txHashes.shield?.slice(0, 24)}... ✓`,
                                 `Stealth_Addr: ${txHashes.transfer?.slice(0, 24)}... ✓`,
-                                `Unshield_Tx: ${txHashes.unshield?.slice(0, 24)}... ✓`,
                                 `Amount: ${amount} SOL`,
                                 `Status: COMPLETE`
                             ]}
                             type="success"
                         />
+                    </TerminalSection>
+
+                    <TerminalSection title="EXECUTION_PIPELINE">
+                        <div className="space-y-3">
+                            {steps.map((s) => {
+                                const status = getStepStatus(s.id);
+                                return (
+                                    <div key={s.id} className="flex items-center gap-3">
+                                        <div className={`
+                                            w-8 h-8 flex items-center justify-center font-mono text-xs border
+                                            ${status === 'complete' ? 'bg-green-500/20 border-green-500/50 text-green-400' : ''}
+                                            ${status === 'active' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 animate-pulse' : ''}
+                                            ${status === 'pending' ? 'bg-white/5 border-white/10 text-gray-600' : ''}
+                                        `}>
+                                            {status === 'complete' ? '✓' : status === 'active' ? '...' : s.status}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className={`text-sm font-mono ${status === 'pending' ? 'text-gray-600' : 'text-white'}`}>
+                                                {s.label}
+                                            </p>
+                                            {txHashes[s.id as keyof typeof txHashes] && (
+                                                <p className="text-xs text-gray-500 font-mono mt-1">
+                                                    {txHashes[s.id as keyof typeof txHashes]?.slice(0, 16)}...
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded">
+                            <p className="text-xs text-amber-400 font-mono">
+                                ⚠️ UNSHIELD: Skipped due to devnet UTXO limitations.
+                                The mocked relayer creates UTXO mismatches that prevent withdrawal.
+                            </p>
+                        </div>
                     </TerminalSection>
 
                     <div className="flex justify-center">
@@ -174,6 +168,44 @@ export default function InteropDemoPage() {
                 </TerminalSection>
             )}
 
+            {!isSuccess && (
+                <TerminalSection title="EXECUTION_PIPELINE">
+                    <div className="space-y-3">
+                        {steps.map((s) => {
+                            const status = getStepStatus(s.id);
+                            return (
+                                <div key={s.id} className="flex items-center gap-3">
+                                    <div className={`
+                                        w-8 h-8 flex items-center justify-center font-mono text-xs border
+                                        ${status === 'complete' ? 'bg-green-500/20 border-green-500/50 text-green-400' : ''}
+                                        ${status === 'active' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 animate-pulse' : ''}
+                                        ${status === 'pending' ? 'bg-white/5 border-white/10 text-gray-600' : ''}
+                                    `}>
+                                        {status === 'complete' ? '✓' : status === 'active' ? '...' : s.status}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className={`text-sm font-mono ${status === 'pending' ? 'text-gray-600' : 'text-white'}`}>
+                                            {s.label}
+                                        </p>
+                                        {txHashes[s.id as keyof typeof txHashes] && (
+                                            <p className="text-xs text-gray-500 font-mono mt-1">
+                                                {txHashes[s.id as keyof typeof txHashes]?.slice(0, 16)}...
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded">
+                        <p className="text-xs text-amber-400 font-mono">
+                            ⚠️ UNSHIELD: Skipped due to devnet UTXO limitations.
+                            The mocked relayer creates UTXO mismatches that prevent withdrawal.
+                        </p>
+                    </div>
+                </TerminalSection>
+            )}
+
             <TerminalSection title="SDK_IMPLEMENTATION">
                 <TerminalCodeBlock
                     language="typescript"
@@ -187,10 +219,11 @@ await fetch('/api/ashborn', {
   body: JSON.stringify({ action: 'stealth', params: { recipient } })
 });
 
-await fetch('/api/ashborn', {
-  method: 'POST',
-  body: JSON.stringify({ action: 'unshield', params: { amount: 0.01 } })
-});`}
+// Unshield skipped on devnet due to UTXO mismatch
+// await fetch('/api/ashborn', {
+//   method: 'POST', 
+//   body: JSON.stringify({ action: 'unshield', params: { amount: 0.01 } })
+// });`}
                 />
             </TerminalSection>
         </TerminalDemoWrapper>

@@ -13,13 +13,34 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: 'Ashborn | The Shadow Monarch',
-    description: 'I shall protect my family. There is no need for words among shadows.',
-    keywords: ['solana', 'privacy', 'zk-proofs', 'blockchain', 'crypto', 'defi'],
+    description: 'I shall protect my family. There is no need for words among shadows. Unified privacy protocol on Solana.',
+    keywords: ['solana', 'privacy', 'zk-proofs', 'blockchain', 'crypto', 'defi', 'shadow monarch', 'ashborn'],
     authors: [{ name: 'Ashborn' }],
+    icons: {
+        icon: '/icon.png',
+        shortcut: '/favicon.ico',
+        apple: '/icon.png',
+    },
     openGraph: {
         title: 'Ashborn | The Shadow Monarch',
-        description: 'There is no need for words among shadows. Unified privacy on Solana.',
+        description: 'There is no need for words among shadows. Unified privacy protocol on Solana.',
         type: 'website',
+        url: 'https://ashborn-sol.vercel.app',
+        siteName: 'Ashborn',
+        images: [
+            {
+                url: '/opengraph-image.png',
+                width: 1200,
+                height: 630,
+                alt: 'Ashborn - The Shadow Monarch',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Ashborn | The Shadow Monarch',
+        description: 'There is no need for words among shadows. Unified privacy protocol on Solana.',
+        images: ['/twitter-image.png'],
     },
 };
 

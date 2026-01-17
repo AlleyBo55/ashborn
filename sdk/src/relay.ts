@@ -4,12 +4,12 @@
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Server-side Privacy Relay that acts as an omnibus identity between
- * users/agents and underlying protocols (PrivacyCash, Radr Labs, etc).
+ * users/agents and underlying protocols (PrivacyCash, Native ShadowWire, etc).
  * 
  * ARCHITECTURE:
  * ┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
  * │   User/Agent    │ ───▶ │  PRIVACY RELAY  │ ───▶ │  PrivacyCash /  │
- * │  (Anonymous)    │      │  (Omnibus ID)   │      │   Radr Labs     │
+ * │  (Anonymous)    │      │  (Omnibus ID)   │      │   ShadowWire    │
  * └─────────────────┘      └─────────────────┘      └─────────────────┘
  * 
  * KEY PRINCIPLES:

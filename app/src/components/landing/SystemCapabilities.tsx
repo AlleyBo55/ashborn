@@ -79,7 +79,7 @@ export default function SystemCapabilities() {
                             <p className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2 text-right">Power Integrations</p>
                             <div className="flex flex-wrap justify-end gap-3">
                                 <PartnerBadge name="Privacy Cash" role="Shielded Pool" color="blue" />
-                                <PartnerBadge name="Radr Labs" role="Stealth Network" color="purple" />
+                                <PartnerBadge name="ShadowWire" role="Stealth Network" color="purple" />
                                 <PartnerBadge name="X402" role="Agent Commerce" color="green" />
                             </div>
                         </div>
@@ -99,15 +99,13 @@ export default function SystemCapabilities() {
                     />
 
                     {/* Card 2: Stealth Transfer */}
-                    {/* Card 2: Stealth Transfer */}
-                    {/* Card 2: Stealth Transfer */}
                     <DemoCard
                         icon={ViewOffIcon}
                         title="Shadow Transfer"
-                        desc="Mathematical invisibility for P2P payments. Send SOL to anyone without revealing their main wallet. Radr Labs integration active."
+                        desc="Mathematical invisibility for P2P payments. Send SOL to anyone without revealing their main wallet. Native ShadowWire active."
                         link="/demo/transfer"
                         color="purple"
-                        tech={['Radr Labs', 'ZK Proofs', 'Relayer']}
+                        tech={['ShadowWire', 'ZK Proofs', 'Relayer']}
                     />
 
                     {/* Card 3: Compliance */}
@@ -130,14 +128,14 @@ export default function SystemCapabilities() {
                         tech={['Composable', 'Atomic', 'SDK']}
                     />
 
-                    {/* Card 5: Radr Native */}
+                    {/* Card 5: ShadowWire Native */}
                     <DemoCard
                         icon={Globe02Icon}
-                        title="Radr Labs Integration"
-                        desc="Direct integration with Radr's stealth infrastructure. Ephemeral keys ensuring perfect forward secrecy for every transaction."
+                        title="Stealth Infrastructure"
+                        desc="Direct integration with Ashborn's native stealth infrastructure. Ephemeral keys ensuring perfect forward secrecy for every transaction."
                         link="/demo/radr"
                         color="pink"
-                        tech={['Curve25519', 'Stealth', 'Radr']}
+                        tech={['Curve25519', 'Stealth', 'Native']}
                     />
 
                     {/* Card 6: Build Your Own */}

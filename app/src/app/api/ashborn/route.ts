@@ -9,7 +9,7 @@
  * ARCHITECTURE:
  * ┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
  * │   User/Agent    │ ───▶ │  PRIVACY RELAY  │ ───▶ │  PrivacyCash /  │
- * │  (Anonymous)    │      │  (Omnibus ID)   │      │   Radr Labs     │
+ * │  (Anonymous)    │      │  (Omnibus ID)   │      │   Recipient     │
  * └─────────────────┘      └─────────────────┘      └─────────────────┘
  * 
  * KEY PRINCIPLES:
@@ -33,9 +33,19 @@ const ASHBORN_RELAY_VERSION = '1.0.0';
 const PRIVACYCASH_PROGRAM_ID = 'ATZj4jZ4FFzkvAcvk27DW9GRkgSbFnHo49fKKPQXU7VS';
 
 // ============================================================================
-// RELAY KEYPAIR
-// The omnibus identity through which ALL protocol interactions flow.
+// RELAY KEYPAIRS
+// Two separate keypairs for clear architectural separation:
+// 1. ASHBORN_RELAY_KEYPAIR: Receives user funds, acts as privacy layer
+// 2. PRIVACYCASH_DEMO_KEYPAIR: Interacts with PrivacyCash protocol
 // ============================================================================
+
+function getAshbornRelayKeypair(): Keypair {
+    const keypairArray = JSON.parse(process.env.ASHBORN_RELAY_KEYPAIR || '[]');
+    if (keypairArray.length === 0) {
+        throw new Error('Ashborn relay keypair not configured. Set ASHBORN_RELAY_KEYPAIR.');
+    }
+    return Keypair.fromSecretKey(new Uint8Array(keypairArray));
+}
 
 function getRelayKeypair(): Keypair {
     const keypairArray = JSON.parse(process.env.PRIVACYCASH_DEMO_KEYPAIR || '[]');
@@ -109,6 +119,16 @@ export async function POST(request: NextRequest) {
         };
 
         switch (envelope.action) {
+            case 'relay-address': {
+                // Return Ashborn Relay address for user deposits
+                const ashbornRelay = getAshbornRelayKeypair();
+                return NextResponse.json({
+                    success: true,
+                    relayAddress: ashbornRelay.publicKey.toBase58(),
+                    relay: { version: ASHBORN_RELAY_VERSION }
+                }, { headers });
+            }
+
             case 'stealth': {
                 const { recipient, nonce = 0 } = envelope.params as { recipient?: string; nonce?: number };
                 const relay = await getPrivacyRelay();
@@ -138,13 +158,23 @@ export async function POST(request: NextRequest) {
             }
 
             case 'balance': {
-                const balance = await connection.getBalance(relayKeypair.publicKey);
+                const ashbornRelay = getAshbornRelayKeypair();
+                const privacyCashWallet = getRelayKeypair();
+                const relayBalance = await connection.getBalance(ashbornRelay.publicKey);
+                const privacyCashBalance = await connection.getBalance(privacyCashWallet.publicKey);
                 return NextResponse.json({
                     success: true,
-                    balance: balance / LAMPORTS_PER_SOL,
-                    balance_lamports: balance,
-                    publicKey: relayKeypair.publicKey.toBase58(),
-                    relay: { version: ASHBORN_RELAY_VERSION }
+                    relay: {
+                        address: ashbornRelay.publicKey.toBase58(),
+                        balance: relayBalance / LAMPORTS_PER_SOL,
+                        balance_lamports: relayBalance
+                    },
+                    privacyCash: {
+                        address: privacyCashWallet.publicKey.toBase58(),
+                        balance: privacyCashBalance / LAMPORTS_PER_SOL,
+                        balance_lamports: privacyCashBalance
+                    },
+                    version: ASHBORN_RELAY_VERSION
                 }, { headers });
             }
 

@@ -9,12 +9,8 @@ import {
     Transaction,
     sendAndConfirmTransaction
 } from '@solana/web3.js';
-import dotenv from 'dotenv';
-import path from 'path';
-import fs from 'fs';
-
-import path from 'path';
-import fs from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 
 // Manually load .env.local
 const envPath = path.resolve(process.cwd(), 'app/.env.local');

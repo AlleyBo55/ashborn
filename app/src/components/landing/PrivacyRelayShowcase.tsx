@@ -48,7 +48,7 @@ export default function PrivacyRelayShowcase() {
                             Stop exposing your identity to every protocol you touch.
                             <br /><br />
                             With <strong className="text-white">Ashborn Shadow</strong>, your transaction is enveloped in darkness.
-                            To PrivacyCash, Radr Labs, and the world—you are a ghost.
+                            To PrivacyCash and the world—you are a ghost.
                             <br /><br />
                             <span className="text-red-400 font-medium">Only the Shadow Monarch knows the truth.</span>
                         </p>
@@ -126,7 +126,7 @@ export default function PrivacyRelayShowcase() {
                                         </div>
                                     </div>
                                     <div className="flex-1 p-4 bg-white/[0.02] border border-white/5 rounded-lg text-center">
-                                        <div className="text-gray-500 mb-1">Radr Labs</div>
+                                        <div className="text-gray-500 mb-1">Recipient</div>
                                         <div className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-1 rounded inline-block">
                                             Sees: &quot;Ashborn&quot;
                                         </div>

@@ -15,11 +15,11 @@ const demos = [
         id: 'radr',
         title: 'ShadowWire',
         tag: 'STEALTH',
-        desc: "Radr stealth addresses. Unlinkable one-time keys.",
+        desc: "Native ShadowWire stealth addresses. Unlinkable one-time keys.",
         href: '/demo/radr',
         icon: ViewOffIcon,
         color: 'purple',
-        integrations: ['Radr', 'Ashborn'],
+        integrations: ['ShadowWire', 'Ashborn'],
     },
     {
         id: 'shield',
@@ -39,7 +39,7 @@ const demos = [
         href: '/demo/transfer',
         icon: SentIcon,
         color: 'green',
-        integrations: ['Ashborn', 'Radr'],
+        integrations: ['Ashborn', 'ShadowWire'],
     },
     {
         id: 'interop',
@@ -49,7 +49,7 @@ const demos = [
         href: '/demo/interop',
         icon: Activity01Icon,
         color: 'cyan',
-        integrations: ['Ashborn', 'PrivacyCash', 'Radr', 'Light Protocol'],
+        integrations: ['Ashborn', 'PrivacyCash', 'ShadowWire', 'Light Protocol'],
     },
     {
         id: 'prove',

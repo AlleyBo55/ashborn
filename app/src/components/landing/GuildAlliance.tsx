@@ -27,8 +27,8 @@ export default function GuildAlliance() {
             <div className="text-center mb-8 px-4">
                 <h3 className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">ASHBORN ARCHITECTURE</h3>
                 <p className="text-sm text-gray-400 max-w-2xl mx-auto">
-                    <span className="text-red-400 font-semibold">Ashborn</span> = On-chain ZK program + SDK. 
-                    Integrates <span className="text-purple-400 font-semibold">Radr</span> stealth addresses + 
+                    <span className="text-red-400 font-semibold">Ashborn</span> = On-chain ZK program + SDK.
+                    Integrates <span className="text-purple-400 font-semibold">ShadowWire</span> stealth addresses +
                     <span className="text-blue-400 font-semibold"> PrivacyCash</span> pools + adds compliance proofs.
                 </p>
             </div>
@@ -69,12 +69,6 @@ export default function GuildAlliance() {
                         <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
                             <span className="text-xl font-bold tracking-tight text-blue-500">PRIVACY</span>
                             <span className="text-xl font-thin tracking-tight text-white">CASH</span>
-                        </div>
-
-                        {/* RADR LABS */}
-                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer">
-                            <span className="text-xl font-bold tracking-tight text-purple-500">RADR</span>
-                            <span className="text-xl font-thin tracking-tight text-white">LABS</span>
                         </div>
 
                         {/* X402 */}
