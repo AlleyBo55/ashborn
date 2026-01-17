@@ -67,7 +67,6 @@ pub mod ashborn {
 
     /// Execute a shadow transfer - unlinkable P2P payment
     /// 
-    /// Integrates with Radr Labs ShadowWire for stealth addresses.
     /// Uses nullifiers to prevent double-spending.
     pub fn shadow_transfer(
         ctx: Context<ShadowTransfer>,

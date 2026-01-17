@@ -1,20 +1,23 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import RadrDemoPage from '../page';
+import ShadowWireDemoPage from '../page';
 
 global.fetch = jest.fn();
 
-describe('Radr Demo', () => {
+describe('Shadowwire Demo', () => {
     beforeEach(() => jest.clearAllMocks());
 
-
+    it('renders Shadowwire demo page with terminal header', () => {
+        render(<ShadowWireDemoPage />);
+        expect(screen.getByText(/SHADOWWIRE/i)).toBeInTheDocument();
+    });
 
     it('displays stealth address protocol info', () => {
-        render(<RadrDemoPage />);
+        render(<ShadowWireDemoPage />);
         expect(screen.getByText(/STEALTH_ADDRESS_PROTOCOL/i)).toBeInTheDocument();
     });
 
     it('shows waiting state before generation', () => {
-        render(<RadrDemoPage />);
+        render(<ShadowWireDemoPage />);
         expect(screen.getByText(/waiting_to_generate/i)).toBeInTheDocument();
     });
 
@@ -27,7 +30,7 @@ describe('Radr Demo', () => {
             })
         });
 
-        render(<RadrDemoPage />);
+        render(<ShadowWireDemoPage />);
         fireEvent.click(screen.getByText(/GENERATE_STEALTH_ADDRESS/i));
 
         await waitFor(() => {
@@ -48,7 +51,7 @@ describe('Radr Demo', () => {
             json: async () => ({ success: true, stealthAddress: 'addr', viewKey: 'key' })
         });
 
-        render(<RadrDemoPage />);
+        render(<ShadowWireDemoPage />);
         fireEvent.click(screen.getByText(/GENERATE_STEALTH_ADDRESS/i));
 
         await waitFor(() => {

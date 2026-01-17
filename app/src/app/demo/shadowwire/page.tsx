@@ -42,7 +42,7 @@ export default function ShadowWireDemoPage() {
             setStep('complete');
             setStatus('success');
         } catch (err) {
-            console.error('Radr error:', err);
+            console.error('Ashborn error:', err);
             setStep('idle');
         }
     };

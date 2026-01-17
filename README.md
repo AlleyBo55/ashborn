@@ -202,17 +202,7 @@ await relay.prove({
 
 ---
 
-## 🌐 Live Demos
 
-| Demo | Integrations | What It Shows |
-|------|-------------|---------------|
-| [Shadow Agent](/demo/shadow-agent) | PrivacyCash, ShadowWire, ZK Groth16 | AI-to-AI private commerce |
-| [Interop](/demo/interop) | PrivacyCash, ShadowWire, Light Protocol | Full Shield → Stealth → Unshield flow |
-| [AI Lending](/demo/ai-lending) | ZK Groth16, PrivacyCash | Private collateral proofs |
-| [AI Payment](/demo/ai-payment) | x402 Micropay, PrivacyCash | Private AI micropayments |
-| [Shield](/demo/shield) | PrivacyCash, Light Protocol | Deposit to privacy pool |
-| [Prove](/demo/prove) | ZK Groth16, snarkjs | Real Groth16 range proofs |
-| [ShadowWire](/demo/radr) | Native ShadowWire | Stealth address generation |
 
 > 🎮 **Try it:** [ashborn-sol.vercel.app](https://ashborn-sol.vercel.app)
 
@@ -351,6 +341,6 @@ MIT — See [LICENSE](LICENSE)
 
 <p align="center">
   <b>THE SHADOW RELAY</b><br/>
-  <em>PrivacyCash sees nothing. Radr Labs sees nothing. Only you know.</em><br/><br/>
+  <em>World sees nothing. Only you know.</em><br/><br/>
   <strong>ARISE.</strong>
 </p>
