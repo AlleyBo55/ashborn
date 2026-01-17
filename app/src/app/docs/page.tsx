@@ -45,7 +45,6 @@ const sections = [
         title: "Protocol Integrations", items: [
             { id: 'integrations', title: 'Overview', icon: Activity01Icon },
             { id: 'privacycash', title: 'PrivacyCash', icon: Shield02Icon },
-            { id: 'radr-labs', title: 'Radr Labs', icon: ViewOffIcon },
             { id: 'light-protocol', title: 'Light Protocol', icon: LockIcon },
             { id: 'x402-micropay', title: 'x402 Micropay', icon: AiChat02Icon },
             { id: 'zk-groth16', title: 'ZK Groth16', icon: FlashIcon },
@@ -54,7 +53,7 @@ const sections = [
     {
         title: "SDK Reference", items: [
             { id: 'sdk-core', title: 'Core SDK', icon: CodeIcon },
-            { id: 'shadow-agent', title: 'Shadow Agent Protocol', icon: SparklesIcon },
+            { id: 'shadow-agent', title: 'shadow agent', icon: SparklesIcon },
             { id: 'demo-modes', title: 'Demo Modes', icon: Activity01Icon },
             { id: 'stealth', title: 'Stealth Addresses', icon: ViewOffIcon },
             { id: 'nlp', title: 'Natural Language', icon: Activity01Icon },
@@ -549,7 +548,7 @@ export default function DocsPage() {
                                     <div className="flex-1 grid grid-cols-2 gap-4">
                                         {/* Identity Side */}
                                         <div className="p-4 rounded-lg bg-purple-900/10 border border-purple-500/20 relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 p-1 bg-purple-500/20 rounded-bl text-[8px] text-purple-300 font-mono">RADR_LABS</div>
+                                            <div className="absolute top-0 right-0 p-1 bg-purple-500/20 rounded-bl text-[8px] text-purple-300 font-mono">Shadow Wire</div>
                                             <div className="flex items-center gap-3 mb-3">
                                                 <ViewOffIcon className="w-8 h-8 text-purple-400" />
                                                 <div className="text-white font-semibold text-sm">Ashborn Program</div>
@@ -732,9 +731,7 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                                 <div>
                                     <span className="text-blue-300 font-semibold">Shield Demo:</span> Uses PrivacyCash program via SDK to deposit SOL into privacy pool
                                 </div>
-                                <div>
-                                    <span className="text-purple-300 font-semibold">Radr Demo:</span> Uses Ashborn program to generate stealth addresses with ShadowWire
-                                </div>
+
                                 <div>
                                     <span className="text-green-300 font-semibold">Transfer Demo:</span> Uses both programs - Ashborn for stealth + PrivacyCash for shielded transfer
                                 </div>
@@ -835,34 +832,6 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                         </div>
                     </section>
 
-                    {/* Protocol Integrations */}
-                    <section id="integrations" className="mb-24 scroll-mt-32">
-                        <SectionHeader title="Protocol Integrations" description="Ashborn unifies the Solana privacy ecosystem into a single Shadow Monarch identity." />
-
-                        <div className="mb-12 p-8 rounded-xl bg-[#0A0A0A] border border-white/10 font-mono text-xs leading-relaxed overflow-x-auto custom-scrollbar shadow-2xl shadow-black">
-                            <div className="flex items-center gap-2 mb-4 text-gray-500 border-b border-white/5 pb-2">
-                                <Activity01Icon className="w-4 h-4" />
-                                <span>RELAY_ARCHITECTURE_V1.ASCII</span>
-                            </div>
-                            <pre className="text-purple-300 font-bold">
-                                {`          ┌─────────────────┐
-          │      USER       │
-          └────────┬────────┘
-                   │
-          ┌────────▼────────┐
-          │  ASHBORN RELAY  │◀─── [Light Protocol]
-          │ (Identity Layer)│     (Compression/ZK)
-          └────────┬────────┘
-     ┌─────────────┼─────────────┐
-     │             │             │
-┌────▼────┐   ┌────▼────┐   ┌────▼────┐
-│ Privacy │   │ Radr    │   │ x402    │
-│ Cash    │   │ Labs    │   │ Micropay│
-└─────────┘   └─────────┘   └─────────┘
-   (Pool)      (Stealth)      (Pay)`}
-                            </pre>
-                        </div>
-                    </section>
 
                     <section id="privacycash" className="mb-24 scroll-mt-32">
                         <div className="flex items-center gap-4 mb-6">
@@ -894,33 +863,7 @@ const result = await ashborn.shield({ amount: 1_000_000n });
                         </ul>
                     </section>
 
-                    <section id="radr-labs" className="mb-24 scroll-mt-32">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                                <ViewOffIcon className="w-8 h-8" />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-3 mb-1">
-                                    <h3 className="text-2xl font-bold text-white">Radr Labs</h3>
-                                    <a href="https://www.radrlabs.io/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors border border-purple-500/20">
-                                        Website ↗
-                                    </a>
-                                </div>
-                                <p className="text-purple-400 font-mono text-sm">Stealth Addressing</p>
-                            </div>
-                        </div>
-                        <p className="text-gray-400 leading-relaxed mb-6">
-                            Radr Labs provides the <strong>ShadowWire</strong> cryptographic primitives known as ECDH (Elliptic Curve Diffie-Hellman). Ashborn uses this to generate one-time stealth addresses that only the recipient can unlock.
-                        </p>
-                        <CodeBlock
-                            language="typescript"
-                            code={`// Ashborn uses Radr's ShadowWire under the hood
-const { stealthAddress } = await ashborn.generateStealthAddress({
-    recipientMeta: metaAddress
-});`}
-                            filename="radr-integration.ts"
-                        />
-                    </section>
+
 
                     <section id="light-protocol" className="mb-24 scroll-mt-32">
                         <div className="flex items-center gap-4 mb-6">
@@ -1002,9 +945,9 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                         />
                     </section>
 
-                    {/* Shadow Agent Protocol */}
+                    {/* shadow agent */}
                     <section id="shadow-agent" className="mb-24 scroll-mt-32">
-                        <SectionHeader title="Shadow Agent Protocol" description="AI-to-AI private commerce via the Shadow Monarch." />
+                        <SectionHeader title="shadow agent" description="AI-to-AI private commerce via the Shadow Monarch." />
                         <CodeBlock
                             language="typescript"
                             code={`import { ShadowAgent } from '@alleyboss/ashborn-sdk';\n\nconst agent = new ShadowAgent({\n  connection,\n  wallet,\n  personality: 'merchant'\n});\n\n// AI negotiates and executes private payment\nconst result = await agent.negotiate({\n  intent: 'Buy 100 USDC worth of compute',\n  maxPrice: 100_000_000n\n});`}
@@ -1014,7 +957,7 @@ const proof = await ashborn.proveRange({ max: 1000n });`}
                             <AiChat02Icon className="w-5 h-5 text-purple-400 mt-0.5" />
                             <div className="text-sm text-purple-200/80 leading-relaxed">
                                 <strong className="text-purple-400 block mb-1">Experimental</strong>
-                                Shadow Agent Protocol is in alpha. Use with caution in production.
+                                shadow agent is in alpha. Use with caution in production.
                             </div>
                         </div>
                     </section>

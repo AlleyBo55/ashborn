@@ -57,10 +57,10 @@ export default function Home() {
                     <MarketingWhy />
                 </SlashSection>
 
-                {/* SYSTEM CAPABILITIES - Viral Demo Showcase */}
-                <SlashSection slant="none" className="bg-black/50" wrapperClassName="z-30">
+                {/* SYSTEM CAPABILITIES - Viral Demo Showcase - HIDDEN as per request (Inspiration Gallery) */}
+                {/* <SlashSection slant="none" className="bg-black/50" wrapperClassName="z-30">
                     <SystemCapabilities />
-                </SlashSection>
+                </SlashSection> */}
 
                 {/* HOW ASHBORN WORKS - Highlighted Section */}
                 <SlashSection slant="none" className="relative z-30">

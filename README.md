@@ -80,7 +80,7 @@ Solana transactions have a hard limit of **1232 bytes**. PrivacyCash transaction
 
 ```mermaid
 graph TD
-    subgraph WITHOUT_ALT [❌ Without ALT (Fails)]
+    subgraph WITHOUT_ALT ["❌ Without ALT (Fails)"]
         A[ZK Proof\n400 bytes] --> B[Encrypted State\n200 bytes]
         B --> C[20 Addresses\n640 bytes]
         C --> D[Total: 1240 bytes]
@@ -89,7 +89,7 @@ graph TD
         style E fill:#ff0000,color:#fff
     end
 
-    subgraph WITH_ALT [✅ With ALT (Success)]
+    subgraph WITH_ALT ["✅ With ALT (Success)"]
         F[ZK Proof\n400 bytes] --> G[Encrypted State\n200 bytes]
         G --> H[20 Addresses\n20 bytes]
         H -- "Compressed via ALT" --> I[Total: 620 bytes]
@@ -202,17 +202,7 @@ await relay.prove({
 
 ---
 
-## 🌐 Live Demos
 
-| Demo | Integrations | What It Shows |
-|------|-------------|---------------|
-| [Shadow Agent](/demo/shadow-agent) | PrivacyCash, ShadowWire, ZK Groth16 | AI-to-AI private commerce |
-| [Interop](/demo/interop) | PrivacyCash, ShadowWire, Light Protocol | Full Shield → Stealth → Unshield flow |
-| [AI Lending](/demo/ai-lending) | ZK Groth16, PrivacyCash | Private collateral proofs |
-| [AI Payment](/demo/ai-payment) | x402 Micropay, PrivacyCash | Private AI micropayments |
-| [Shield](/demo/shield) | PrivacyCash, Light Protocol | Deposit to privacy pool |
-| [Prove](/demo/prove) | ZK Groth16, snarkjs | Real Groth16 range proofs |
-| [ShadowWire](/demo/radr) | Native ShadowWire | Stealth address generation |
 
 > 🎮 **Try it:** [ashborn-sol.vercel.app](https://ashborn-sol.vercel.app)
 
@@ -351,6 +341,6 @@ MIT — See [LICENSE](LICENSE)
 
 <p align="center">
   <b>THE SHADOW RELAY</b><br/>
-  <em>PrivacyCash sees nothing. Radr Labs sees nothing. Only you know.</em><br/><br/>
+  <em>World sees nothing. Only you know.</em><br/><br/>
   <strong>ARISE.</strong>
 </p>

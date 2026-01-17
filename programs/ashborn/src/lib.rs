@@ -39,7 +39,19 @@ pub mod ashborn {
         instructions::initialize::handler(ctx)
     }
 
-    /// Shield assets into the privacy pool
+    /// Shield assets (SDK-compatible simplified version)
+    /// 
+    /// Creates a shielded note with commitment. Demo-friendly version
+    /// that doesn't require full Merkle tree proofs.
+    pub fn shield(
+        ctx: Context<Shield>,
+        amount: u64,
+        commitment: [u8; 32],
+    ) -> Result<()> {
+        instructions::shield::shield_simple_handler(ctx, amount, commitment)
+    }
+
+    /// Shield assets into the privacy pool (full version with proofs)
     /// 
     /// Integrates with Privacy Cash SDK for confidential deposits.
     /// Creates an encrypted note with amount commitment.
@@ -55,7 +67,6 @@ pub mod ashborn {
 
     /// Execute a shadow transfer - unlinkable P2P payment
     /// 
-    /// Integrates with Radr Labs ShadowWire for stealth addresses.
     /// Uses nullifiers to prevent double-spending.
     pub fn shadow_transfer(
         ctx: Context<ShadowTransfer>,

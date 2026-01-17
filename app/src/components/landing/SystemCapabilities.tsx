@@ -79,7 +79,7 @@ export default function SystemCapabilities() {
                             <p className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2 text-right">Power Integrations</p>
                             <div className="flex flex-wrap justify-end gap-3">
                                 <PartnerBadge name="Privacy Cash" role="Shielded Pool" color="blue" />
-                                <PartnerBadge name="ShadowWire" role="Stealth Network" color="purple" />
+                                <PartnerBadge name="Light Protocol" role="Merkle Trees" color="yellow" />
                                 <PartnerBadge name="X402" role="Agent Commerce" color="green" />
                             </div>
                         </div>
@@ -89,51 +89,23 @@ export default function SystemCapabilities() {
                 {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Card 1: AI Payment */}
-                    <DemoCard
-                        icon={BotIcon}
-                        title="AI-to-AI Economy"
-                        desc="Agents paying agents in total darkness. Using X402 for payment gates and Ashborn for receiver anonymity. The future of machine commerce."
-                        link="/demo/ai-payment"
-                        color="blue"
-                        tech={['PrivacyCash', 'X402', 'Devnet']}
-                    />
+
 
                     {/* Card 2: Stealth Transfer */}
-                    <DemoCard
-                        icon={ViewOffIcon}
-                        title="Shadow Transfer"
-                        desc="Mathematical invisibility for P2P payments. Send SOL to anyone without revealing their main wallet. Native ShadowWire active."
-                        link="/demo/transfer"
-                        color="purple"
-                        tech={['ShadowWire', 'ZK Proofs', 'Relayer']}
-                    />
+
 
                     {/* Card 3: Compliance */}
-                    <DemoCard
-                        icon={SecurityValidationIcon}
-                        title="Solvency Proofs"
-                        desc="Prove you have funds without showing how much. Selective disclosure verified on-chain. Regulatory compliance, solved."
-                        link="/demo/prove"
-                        color="green"
-                        tech={['Groth16', 'Circom', 'Range Proof']}
-                    />
+
 
                     {/* Card 4: Interop */}
-                    <DemoCard
-                        icon={FlashIcon}
-                        title="Protocol Interop"
-                        desc="Seamlessly move assets between PrivacyCash pools and Ashborn stealth addresses. One shield, infinite destinations."
-                        link="/demo/interop"
-                        color="yellow"
-                        tech={['Composable', 'Atomic', 'SDK']}
-                    />
+
 
                     {/* Card 5: ShadowWire Native */}
                     <DemoCard
                         icon={Globe02Icon}
                         title="Stealth Infrastructure"
                         desc="Direct integration with Ashborn's native stealth infrastructure. Ephemeral keys ensuring perfect forward secrecy for every transaction."
-                        link="/demo/radr"
+                        link="/demo/shadowwire"
                         color="pink"
                         tech={['Curve25519', 'Stealth', 'Native']}
                     />
