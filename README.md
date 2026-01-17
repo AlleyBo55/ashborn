@@ -15,7 +15,7 @@
 When you use PrivacyCash directly → **PrivacyCash knows your wallet.**  
 When you use PrivacyCash directly → **PrivacyCash knows your wallet.**  
 When you use *any* privacy protocol → **That protocol sees YOU.**
-> 🎮 **Live Demo:** [https://ashborn.vercel.app](https://ashborn-sol.vercel.app)
+> 🎮 **Live Demo:** [https://ashborn-sol.vercel.app](https://ashborn-sol.vercel.app)
 > Now featuring the **Shadow Monarch Aesthetic** experience.
 
 ### With Ashborn? **They see nothing.**
